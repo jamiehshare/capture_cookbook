@@ -44,7 +44,7 @@ Subsequently, there is a section dedicated to enhancing the overall aesthetics o
 
 # Specific Visualisation Purposes
 
-## Trend Over Time
+## Trend over time
 
 One of the fundamental purposes of data visualisation is to gain insights into how a particular metric or variable has evolved over time. This can be achieved through the use of line charts, which provide a straightforward way of representing trends.
 
@@ -625,7 +625,7 @@ left_skewed_dist / right_skewed_dist / bimodal_dist
 
 From these examples, our interpretation should be that the left-skewed distribution appears as a curve skewed to the left, with most values clustered towards the upper end of our scale (closer to 1). On the other hand, the right-skewed distribution appears as a curve skewed to the right, with most values clustered towards the lower end (closer to 0). Lastly, the bimodal distribution displays two distinct peaks, with most values concentrated around two different means (0.3 and 0.7 in this particular example).
 
-## Visualise most frequent terms
+## Visualise most frequent terms - Bigram network
 
 The objective of a bigram network is to provide a comprehensive overview of a specific conversation by identifying frequently occurring pairs of words.
 
@@ -665,7 +665,7 @@ Interpreting a bigram network is more complex compared to the simpler plots we h
 
 For a more detailed overview of bigrams and more specific business-specific interpretation, please see the [ParseR vignette](http://parser.shareldn.com/articles/ngrams.html)
 
-## Differences in language between categories
+## Differences in language between categories - WLO
 
 Often we will be interested in comparing language use between groups/categories. These categories could be audiences, posts of differing sentiment, posts from different quarters etc.If we can classify different posts into distinct groups, we can compare language.
 
@@ -706,7 +706,77 @@ Despite the complexity involved, it's crucial to emphasize that the magnitude of
 
 Therefore, when reporting WLO to clients, one must refrain from using phrases such as "This term is X times as likely to appear in Category A than Category B and C". Instead use phrases such as "**This term has a stronger association with Category A than Category B and C**".
 
-## Comparing two categorical variables with a metric of interest
+## Visualising complex conversational landscapes (UMAP)
+
+UMAP (Uniform Manifold Approximation and Projection) is a powerful data visualization technique that can help analysts gain insights into complex datasets, such as the conversational landscape of social media mentions.
+
+We are often tasked with capturing a wide array of conversations on various topics. However, analysing and making sense of this vast amount of data can be challenging. UMAP provides a way to visualize and explore this conversational landscape, enabling us to identify clusters, patterns, and relationships within the data.
+
+```{r}
+umap_tib <- read_rds("~/Documents/R/capture_cookbook/data/umap.rds")
+
+umap_1 <- umap_tib %>% 
+  ggplot(aes(x = V1, y = V2, col = factor(cluster))) +
+  geom_point(size = 0.3,
+             alpha = 0.5) +
+  scale_colour_viridis_d() +
+  coord_fixed() +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        panel.border = element_blank(),
+        panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "none")
+
+umap_2 <- umap_tib %>% 
+  ggplot(aes(x = V1, y = V2, col = factor(cluster))) +
+  geom_point(size = 0.3,
+             alpha = 0.5) +
+  scale_colour_viridis_d() +
+  coord_fixed() +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        # panel.border = element_blank(),
+        panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "none")
+
+umap_3 <- umap_tib %>% 
+  ggplot(aes(x = V1, y = V2, col = factor(cluster))) +
+  geom_point(size = 0.3,
+             alpha = 0.5) +
+  scale_colour_viridis_d() +
+  labs(x = "x",
+       y = "y") +
+  coord_fixed() +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        axis.line = element_line(),
+        panel.border = element_blank(),
+        panel.grid = element_blank(),
+        legend.position = "none")
+
+umap_1 + umap_2 + umap_3
+```
+
+### Interpretation
+
+When applying UMAP to social media mentions, the technique projects the data into a lower-dimensional space, typically two dimensions, while preserving the underlying structure of the conversations. Each data point represents a post, and their proximity to each other on the UMAP plot indicates similarity in the context or content of the conversations (i.e. semantic similarity).
+
+UMAP reveals clusters or groups of mentions that are closer together on the plot. These clusters represent conversations that share common themes, topics, or sentiments. We can examine these clusters to identify distinct subtopics or communities within the larger conversational landscape. By exploring the content of these clusters, we can gain a deeper understanding of the prevailing narratives or discussions taking place on social media.
+
+UMAP visualizations also highlight outliers or mentions that are far apart from the main clusters. These outliers may represent unique or less common aspects of the conversation, such as alternative perspectives or rare events, or they might represent irrelevant posts which have snuck though our data cleaning steps. 
+
+The density of points in certain areas of the UMAP plot can indicate the volume of conversations or the prominence of specific themes. Areas with dense clusters may represent highly active or popular discussions, while sparser regions could indicate less popular or peripheral topics. Additionally, the distance between clusters can provide insights into the relationships or connections between different themes or conversations. Closer clusters may indicate related or overlapping discussions, while distant clusters suggest more distinct or separate topics.
+
+## Comparing one or more categorical variables with a metric of interest
 
 Heatmaps are powerful visualisations that use colours to help us identify patterns in the value of a metric for one or two categorical variables. They offer great versatility and can be employed for various purposes, all aimed at addressing specific business questions by examining colour intensity in different areas of the heatmap.
 
