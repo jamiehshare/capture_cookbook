@@ -1268,6 +1268,8 @@ bar_no_lab <- tribble(
   theme_bw() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
         panel.border = element_blank(),
         axis.line = element_line(),
         panel.grid.major.x = element_blank(),
