@@ -1817,6 +1817,94 @@ ggplot(aes(x, y, fill = factor(z))) +
 
 qual_heatmap + seq_heatmap + div_heatmap
 ```
+**NTS, TO DECIDE WHETHER TO KEEP WITH VIRIDIS DEFAULT OR CHANGE TO A 'NICER' SEQUENTIAL PALETTE THAT ALSO CHANGES SATURATION I.E BELOW
+```{r, col-ex-2-2, fig.height = 3, fig.cap = 'When to use sequential colour palette'}
+x <- LETTERS[1:7]
+y <- paste0("var", seq(1, 4))
+
+set.seed(1234)
+data <- expand.grid(x = x, y = y) %>%
+  mutate(z = runif(28, 1, 6),
+         z = round(z, 0),
+         z = paste0(z*10, "%"))
+
+qual_heatmap <- data %>% 
+ggplot(aes(x, y, fill = factor(z))) + 
+  geom_tile() +
+  labs(x = "Topic",
+       y = "Platform",
+       fill = NULL,
+       title = "Bad",
+       subtitle = "Qualitative Palette") +
+  scale_fill_manual(values = msft_cols,
+                    guide = guide_legend(label.position = "bottom",
+                                         nrow = 1)) +
+  coord_fixed() +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
+        panel.border = element_blank(),
+        axis.line = element_line(),
+        legend.key.height = unit(0.4, "cm"),  
+        legend.key.width = unit(0.8, "cm"),
+        legend.position = "bottom",
+        legend.spacing.x = unit(0, 'cm'),
+        legend.text = element_text(size = 7))
+
+seq_heatmap <- data %>% 
+ggplot(aes(x, y, fill = factor(z))) + 
+  geom_tile() +
+  labs(x = "Topic",
+       y = "Platform",
+       fill = NULL,
+       title = "Good",
+       subtitle = "Sequential Palette") +
+  # scale_fill_viridis_d(direction = -1,
+  #                      guide = guide_legend(label.position = "bottom",
+  #                                           nrow = 1)) +
+  scale_fill_brewer(palette = "YlGnBu",
+                    guide = guide_legend(label.position = "bottom",
+                                            nrow = 1)) +
+  coord_fixed() +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
+        panel.border = element_blank(),
+        axis.line = element_line(),
+        legend.key.height = unit(0.4, "cm"),  
+        legend.key.width = unit(0.8, "cm"),
+        legend.position = "bottom",
+        legend.spacing.x = unit(0, 'cm'),
+        legend.text = element_text(size = 7))
+
+div_heatmap <- data %>% 
+ggplot(aes(x, y, fill = factor(z))) + 
+  geom_tile() +
+  labs(x = "Topic",
+       y = "Platform",
+       fill = NULL,
+       title = "Not ideal",
+       subtitle = "Divergent Palette") +
+  scale_fill_brewer(palette = "PRGn",
+                    guide = guide_legend(label.position = "bottom",
+                                         nrow = 1)) +
+  coord_fixed() +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
+        panel.border = element_blank(),
+        axis.line = element_line(),
+        legend.key.height = unit(0.4, "cm"),  
+        legend.key.width = unit(0.8, "cm"),
+        legend.position = "bottom",
+        legend.spacing.x = unit(0, 'cm'),
+        legend.text = element_text(size = 7))
+
+qual_heatmap + seq_heatmap + div_heatmap
+```
 
 Despite being "text" rather than "numbers, something like a Likert scale has inherent order to it and hence a qualitative colour palette is unsuitable for this particular visualisation. Whilst this palette enables easy differentiation between groups at a glance, it fails to represent the underlying scale or intensity of the Likert scale. The sequential colour palette is also unsuitable. Its subtle differences in colour shades can make it challenging for viewers to distinguish between the different categories accurately. The sequential palette may inadvertently suggest a progression or intensity within the Likert scale, misleading the interpretation of the data. In contrast, the divergent colour palette can be considered suitable for the Likert scale stacked bar charts. By using a divergent palette, meaningful thresholds or midpoints within the scale can be highlighted effectively. It enables the representation of both positive and negative values, accentuating the contrast between categories. 
 
@@ -1835,7 +1923,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
   geom_bar(position = "stack", stat = "identity",
            width = 0.6) +
   labs(x = "Category",
-       y = "Number of posts classified per topic",
+       y = "No. of posts classified per topic",
        title = "Bad",
        subtitle = "Qualitative Palette",
        fill = NULL) +
@@ -1860,7 +1948,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
   geom_bar(position = "stack", stat = "identity",
            width = 0.6) +
   labs(x = "Category",
-       y = "Number of posts classified per topic",
+       y = "No. of posts classified per topic",
        title = "Bad",
        subtitle = "Sequential Palette",
        fill = NULL) +
@@ -1885,7 +1973,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
   geom_bar(position = "stack", stat = "identity",
            width = 0.6) +
   labs(x = "Category",
-       y = "Number of posts classified per topic",
+       y = "No. of posts classified per topic",
        subtitle = "Divergent Palette",
        title = "Good",
        fill = NULL) +
