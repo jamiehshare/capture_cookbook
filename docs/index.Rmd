@@ -1656,6 +1656,8 @@ qual_bar <- tribble(
   "E", 10,
   "F", 27
 ) %>% 
+  arrange(desc(n)) %>% 
+  mutate(colA = factor(colA, levels = colA)) %>% 
   ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
   geom_col() +
   labs(x = "Message Type",
@@ -1682,6 +1684,8 @@ seq_bar <- tribble(
   "E", 10,
   "F", 27
 ) %>% 
+  arrange(desc(n)) %>% 
+  mutate(colA = factor(colA, levels = colA)) %>% 
   ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
   geom_col() +
   scale_fill_viridis_d() +
@@ -1709,6 +1713,8 @@ div_bar <- tribble(
   "E", 10,
   "F", 27
 ) %>% 
+  arrange(desc(n)) %>% 
+  mutate(colA = factor(colA, levels = colA)) %>% 
   ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
   geom_col() +
   scale_fill_brewer(palette = "PRGn") +
@@ -1817,7 +1823,7 @@ ggplot(aes(x, y, fill = factor(z))) +
 
 qual_heatmap + seq_heatmap + div_heatmap
 ```
-**NTS, TO DECIDE WHETHER TO KEEP WITH VIRIDIS DEFAULT OR CHANGE TO A 'NICER' SEQUENTIAL PALETTE THAT ALSO CHANGES SATURATION I.E BELOW
+**NTS, TO DECIDE WHETHER TO KEEP WITH VIRIDIS DEFAULT OR CHANGE TO A 'NICER' SEQUENTIAL PALETTE THAT ALSO CHANGES SATURATION I.E BELOW**
 ```{r, col-ex-2-2, fig.height = 3, fig.cap = 'When to use sequential colour palette'}
 x <- LETTERS[1:7]
 y <- paste0("var", seq(1, 4))
