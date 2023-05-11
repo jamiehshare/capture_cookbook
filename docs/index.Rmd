@@ -1,5 +1,5 @@
 --- 
-title: "Capture Cookbook 📈👩‍🍳"
+title: "Capture Cookbook 📈🧑‍🍳"
 author: "Capture Intelligence Data Science Team"
 date: "*Last updated: `r Sys.Date()`*"
 output: 
@@ -22,25 +22,32 @@ library(patchwork)
 library(ggrepel)
 library(ggtext)
 library(forcats)
+library(gtable)
+library(gtExtras)
+library(gt)
 ```
 
 # About the Capture Cookbook 
 
-The purpose of this document is to provide a resource for anyone at SHARE Creative or Capture Intelligence to understand the commonly used visualisations produced for client work, that is appreciate when they should be used and how to interpret them.
+The aim of this document is to serve as a valuable resource for everyone at SHARE Creative or Capture Intelligence, enabling them to understand the commonly used visualizations created for client projects. It is important to appreciate when and how to use these visualizations, as well as how to interpret them.
 
-This is nicely summarised by the BBC in their graphics cookbook:
+The BBC has provided an excellent summary of this topic in their own graphics cookbook:
 
 >A reference manual, rather than a tutorial, it might not tell you how to make your very first chart in R, but is a useful collection of little tips and tricks.
 
-Indeed, this document will not teach you R, or how to physically make these plots. Rather it's goal is to help understand how and when visualisations should be used in our work and empower anyone with the confidence to explain key meaning, strengths, and weaknesses of different plots.
+In line with this, this document will not teach you R or the technical aspects of creating these plots. Instead, its primary goal is to help you grasp the purpose and appropriate usage of visualizations in our work. By doing so, it empowers everyone to confidently explain the key insights, strengths, and weaknesses conveyed by different types of plots.
+
+The cookbook begins by introducing various types of visualisations, each serving a specific purpose based on the type of task you want to perform. This approach is adopted because there are often multiple ways to present the same data, and each visualisation has its own merits and drawbacks. Within this section, you will find examples of the business questions we commonly encounter, accompanied by appropriate visualisations and explanations for interpreting them.
+
+Subsequently, there is a section dedicated to enhancing the overall aesthetics of plots. These tips not only contribute to visually pleasing outputs but also assist in effective storytelling. Moreover, they introduce fundamental principles of data visualization that we should all be mindful of.
 
 # Specific Visualisation Purposes
 
 ## Trend Over Time
 
-Perhaps the simplest plot we would make would be for the purpose of understanding how a metric or variable has changed over time.
+One of the fundamental purposes of data visualisation is to gain insights into how a particular metric or variable has evolved over time. This can be achieved through the use of line charts, which provide a straightforward way of representing trends.
 
-At a high level, this could be when analysing volume, proportion, or percentage over time.
+When analysing trends over time, we often focus on metrics such as volume, proportion, or percentage. By plotting these values on a line chart, we can easily observe their fluctuations and patterns.
 
 ### Example
 
@@ -74,9 +81,11 @@ example %>%
 
 ### Intepretation
 
-The interpretation of a line chart is very simple- but we must always be careful to look at the axes to understand what is being shown. Is the y axis raw values of proportion? Does our x axis encompass a year or a month?
+Interpreting a line chart is relatively simple, but it is crucial to pay attention to the axes in order to fully understand the information being presented. For instance, we need to determine whether the y-axis represents raw values or proportions, and whether the x-axis represents years, months, or another unit of time.
 
-One thing to be wary of is that for trend plots, we invariably have to bin the data into more accessible intervals of dates (especially as Sprinklr outputs 'Created Time' to the nearest second, and it is unlikely many posts are posted at exactly the same second). Depending on which time intervals are chosen, the interpretation of the plots can vary. Choosing an inappropriate interval can obscure trends or make them appear more dramatic than they actually are. In the example above, the data was binned on a daily basis; however we can see below how the plot changes when we treat the data at a weekly scale- we do not get such a nuanced view of fluctuations in volume.
+It's important to note that when creating trend plots, we typically need to group the data into intervals that are more easily digestible. This is especially true when working with data from Sprinklr, as the "Created Time" field is recorded down to the nearest second, and it's unlikely that multiple posts are made at the exact same second. The choice of time intervals can significantly impact the interpretation of the plot. Selecting an inappropriate interval may obscure trends or exaggerate their significance.
+
+In the example above, we binned the data on a daily basis. However, if we examine the plot below, which represents the data at a weekly scale, we can see how the view of volume fluctuations becomes less detailed.
 
 ```{r gg-line-week, fig.cap = 'Line chart showing weekly trend'}
 example %>% 
@@ -98,9 +107,9 @@ example %>%
         axis.line = element_line())
 ```
 
-We *can* also plot the same data using a bar chart rather than a line chart. The interpretation is the same, however they may not be as effective in showing trends because the bars are discrete rather than continuous, and it emphasises the magnitude of each individual interval rather than the total trend.
+It's worth noting that we *can* also present the same data using a bar chart instead of a line chart. The interpretation remains the same, but bar charts may not be as effective at displaying trends. This is because the bars are discrete rather than continuous, and they emphasise the magnitude of individual intervals rather than the overall trend.
 
-As such, bar charts are more useful when the absolute value of a data point is relevant, or perhaps when we already have line charts included on the plot and we want to show an additional value (i.e. we already have proportion plotted with time, we might use a bar to represent volume)
+Therefore, bar charts can be thought of as more useful when the absolute value of a data point is relevant for understanding a trend, or when we want to supplement an existing line chart with additional information (for example, representing volume alongside the proportion already plotted with time).
 
 ```{r gg-bar-trend, fig.cap = 'Bar chart showing weekly trend'}
 example %>% 
@@ -123,9 +132,7 @@ example %>%
 
 ## Comparing categories
 
-Often we need to see how different groups or categories compare to each other in terms of a specific metric or variable.
-
-For example we might want to compare the volume of posts per certain topic. The key thing here is that these variables we are measuring are distinct groups and they may not have a logical order (in the case of Platform, for example). In such cases, a bar chart is often an appropriate and popular way to go.
+It is often necessary to compare different groups or categories in relation of a specific metric or variable. For instance, we may want to examine the volume of posts for different topics. The crucial aspect here is that these variables we are measuring represent distinct groups and may not follow a logical order (e.g., Platform). In such cases, a bar chart is commonly used and a popular way to go.
 
 ### Example
 
@@ -148,9 +155,9 @@ example %>%
 
 #### Intepretation
 
-Similar to the trends over time chart above, the interpretation of a classic bar chart is very simple. However to help storytelling there are key changes we can make to improve the clarity of such a plot. 
+Similar to the aforementioned trend charts, interpreting a classic bar chart is straightforward. However, there are key modifications we can make to enhance the clarity of the plot and facilitate storytelling.
 
-One of these includes reordering the categories on the x axis. This could perhaps be in alphabetical order if we have previously used that order in a project, but often of use is to have the bars displayed in order of the y axis value- in this case "Number of posts"
+One such modification involves reordering the categories on the x-axis. We may choose to arrange them alphabetically if that order has been used previously in the project. Alternatively, it can be useful to display the bars in descending order based on the y-axis value, in this case, "Number of posts."
 
 ```{r gg-bar-order, fig.cap = 'Bar chart showing the number of messages per category'}
 example %>% 
@@ -169,7 +176,7 @@ example %>%
         axis.line = element_line())
 ```
 
-A key issue with bar plots involves readability when there are lots of categories. If these categories lead to bars of similar lengths, it can lead to a phenomenom known as the Moiré effect and cause confusion and difficulty focusing. This can make it challenging to distinguish between individual bars and interpret the data accurately.
+A significant challenge with bar plots arises when there are numerous categories. If these categories result in bars of similar lengths, a phenomenon known as the Moiré effect can occur. This effect leads to confusion and difficulty in focusing, making it challenging to distinguish between individual bars and accurately interpret the data.
 
 ```{r gg-bar-moire, fig.cap = 'Bar chart showing the number of messages per category'}
 colB <- c(runif(4, min = 50, max = 55),
@@ -204,11 +211,11 @@ tribble(
         axis.line = element_line())
 ```
 
-In the bar chart above, we see an example of the Moiré effect. This is when we start to see “patterns” that don’t exist due to your senses being overloaded by what your eyes are taking in. In addition, charts can look chunky and busy with more than ~ 8 bars - even if they are of varying sizes.
+We observe an example of the Moiré effect in the bar chart above. It manifests when we start perceiving "patterns" that are not actually present due to sensory overload. Furthermore, charts with more than approximately eight bars, even if they vary in size, can appear cluttered and overwhelming.
 
-##### Lollipop
+##### Lollipop Charts
 
-To combat this, lollipop charts can be used to show the same data:
+In order to address this challenge, we can employ lollipop charts to present the data in a different way:
 
 ```{r gg-lollipop, fig.cap = 'Lollipop chart showing the number of messages per category'}
 
@@ -244,17 +251,17 @@ tribble(
         axis.line = element_line())
 ```
 
-Hopefully the lollipop chart is a bit clearer for your eyes. These charts are also good alternatives for bar charts in general if one feels that they are using too many bar charts in a deck, as they provide a much nicer use of white space than some busy bar charts.
+The lollipop chart offers a clearer visual representation that may be (hopefully is) more appealing to you. These charts can also serve as excellent alternatives to bar charts in general, particularly if you find yourself using bar charts excessively in a particular deck. Lollipop charts make better use of white space, avoiding the clutter often associated with busy bar charts.
 
-A key issue with lollipop charts vs bar charts is how important it is for the client to know the exact value of each category. In bar charts, it is clear where the top of the bar is, whereas for a lollipop chart, is the centre of the circle the value in question (a bit imprecise), or is it the top of the circle (or bottom of the circle)?? Whilst this can be combated by adding the raw values to the lollipop chart directly, it is important to consider who will be viewing the chart and the key message we want to hit home (i.e. general trends or specific values).
+One important consideration when comparing lollipop charts to bar charts is the level of importance attached to knowing the exact value of each category. In bar charts, it is evident where the top of the bar is located, but with lollipop charts, determining whether the centre, top, or bottom of the circle represents the value in question can be somewhat imprecise. To address this, it is possible to include the raw values directly on the lollipop chart. Despite this, it remains essential to consider the intended audience and the key message we aim to convey, whether it pertains to general trends or specific values.
 
-#### Pie Chart
+#### Pie Charts
 
-Whilst pie charts are commonly used and there is comfort to be had in the familiar, they are rarely the best option to our data. Despite this, we often get requests to also demonstrate this same data (comparing categories) with pie charts. 
+While pie charts are commonly used and provide a sense of familiarity, they are rarely the optimal choice for representing our data. Nevertheless, we often receive requests to include pie charts when comparing categories.
 
-**Pie charts are most effective when** values are around 25%, 50%, or 75%- we can interpret these percentages much easier in a pie chart than a stacked bar. 
+**Pie charts are most effective when** when values are approximately 25%, 50%, or 75%. These percentages are easier to interpret within a pie chart compared to a stacked bar chart.
 
-```{r gg-pie, fig.cap = 'test test'}
+```{r gg-pie, fig.cap = 'When a pie chart is better than a stacked bar chart', out.width="60%"}
 bar <- tribble(
   ~colA, ~colB,
   "a", 22,
@@ -272,7 +279,7 @@ bar <- tribble(
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
   theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.title = element_text(size = 25, hjust = 0.5),
         panel.border = element_blank(),
         # axis.line = element_line(),
         axis.text = element_blank(),
@@ -295,7 +302,7 @@ pie <- tribble(
   labs(title = "Better") +
   theme_bw() +
   theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.title = element_text(size = 25, hjust = 0.5),
         panel.border = element_blank(),
         # axis.line = element_line(),
         axis.text = element_blank(),
@@ -307,9 +314,9 @@ pie <- tribble(
 bar + pie
 ```
 
-**Pie charts are not a good choice** if we really want the client to compare the size of segments
+**Pie charts are not suitable** when we want clients to be able to accurately compare the size of different segments.
 
-```{r gg-pie-2, fig.cap = 'test test'}
+```{r, gg-pie-2, fig.cap = 'When a bar chart is better than a pie bar chart', out.width="60%"}
 bar <- tribble(
   ~colA, ~colB,
   "a", 45,
@@ -326,7 +333,7 @@ bar <- tribble(
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
   theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.title = element_text(size = 25, hjust = 0.5),
         panel.border = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
@@ -350,7 +357,7 @@ pie <- tribble(
   labs(title = "Bad") +
   theme_bw() +
   theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.title = element_text(size = 25, hjust = 0.5),
         panel.border = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
@@ -361,13 +368,13 @@ pie <- tribble(
 bar + pie
 ```
 
-This can be alleviated by adding values directly on to the plot, but we will get to that later in the cookbook.
+This limitation can be somewhat mitigated by directly adding values onto the plot, but we will delve into that aspect later in this cookbook
 
-#### Doughnut Chart
+#### Doughnut Charts
 
-The sibling of the Pie Chart, a doughnut chart displays the same information as a pie chart though the centre is removed. This allows information to be reported within the centre of the chart itself. However, whereas pie charts are designed so the proportion of slices represent the value of interest, for doughnut charts it is the length of each arc that is representative of the value we are presenting. The same precautions should be kept in mind when making and presenting doughnut chart as mentioned above for pie charts (in fact, if anything, the number of categories that can appropriately be displayed is lower- up to 5).
+The sibling of the Pie Chart, a doughnut chart displays the same information as a pie chart though the centre is removed. This allows information to be reported within the centre of the chart itself. However, whereas the proportion of slices represents the values of interest in pie charts, doughnut charts use the length of each arc to represent the values being presented. The same precautions should be kept in mind when making and presenting doughnut chart as mentioned above for pie charts (in fact, if anything, the number of categories that can appropriately be displayed is lower- up to 5).
 
-```{r gg-doughnut, fig.cap = 'Comparison between a Pie Chart and a Doughnut Chart showing the same data'}
+```{r gg-doughnut, fig.cap = 'Comparison between a Pie Chart and a Doughnut Chart. Both charts present the same data', out.width="60%"}
 pie <- tribble(
   ~colA, ~colB,
   "a", 22,
@@ -382,7 +389,7 @@ pie <- tribble(
   labs(title = "Pie Chart") +
   theme_bw() +
   theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.title = element_text(size = 25, hjust = 0.5),
         panel.border = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
@@ -404,10 +411,11 @@ doughnut <- tribble(
   scale_fill_viridis_d() +
   labs(title = "Doughnut Chart") +
   annotate(geom = 'text', x = -0.5, y = 0, label = "Number of posts: \nX posts",
-           family = "GT Walsheim Pro") +
+           family = "GT Walsheim Pro",
+           size = 6) +
   theme_bw() +
   theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.title = element_text(size = 25, hjust = 0.5),
         panel.border = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
@@ -420,9 +428,11 @@ pie + doughnut
 
 ## Comparing sub-categories within categories 
 
-We may need a stacked bar chart when we want to go one step further than a simple bar chart. That is, when we also want to see the relative composition of each bar based on the levels of a second categorical variable.
+A stacked bar chart can be a valuable tool for gaining deeper insights beyond a simple bar chart. It allows us to understand the relative composition of each bar (i.e. category) by considering the levels of a second categorical variable nested within.
 
-A key business question that may be answered with this is to visualise how sentiment varies between topics, or brands (again, any categorical variable).
+In the context of our marketing company, stacked bar charts can help us answer important business questions. For example, we can use them to visualize how sentiment varies between different topics or brands, or any other categorical variable of interest.
+
+A key business question that may be answered with this is to visualise how sentiment varies between between topics or brands, or any other categorical variable of interest.
 
 ### Example
 
@@ -477,7 +487,9 @@ tribble(
 
 ### Interpretation
 
-Interpretation for stacked bar charts requires careful consideration. It may not be clear straight away to a client whether each stack starts from the same baseline as purple in our case (i.e. at 0), or if it starts from the top of the stack below (which it does in our case). It can also be difficult to directly compare stacks between categories. For the baselines stack (purple), it is clear which category contains the largest number of negative posts, however it is much more difficult to compare the neutral and positive stacks as they do not share the same baseline (ask yourself, are there more neutral posts in category C or D- it's not clear is it?). Finally, stacked bar charts can also be very difficult to interpret when total bar size varies greatly as the individual stacks can become squashed.
+Interpreting stacked bar charts requires careful consideration, especially when presenting them to clients who may not be familiar with this type of visualisation. It may not be immediately clear to clients whether each stack starts from the same baseline, such as the purple stack in our case (which starts at 0), or if it starts from the top of the stack below (as it does in our case).
+
+Comparing stacks between different categories can also be challenging. While it's evident which category contains the largest number of negative posts in the baseline stack (purple), it becomes more difficult to compare the neutral and positive stacks since they don't share the same baseline (ask yourself, are there more neutral posts in category C or D- it's not clear is it?). Being mindful of this limitation is crucial. Finally, stacked bar charts can be particularly challenging to interpret when the total bar size varies significantly. In such cases, the individual stacks can become squashed, making it harder to discern the relative proportions accurately.
 
 ```{r gg-stacked-perc, fig.cap = 'Stacked bar chart showing sentiment percentage per category'}
 tribble(
@@ -512,13 +524,13 @@ tribble(
         axis.line = element_line())
 ```
 
-Therefore we can scale our data so that rather than showing the raw volumes, we can show the proportion/percentage of posts of each sentiment per category. This means it is much easier to see the sentiment make up of categories with lower volume, but also runs the risk of clients not appreciating that each bar in reality represents vastly different volumes.
+To address the potential challenges mentioned above, we can scale our data to show proportions or percentages of posts with each sentiment per category, rather than raw volumes. This approach makes it much easier to compare the sentiment makeup of categories with lower volume. However, it's essential to note that scaling the data in this way may lead clients to overlook the fact that each bar represents vastly different volumes in reality.
 
-The way around this is clear explanation of what the chart is showing, whether it is volume or proportion, and determining a story that you are telling and focussing on that (such as comparing between categories or just within)
+To navigate this potential pitfall, it is crucial to provide clear explanations of what the chart represents, whether it shows volume or proportion, and to determine a specific narrative or story that the visualisation aims to convey (such as comparing sentiments *between* categories or exploring sentiment variations *within* a specific category).
 
 ## Visualise distribution of a continuous variable
 
-Sometimes we will want to understand the the shape of the distribution of a **continuous variable** in our data. This could be if we have calculated valence using the ParseR package. Whilst this kind of plot is often kept away from clients and instead used for exploratory data analysis (EDA), it is still an extremely powerful and useful string to have in your bow.
+Sometimes we will want to understand the distribution of a **continuous variable** in our data to gain insights. For instance, if we have calculated valence using the ParseR package, we might want to examine the distribution. Although these types of visualizations are typically used for exploratory data analysis (EDA) rather than client presentations, it is still an extremely powerful and useful string to have in your data exploration bow.
 
 ### Example
 
@@ -544,9 +556,9 @@ normal_data %>%
 
 ### Interpretation
 
-Histograms contain a series of bars, where each bar represents a range of values for our variable we are visualising (in this case the x axis of Sentiment Score). When interpreting a histogram, it is important to pay attention to the shape, centre, and spread of the distribution. The shape can be normal (symmetric), skewed to the left or right, or bimodal (two peaks). The centre can be represented by the mean or median, while the spread can be represented by the standard deviation or range. Histograms can be useful for identifying outliers, understanding the range and variability of the data, and comparing the distribution of a variable across different groups. Similar to our "trends over time" plots, when creating a histogram it is important to choose an appropriate bin width or range of values for each bar, as this can affect the interpretation of the distribution.
+Histograms are graphical representations that consist of bars, with each bar representing a specific range of values for the variable we are visualising (e.g., the x-axis of Sentiment Score). When interpreting a histogram, it is essential to consider the shape, centre, and spread of the distribution. The shape can be symmetric (normal), skewed to the left or right, or exhibit bimodal characteristics (two peaks). The centre can be determined using the mean or median, while the spread can be represented by the standard deviation or range. Histograms offer several benefits, such as identifying outliers, understanding data range and variability, and comparing variable distributions across different groups. Similar to our "trends over time" plots, it is important to select an appropriate bin width or value range for each bar when creating a histogram, as this choice can influence the interpretation of the distribution.
 
-For clarity, here are some histograms showing a *left-skewed*, *right-skewed*, and *bimodal* distribution:
+To provide clarity, let's examine histograms depicting a *left-skewed*, *right-skewed*, and *bimodal* distribution:
 
 ```{r gg-hist-2, fig.cap = 'Histograms revealing different underlying distributions within data'}
 # Generate sample data for left-skewed distribution
@@ -612,13 +624,13 @@ bimodal_dist <- bimodal_data %>%
 left_skewed_dist / right_skewed_dist / bimodal_dist 
 ```
 
-Form these, our interpretion should be that the left-skewed distribution appears as a curve that is skewed to the left, with most values clustered towards the upper end of our scale (closer to 1). The right-skewed distribution appears as a curve that is skewed to the right, with most values clustered towards the lower end (closer to 0). The bimodal distribution appears as two distinct peaks, with most values clustered around two different means (0.3 and 0.7 in this example).
+From these examples, our interpretation should be that the left-skewed distribution appears as a curve skewed to the left, with most values clustered towards the upper end of our scale (closer to 1). On the other hand, the right-skewed distribution appears as a curve skewed to the right, with most values clustered towards the lower end (closer to 0). Lastly, the bimodal distribution displays two distinct peaks, with most values concentrated around two different means (0.3 and 0.7 in this particular example).
 
 ## Visualise most frequent terms
 
-The aim of a bigram network is to get a high level understanding of a specific conversation by finding highly frequent bigrams.
+The objective of a bigram network is to provide a comprehensive overview of a specific conversation by identifying frequently occurring pairs of words.
 
-N.B. The term *bi*-gram refers to a sequence of two adjacent terms. If we examine three adjacent terms, this would be referred to as a *tr*-igram, and so on. In other words a bigram is an *n*-gram where n = 2. The plot we present is known as a bigram *network* that displays bigrams. Whilst it may seem like splitting hairs, it is important to be precise in our terminology.
+N.B. The term *bi*-gram refers to a sequence of two adjacent terms. If we were to examine three adjacent terms, this would be referred to as a *tr*-igram, and so on. In other words, a bigram specficially refers to an *n*-gram where n = 2. The plot we present is known as a bigram *network*, which displays these pairs of words. Whilst it may seem like splitting hairs, it is important to be precise in our terminology.
 
 ### Example
 
@@ -650,13 +662,13 @@ counts %>%
 
 ### Interpretation
 
-The interpretation of a bigram network is much trickier than the simple plots we have so far introduced. Each term is represented by both a label and a node (circle), with edges (arrows) between terms representing the direction a bigram should be read. The colour of the nodes and edges represents term and bigram frequency, respectively. The size of the nodes also represent term frequency, and can be a good easy stepping point into identifying highly frequent terms. The physical location of the nodes does not mean anything, they are placed by an algorithm based on what they are connected to. For example, the bigram "join us" is no more similar to "every day" as it is to "annual hispanic". 
+Interpreting a bigram network is more complex compared to the simpler plots we have previously discussed. Each word is represented by both a label and a node (circle), with edges (arrows) between terms representing the direction a bigram should be read. The colour of the nodes represents the frequency of the individual terms, while the colour of the edges represents the frequency of the bigrams. Additionally, the size of the nodes corresponds to the frequency of the individual terms. This size distinction can serve as an initial guide to identify frequently occurring words. Finally, it is important to note that the physical placement of the nodes holds no significance; their arrangement is determined by an algorithm based on their connections. For instance, the bigram "join us" is no more similar to "every day" than it is to "annual Hispanic".
 
 For a more detailed overview of bigrams and more specific business-specific interpretation, please see the [ParseR vignette](http://parser.shareldn.com/articles/ngrams.html)
 
 ## Differences in language between categories
 
-Comparing language use between groups/categories. These categories could be audiences, posts of differing sentiment, posts from different quarters etc.
+Often we will be interested in comparing language use between groups/categories. These categories could be audiences, posts of differing sentiment, posts from different quarters etc.If we can classify different posts into distinct groups, we can compare language.
 
 ### Example
 
@@ -687,19 +699,19 @@ wlos$viz
 
 ### Interpretation
 
-Before getting bogged down by the statistical interpretation of WLO, let's think about this from a data visualisation point of view. WLO charts are simply scatter plots, where the x axis shows word frequency, and the y axis shows the log odds ratio. Each point on the scatterplot is a word, and we apply a label to each point to identify words. Things get a little trickier when we take a look at the x axis and realise it is on a logarithmic scale- meaning the distance between 1 and 10 on this scale would be the same as between 10 and 100 (note though for clarity the WLO x-axes do not start at 0).
+Before getting bogged down by the statistical interpretation of WLO, let's think about this from a data visualisation point of view. WLO charts are essentially scatter plots that depict word frequency on the x-axis and the log odds ratio on the y-axis. Each point on the scatter plot represents a word, with labels applied to identify them. Things get a little trickier when we take a look at the x axis and realise it is on a logarithmic scale- meaning the distance between 1 and 10 on this scale would be the same as between 10 and 100 (although WLO x-axes typically don't start at 0 for clarity).
 
-For a more detailed overview of WLO and important interpretation from a statistical perspective, please see the [ParseR vignette](http://parser.shareldn.com/articles/distinctness_in_text.html)
+For a more comprehensive understanding of WLO and its statistical interpretation, please refer to the [ParseR vignette](http://parser.shareldn.com/articles/distinctness_in_text.html)
 
-In other words, it's important to remember that the magnitude of a WLO value reflects the strength of the association, but it is not directly interpretable as a probability or frequency. Rather, it reflects the logarithmic difference between two probabilities (or odds), and should be treated as a relative measure of association.
+Despite the complexity involved, it's crucial to emphasize that the magnitude of a WLO value indicates the strength of the association *but is not directly interpretable as a probability or frequency*. Instead, it represents the logarithmic difference between two probabilities (or odds) and should be treated as a relative measure of association.
 
-Therefore, when reporting WLO to clients, one must refrain from using phrases such as "This term is X times as likely to appear in Category A than Category B and C", and instead use phrases such as "**This term has a stronger association with Category A than Category B and C**".
+Therefore, when reporting WLO to clients, one must refrain from using phrases such as "This term is X times as likely to appear in Category A than Category B and C". Instead use phrases such as "**This term has a stronger association with Category A than Category B and C**".
 
 ## Comparing two categorical variables with a metric of interest
 
-Heatmaps are extremely useful charts that use colours to enable us to observe patterns in the value of a metric for one or two categorical variables. They are extremely versatile and can be used for a variety of different uses but all rely on examining the intensity of colours in diferent areas of the heatmap to answer a specific business question.
+Heatmaps are powerful visualisations that use colours to help us identify patterns in the value of a metric for one or two categorical variables. They offer great versatility and can be employed for various purposes, all aimed at addressing specific business questions by examining color intensity in different areas of the heatmap.
 
-For example, they could be used to see in which topics certain brands appear more frequently in or whether there specific time periods where discussions are more intense?
+For instance, heatmaps can be utilized to determine the topics in which certain brands are mentioned more frequently, or to identify specific time periods when discussions are more intense.
 
 ### Example
 
@@ -750,13 +762,13 @@ data %>%
 
 ### Interpretation
 
-The above heatmap represents the distribution of brand mentions across different topics. That is, if we were to add the values of each cell together, each row would equal 100%, but each column wouldn't.
+The heatmap displayed above illustrates the distribution of brand mentions across different topics. Each row represents a topic, and if we were to sum the values in each cell, the total for each row would equal 100%, while this wouldn't hold true for each column.
 
-The x-axis represents different brands, whereas the y-axis represents different topics. Each cell is coloured and represents the percentage of conversation within each topic that includes mention of a specific brand.
+The x-axis represents different brands, while the y-axis represents different topics. Each colored cell represents the percentage of conversation within each topic that includes mentions of a specific brand.
 
-Heatmaps are useful at representing a generalised view of the data, rather than an overly precise representation. As such, during interpretation general patterns should be observed rather than specific values referenced. For example, we can see that Brand A is very popular (darker colours), and is highly mentioned in the conversations for all the Topics except Topic 4. Indeed, we can see that Brand E is very prevalent in Topic 4, and dominates the branded conversation here (darker colour). Conversely, we can see that the brands D (and to a lesser extent F) appear in very low percentages in all of the topics (due to the lighter colours in column Brand D).
+Heatmaps are particularly useful for providing a generalized view of the data rather than an overly precise representation. Consequently, during interpretation, it is more appropriate to observe general patterns rather than focusing on specific values. For example, we can observe that Brand A is highly popular (darker colours) and is frequently mentioned in conversations for all topics except Topic 4. Additionally, Brand E stands out prominently in Topic 4, dominating the branded conversation within that topic (darker colour). Conversely, Brands D and F appear with much lower percentages in all topics (indicated by lighter colours in the Brand D column).
 
-Another example to help interpretation of heatmaps is seen below. This heatmap effectively acts like a calendar, with each row being a different day and each column being an hour of the day. We can treat this plot as showing the proportion of branded conversation occuring at different times during the week. Straight away there are two clear patterns we can see here, for each day, the majority of users posting about this brand do so between the hours of 16:00 and 21:00 (darker colours - reading rows from left to right); and across days we can see Saturday and Sunday having more posts at most hours than weekdays (darker colours when reading columns up and down). 
+To further illustrate the interpretation of heatmaps, let's consider the following example. The heatmap shown here effectively functions as a calendar, with each row representing a different day and each column representing an hour of the day. We can interpret this plot as depicting the proportion of branded conversations occurring at different times throughout the week. Immediately, two clear patterns emerge. Firstly, for each day, the majority of users posting about this brand do so between 16:00 and 21:00 (indicated by darker colours when reading rows from left to right). Secondly, when comparing the days, we observe that Saturday and Sunday have more posts at most hours than weekdays (indicated by darker coluors when reading columns up and down).
 
 ```{r gg-heatmap-2, fig.cap = 'Example heatmap showing hourly social media brand mentions for each day of the week'}
 x <- 1:10000
@@ -801,6 +813,186 @@ data.frame(x, hour, day) %>%
         legend.text = element_text(size = 7),
         legend.title = element_text(hjust = 0.5))
 ```
+
+## Presenting precise numerical values
+
+Sometimes we need to provide a comprehensive view of the data and allow the reader to examine the exact values of our analyses and make detailed comparisons themselves. Therefore, if precision is crucial for your analysis and you want to provide specific values or facilitate precise calculations, a table may be more appropriate. Tables can also be suitable when we want to either summarise a lot of information that would require multiple charts over multiple slides.
+
+The use cases for tables are almost infinite- this makes sense as every chart we make is based on a table which we could, unwisely, present in lieu of a chart. But let's start with a simple example:
+
+```{r, eval=F}
+cookbook_gt <- read_rds("~/Documents/R/capture_cookbook/data/gt_topic.rds")
+
+viridis <- viridis_pal(option = "viridis", direction = -1)(4)
+
+var_1_pal <- col_numeric(c("#f7f7f7", viridis[1]), domain = c(0, 1), alpha = 0.75)
+var_2_pal <- col_numeric(c("#f7f7f7", viridis[2]), domain = c(0, 1), alpha = 0.75)
+var_3_pal <- col_numeric(c("#f7f7f7", viridis[3]), domain = c(0, 1), alpha = 0.75)
+var_4_pal <- col_numeric(c("#f7f7f7", viridis[4]), domain = c(0, 1), alpha = 0.75)
+
+cookbook_gt %>% 
+  select(topic, var_1, var_2, var_3, var_4) %>% 
+  gt() %>% 
+  tab_header(title = "Example table") %>%
+  fmt_number(columns = c(var_1, var_2, var_3, var_4), sep_mark = ",", decimals = 2) %>%
+  tab_source_note(source_note = md("We can write relevant information in a source note.  \nData from XYZ.  \nDarker colours represent higher values for each variable")) %>%
+  opt_table_font(font = "GT Walsheim Pro") %>%
+  tab_style(style = cell_text(weight = "600",
+                              align = "center"), 
+            locations = cells_title(groups = "title")) %>% 
+  tab_style(style = cell_text(color = "grey50",
+                              transform = "capitalize"), 
+            locations = cells_column_labels(everything())) %>% 
+  cols_align(align = "left") %>% 
+  tab_options(
+    column_labels.border.top.width = px(3),
+    column_labels.border.top.color = "transparent",
+    #Remove border around table
+    table.border.top.color = "transparent",
+    table.border.bottom.color = "transparent",
+    #Adjust font sizes and alignment
+    source_notes.font.size = 12,
+    heading.align = "left"
+    ) %>% 
+  gtsave("~/Documents/R/capture_cookbook/img/gt_table.png", vwidth = 2500, expand = 20)
+```
+<center>
+
+![](../img/gt_table.png){width=50%}
+
+</center>
+
+### Interpretation
+
+There isn't too much to explain in interpreting tables. Instead, we will focus on some good tips when designing tables.
+
+* Tables become more readable the fewer columns they have. Careful consideration of the most important information necessary to portray will improve legibility.
+* Try to reduce the width of columns to help legibility. This includes reducing the column heading length but also using abbreviations or appropriate precision of values (e.g. report 3.14 rather than 3.141592)
+* Sort the table by something appropriate. Whilst it might appear that sorting alphabetically is suitable, it rarely brings the most import data to the top. Often we might want to sort by volume, sentiment, or another value that supports the killer take-home message. We can see what our table now looks like if sorted by Var_1:
+
+```{r, eval=F}
+cookbook_gt %>%
+  select(topic, var_1, var_2, var_3, var_4) %>% 
+  arrange(desc(var_1)) %>%
+  mutate(topic = reorder(topic, var_1)) %>% 
+  gt() %>% 
+  tab_header(title = "Example table") %>%
+  fmt_number(columns = c(var_1, var_2, var_3, var_4), sep_mark = ",", decimals = 2) %>%
+  tab_source_note(source_note = md("We can write relevant information in a source note.  \nData from XYZ.  \nDarker colours represent higher values for each variable")) %>%
+  opt_table_font(font = "GT Walsheim Pro") %>%
+  tab_style(style = cell_text(weight = "600",
+                              align = "center"), 
+            locations = cells_title(groups = "title")) %>% 
+  tab_style(style = cell_text(color = "grey50",
+                              transform = "capitalize"), 
+            locations = cells_column_labels(everything())) %>% 
+  cols_align(align = "left") %>% 
+  tab_options(
+    column_labels.border.top.width = px(3),
+    column_labels.border.top.color = "transparent",
+    #Remove border around table
+    table.border.top.color = "transparent",
+    table.border.bottom.color = "transparent",
+    #Adjust font sizes and alignment
+    source_notes.font.size = 12,
+    heading.align = "left"
+    )  %>% 
+  gtsave("~/Documents/R/capture_cookbook/img/gt_table_2.png", vwidth = 2500, expand = 20)
+```
+
+<center>
+
+![](../img/gt_table_2.png){width=50%}
+
+</center>
+* We can apply charts to tables! Yes, yes, I know this section was supposed to be about tables not charts, but we can add simple charts known as sparklines to show clear trends within tables. These charts are obviously not very detailed as they need to sit in a small space, but can provide a nice compliment to the other values presented in the table.
+
+```{r, eval=F}
+cookbook_gt %>% 
+  gt() %>%
+  tab_header(title = "Example table") %>%
+  fmt_number(columns = c(var_1, var_2, var_3, var_4), sep_mark = ",", decimals = 2) %>%
+  tab_source_note(source_note = md("We can write relevant information in a source note.  \nData from XYZ.  \nDarker colours represent higher values for each variable")) %>%
+  opt_table_font(font = "GT Walsheim Pro") %>%
+  tab_style(style = cell_text(weight = "600",
+                              align = "center"), 
+            locations = cells_title(groups = "title")) %>% 
+  tab_style(style = cell_text(color = "grey50",
+                              transform = "capitalize"), 
+            locations = cells_column_labels(everything())) %>% 
+  cols_align(align = "left") %>% 
+  cols_align(align = "center",
+             columns = c(`Volume over time`)) %>%
+  tab_options(
+    column_labels.border.top.width = px(3),
+    column_labels.border.top.color = "transparent",
+    #Remove border around table
+    table.border.top.color = "transparent",
+    table.border.bottom.color = "transparent",
+    #Adjust font sizes and alignment
+    source_notes.font.size = 12,
+    heading.align = "left"
+    ) %>% 
+  gtExtras::gt_plt_sparkline(`Volume over time`,
+                             label = F) %>% 
+  gtsave("~/Documents/R/capture_cookbook/img/gt_table_3.png", vwidth = 2500, expand = 20)
+```
+
+<center>
+
+![](../img/gt_table_3.png){width=60%}
+
+</center>
+* Add colour to the table. We can apply our heatmap principles from the section above to colour our table similar to a heatmap. This can either be done on a column by column basis (with different colours per columns), or by across multiple columns if they show the same variable (e.g. sentiment percentage in January [Column 1], February [Column 2], March (Column 3]). Bear in mind that there will be no legend, so it should be clear what the colours present - high numbers should be darker.
+
+```{r, eval=F}
+cookbook_gt %>% 
+  gt() %>%
+  tab_header(title = "Example table") %>%
+  data_color(
+    columns = var_1,
+    palette = var_1_pal) %>%
+  data_color(
+    columns = var_2,
+    palette = var_2_pal) %>%
+  data_color(
+    columns = var_3,
+    palette = var_3_pal) %>%
+  data_color(
+    columns = var_4,
+    palette = var_4_pal) %>%
+  fmt_number(columns = c(var_1, var_2, var_3, var_4), sep_mark = ",", decimals = 2) %>%
+  tab_source_note(source_note = md("We can write relevant information in a source note.  \nData from XYZ.  \nDarker colours represent higher values for each variable")) %>%
+  opt_table_font(font = "GT Walsheim Pro") %>%
+  tab_style(style = cell_text(weight = "600",
+                              align = "center"), 
+            locations = cells_title(groups = "title")) %>% 
+  tab_style(style = cell_text(color = "grey50",
+                              transform = "capitalize"), 
+            locations = cells_column_labels(everything())) %>% 
+  cols_align(align = "left") %>% 
+  cols_align(align = "center",
+             columns = c(`Volume over time`)) %>%
+  tab_options(
+    column_labels.border.top.width = px(3),
+    column_labels.border.top.color = "transparent",
+    #Remove border around table
+    table.border.top.color = "transparent",
+    table.border.bottom.color = "transparent",
+    #Adjust font sizes and alignment
+    source_notes.font.size = 12,
+    heading.align = "left"
+    ) %>% 
+  gtExtras::gt_plt_sparkline(`Volume over time`,
+                             label = F) %>% 
+  gtsave("~/Documents/R/capture_cookbook/img/gt_table_4.png", vwidth = 2500, expand = 20)
+```
+
+<center>
+
+![](../img/gt_table_4.png){width=60%}
+
+</center>
 
 # Chart Aesthetic Tips
 
@@ -1169,13 +1361,15 @@ qual_bar <- tribble(
   geom_col() +
   labs(x = "Message Type",
        y = "Number of posts",
-       title = "Good") +
+       title = "Good",
+       subtitle = "Qualitative Palette") +
   scale_fill_manual(values = msft_cols) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
   scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
         axis.line = element_line(),
         legend.position = "none")
@@ -1194,13 +1388,14 @@ seq_bar <- tribble(
   scale_fill_viridis_d() +
   labs(x = "Message Type",
        y = "Number of posts",
-       title = "Not ideal") +
+       title = "Not ideal",
+       subtitle = "Sequential Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
   scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(size = 8, hjust = 0.5,
+        plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         panel.border = element_blank(),
         axis.line = element_line(),
@@ -1220,12 +1415,14 @@ div_bar <- tribble(
   scale_fill_brewer(palette = "PRGn") +
   labs(x = "Message Type",
        y = "Number of posts",
-       title = "Bad") +
+       title = "Bad",
+       subtitle = "Divergent Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
   scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
         axis.line = element_line(),
         legend.position = "none")
@@ -1251,13 +1448,15 @@ qual_bar <- tribble(
   geom_col() +
   labs(x = "Message Type",
        y = "Number of posts",
-       title = "Fine") +
+       title = "Fine",
+       subtitle = "Qualitative Palette") +
   scale_fill_manual(values = msft_cols) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
   scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
         axis.line = element_line(),
         legend.position = "none")
@@ -1276,13 +1475,14 @@ seq_bar <- tribble(
   scale_fill_viridis_d() +
   labs(x = "Message Type",
        y = "Number of posts",
-       title = "Good") +
+       title = "Good",
+       subtitle = "Sequential Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
   scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(size = 8, hjust = 0.5,
+        plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         panel.border = element_blank(),
         axis.line = element_line(),
@@ -1302,12 +1502,14 @@ div_bar <- tribble(
   scale_fill_brewer(palette = "PRGn") +
   labs(x = "Message Type",
        y = "Number of posts",
-       title = "Bad") +
+       title = "Bad",
+       subtitle = "Divergent Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
   scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
         axis.line = element_line(),
         legend.position = "none")
@@ -1335,7 +1537,8 @@ ggplot(aes(x, y, fill = factor(z))) +
   labs(x = "Topic",
        y = "Platform",
        fill = NULL,
-       title = "Bad") +
+       title = "Bad",
+       subtitle = "Qualitative Palette") +
   scale_fill_manual(values = msft_cols,
                     guide = guide_legend(label.position = "bottom",
                                          nrow = 1)) +
@@ -1343,6 +1546,7 @@ ggplot(aes(x, y, fill = factor(z))) +
   theme_bw() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
         axis.line = element_line(),
         legend.key.height = unit(0.4, "cm"),  
@@ -1357,7 +1561,8 @@ ggplot(aes(x, y, fill = factor(z))) +
   labs(x = "Topic",
        y = "Platform",
        fill = NULL,
-       title = "Good") +
+       title = "Good",
+       subtitle = "Sequential Palette") +
   scale_fill_viridis_d(direction = -1,
                        guide = guide_legend(label.position = "bottom",
                                             nrow = 1)) +
@@ -1365,6 +1570,7 @@ ggplot(aes(x, y, fill = factor(z))) +
   theme_bw() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
         axis.line = element_line(),
         legend.key.height = unit(0.4, "cm"),  
@@ -1379,7 +1585,8 @@ ggplot(aes(x, y, fill = factor(z))) +
   labs(x = "Topic",
        y = "Platform",
        fill = NULL,
-       title = "Not ideal") +
+       title = "Not ideal",
+       subtitle = "Divergent Palette") +
   scale_fill_brewer(palette = "PRGn",
                     guide = guide_legend(label.position = "bottom",
                                          nrow = 1)) +
@@ -1387,6 +1594,7 @@ ggplot(aes(x, y, fill = factor(z))) +
   theme_bw() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
         axis.line = element_line(),
         legend.key.height = unit(0.4, "cm"),  
@@ -1417,6 +1625,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
   labs(x = "Category",
        y = "Number of posts classified per topic",
        title = "Bad",
+       subtitle = "Qualitative Palette",
        fill = NULL) +
   scale_fill_manual(values = msft_cols,
                     guide = guide_legend(ncol = 1)) +
@@ -1426,6 +1635,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
   scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
         axis.line = element_line(),
         legend.key.height = unit(0.4, "cm"),  
@@ -1440,6 +1650,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
   labs(x = "Category",
        y = "Number of posts classified per topic",
        title = "Bad",
+       subtitle = "Sequential Palette",
        fill = NULL) +
   scale_fill_viridis_d(direction = -1,
                     guide = guide_legend(ncol = 1)) +
@@ -1449,6 +1660,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
   scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
         axis.line = element_line(),
         legend.key.height = unit(0.4, "cm"),  
@@ -1462,6 +1674,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
            width = 0.6) +
   labs(x = "Category",
        y = "Number of posts classified per topic",
+       subtitle = "Divergent Palette",
        title = "Good",
        fill = NULL) +
   scale_fill_brewer(palette = "PRGn",
@@ -1473,6 +1686,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
   scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
         axis.line = element_line(),
         legend.key.height = unit(0.4, "cm"),  
@@ -1483,4 +1697,4 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
 qual_likert + seq_likert + div_likert
 ```
 
-*Highlighting key pieces
+## Highlighting important data

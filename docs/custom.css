@@ -1,0 +1,70 @@
+#main .nav-pills > li.active > a,
+#main .nav-pills > li.active > a:hover,
+#main .nav-pills > li.active > a:focus {
+    background-color: #FDE725FF;
+} 
+
+#main .nav-pills > li > a:hover {
+    background-color: #7AD151FF;
+}
+
+h1, h2, h3, h4, h5, h6, legend {
+    color: #440154FF;
+} /* Colours for headings*/
+ 
+#nav-top span.glyphicon {
+    color: #440154FF;
+}
+
+#table-of-contents header {
+    color: #d64a70;
+}
+
+#table-of-contents h2 {
+    background-color: #22983B;
+}
+
+#main a {
+    background-image: linear-gradient(180deg,#22A884FF,#22A884FF);
+    color: #22A884FF;
+}
+
+a:hover {
+    color: #440154FF;
+}
+
+a:visited {
+    color: #FDE725FF;
+}
+
+.panel {
+  background-color: #FDE725FF !important;
+}
+
+#sidebar {
+  background-color: #21908CFF;
+  color: white;
+}
+
+#sidebar a {
+  color: white;
+}
+
+#sidebar h2 {
+  background-color: #3B528BFF;
+  color: white;
+}
+
+#postamble{
+    color:#fcfcfc;
+    background:#440154FF;
+    border-top:solid 10px #211103;
+    font-family:"Lato","proxima-nova","Helvetica Neue",Arial,sans-serif;
+    font-size: 90%;
+    z-index:400;
+    padding:12px;
+}
+
+#content {
+  background-color: #FFF;
+}
