@@ -625,7 +625,7 @@ left_skewed_dist / right_skewed_dist / bimodal_dist
 
 From these examples, our interpretation should be that the left-skewed distribution appears as a curve skewed to the left, with most values clustered towards the upper end of our scale (closer to 1). On the other hand, the right-skewed distribution appears as a curve skewed to the right, with most values clustered towards the lower end (closer to 0). Lastly, the bimodal distribution displays two distinct peaks, with most values concentrated around two different means (0.3 and 0.7 in this particular example).
 
-## Visualise most frequent terms - Bigram network
+## Visualise most frequent terms (Bigram network)
 
 The objective of a bigram network is to provide a comprehensive overview of a specific conversation by identifying frequently occurring pairs of words.
 
@@ -665,7 +665,7 @@ Interpreting a bigram network is more complex compared to the simpler plots we h
 
 For a more detailed overview of bigrams and more specific business-specific interpretation, please see the [ParseR vignette](http://parser.shareldn.com/articles/ngrams.html)
 
-## Differences in language between categories - WLO
+## Differences in language between categories (WLO)
 
 Often we will be interested in comparing language use between groups/categories. These categories could be audiences, posts of differing sentiment, posts from different quarters etc.If we can classify different posts into distinct groups, we can compare language.
 
