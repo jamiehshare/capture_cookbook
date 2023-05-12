@@ -1368,446 +1368,6 @@ cookbook_gt %>%
 
 The following are good data viz practices that should be kept in mind whenever we make a chart. Clients may request charts that go against these practices and principles, but it is important to be aware of such principles in our quest for making beautiful looking Capture Intelligence plots.
 
-## Adding values to plot directly
-
-Sometimes we might want a really clean looking plot, or fully transparency of the exact value being visualised is paramount. 
-
-In this case, also including the raw values directly onto a figure can be extremely useful. Here we take the same bar chart we introduced earlier in the Cookbook but include the specific values that each of our bars represents as a label. Because we include these values, we can also remove our y axis as well as any plot gridlines as they no longer help us discern more information from the plot. 
-
-```{r gg-value, fig.cap = 'Bar chart showing the number of messages per category'}
-example %>% 
-  count(message_type_2) %>% 
-  ggplot(aes(x = message_type_2, y = n)) +
-  geom_col(fill = viridis_pal(option = "viridis")(1)) +
-  geom_text(aes(label = n), 
-            vjust = 1.5,
-            colour = "white",
-            size = 4,
-            family = "GT Walsheim Pro") +
-  labs(x = "Message Type",
-       y = NULL,
-       title = "Bar chart showing the number of messages per category") +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.line.y = element_blank(),
-        axis.text.y = element_blank(),
-        axis.ticks.y = element_blank(),
-        panel.grid = element_blank(),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
-```
-
-As mentioned in the pie chart section (REF), adding labels is highly recommended for pie charts and donught charts:
-
-```{r gg-value-2, fig.cap = 'Comparison between a Pie Chart and a Doughnut Chart showing the same data'}
-pie <- tribble(
-  ~colA, ~colB,
-  "a", 22,
-  "b", 30,
-  "c", 48
-) %>% 
-  mutate(colA = toupper(colA),
-         colC = cumsum(rev(colB)),
-         colD = (colC + lag(colC, default = 0)) / 2) %>% 
-  ggplot(aes(x = 2, y = colB, fill = colA)) +
-  geom_bar(stat="identity", width=1) +
-  coord_polar("y", start=0) +
-  scale_fill_viridis_d() +
-  geom_text(aes(y = colD, label = paste0(colB, "%")), 
-            x = 2.63,
-            colour = "black",
-            size = 5,
-            family = "GT Walsheim Pro") +
-  labs(title = "Pie Chart") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none",
-        panel.grid = element_blank())
-
-doughnut <- tribble(
-  ~colA, ~colB,
-  "a", 22,
-  "b", 30,
-  "c", 48
-) %>% 
-  mutate(colA = toupper(colA),
-         colC = cumsum(rev(colB)),
-         colD = (colC + lag(colC, default = 0)) / 2,
-         sum_posts = sum(colB)) %>% 
-  ggplot(aes(x = 2, y = colB, fill = colA)) +
-  geom_bar(stat="identity", width=1) +
-  coord_polar("y", start=0) +
-  xlim(-0.5, 2.5) +
-  scale_fill_viridis_d() +
-  labs(title = "Doughnut Chart") +
-  annotate(geom = 'text', x = -0.5, y = 0, label = paste0("Number of posts: \n", 100, " posts"),
-           family = "GT Walsheim Pro", size = 6) +
-  geom_text(aes(y = colD, label = paste0(colB, "%")), 
-            x = 2.9,
-            colour = "black",
-            size = 5,
-            family = "GT Walsheim Pro") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none",
-        panel.grid = element_blank())
-
-pie + doughnut
-```
-
-## Adding labels to the plot directly
-
-Similarly, it is often good practice to add a category label directly to the plot too to avoid having a legend. This is because in general legends take too long to read (ones eyes have to go back and forth between legend and plot), they don't work great with many colours, and decrease accessibility of our plots.
-
-For example, let's see a plot where we have a legend:
-
-```{r gg-nolabel, fig.cap = 'Line chart showing daily trend of three categories'}
-set.seed(1234)
-example %>% 
-  mutate(created_time = floor_date(created_time,
-                                   unit = "day")) %>% 
-  count(created_time) %>% 
-  mutate(a = as.integer(n * runif(n = nrow(.), min = 0.1, max = 2) + 150),
-         b = as.integer(rev(a) * runif(n = nrow(.), min = 0.5, max = 1))) %>% 
-  pivot_longer(cols = c(n, a, b), values_to = "value") %>% 
-  mutate(name = case_when(name == "n" ~ "Category A",
-                          name == "b" ~ "Category B",
-                          T ~ "Category C")) %>% 
-  mutate(label = if_else(created_time == max(created_time), as.character(name), NA_character_),
-         created_time = as_date(created_time)) %>%
-  ggplot(aes(x = created_time, y = value)) +
-  geom_line(aes(colour = name),
-            linewidth = 1) +
-  scale_colour_manual(values = c(viridis_pal(option = "viridis")(1),
-                                 viridis_pal(option = "viridis")(10)[5],
-                                 viridis_pal(option = "viridis")(10)[9])) +
-  lims(x = c(as_date("2018-10-15"), as_date("2018-11-03"))) +
-  labs(x = "Date",
-       y = "Number of posts",
-       title = "Line chart showing daily trend of three categories",
-       colour = "Category") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
-```
-
-Notice how you have to keep looking between the plot and the legend to fully understand which line represents which category? 
-
-When we plot the category label directly on the figure, this mental load is removed:
-
-```{r gg-label, fig.cap = 'Line chart showing daily trend of three categories'}
-set.seed(1234)
-example %>% 
-  mutate(created_time = floor_date(created_time,
-                                   unit = "day")) %>% 
-  count(created_time) %>% 
-  mutate(a = as.integer(n * runif(n = nrow(.), min = 0.1, max = 2) + 150),
-         b = as.integer(rev(a) * runif(n = nrow(.), min = 0.5, max = 1))) %>% 
-  pivot_longer(cols = c(n, a, b), values_to = "value") %>% 
-  mutate(name = case_when(name == "n" ~ "Category A",
-                          name == "b" ~ "Category B",
-                          T ~ "Category C")) %>% 
-  mutate(label = if_else(created_time == max(created_time), as.character(name), NA_character_),
-         created_time = as_date(created_time)) %>%
-  ggplot(aes(x = created_time, y = value)) +
-  geom_line(aes(colour = name),
-            linewidth = 1) +
-  # scale_colour_viridis_d(direction = -1) +
-  scale_colour_manual(values = c(viridis_pal(option = "viridis")(1),
-                                 viridis_pal(option = "viridis")(10)[5],
-                                 viridis_pal(option = "viridis")(10)[9])) +
-  geom_text(aes(label = label, colour = label),
-            nudge_x = 1.5,
-            vjust = -0.1,
-            na.rm = TRUE,
-            family = "GT Walsheim Pro",
-            size = 5) +
-  lims(x = c(as_date("2018-10-15"), as_date("2018-11-03"))) +
-  labs(x = "Date",
-       y = "Number of posts",
-       title = "Line chart showing daily trend of three categories") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        legend.position = "none")
-```
-
-## Gridlines and borders
-
-We should aim to remove clutter from plots to strive for clean and elegant plots. I highly recommend anyone interested in data visualisations to read the works of Edward Tufte, but one of his most famous opinions is to "Maximise the data-ink ratio, within reason". Through this, Tufte proposes a minimalistic approach to data visualisation by removing most parts of a plot which do not display the data itself. This is certainly one extreme of data visualisation aesthetics, and we should look to find a a middle balance between including too much and too little 'non-data ink' (anything on a chart that doesn't display the actual data).
-
-With gridlines the advice should be:
-
-* Gridlines that run perpendicular to the variable of interest are the most useful
-* We do not need gridlines that go from the x axis on a bar chart where the x axis is a category (the bars themselves guide our eye the same way a gridline would).
-```{r gg-grid, fig.height = 3, fig.cap = 'Remove x axis gridlines when displaying categorical bdata'}
-bar_grid <- tribble(
-  ~colA, ~n, 
-  "A", 30,
-  "B", 20,
-  "C", 25,
-  "D", 15,
-  "E", 10,
-  "F", 27
-) %>% 
-  ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
-  geom_col(fill = viridis_pal(option = "viridis")(1)) +
-  labs(x = "Message Type",
-       y = "Number of posts",
-       title = "Unnecessary",
-       subtitle = "Unnecessary x-axis gridlines") +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
-                                     colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        legend.position = "none")
-
-bar_no_grid <- tribble(
-  ~colA, ~n, 
-  "A", 30,
-  "B", 20,
-  "C", 25,
-  "D", 15,
-  "E", 10,
-  "F", 27
-) %>% 
-  ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
-  geom_col(fill = viridis_pal(option = "viridis")(1)) +
-  labs(x = "Message Type",
-       y = "Number of posts",
-       title = "Good",
-       subtitle = "x-axis gridlines removed") +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
-                                     colour = "grey50"),
-        panel.border = element_blank(),
-        panel.grid.major.x = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        legend.position = "none")
-
-bar_grid + bar_no_grid
-```
-
-* When the data values are specifically displayed on the chart (as in Figure \@ref(fig:gg-value)) then we do not need gridlines to help interpret these values.
-```{r gg-grid-2, fig.height = 3, fig.cap = 'Remove x axis gridlines when displaying categorical bdata'}
-bar_no_lab <- tribble(
-  ~colA, ~n, 
-  "A", 30,
-  "B", 20,
-  "C", 25,
-  "D", 15,
-  "E", 10,
-  "F", 27
-) %>% 
-  ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
-  geom_col(fill = viridis_pal(option = "viridis")(1)) +
-  geom_text(aes(label = n), 
-            vjust = 1.5,
-            colour = "white",
-            size = 4,
-            family = "GT Walsheim Pro") +
-  labs(x = "Message Type",
-       y = "Number of posts",
-       title = "Unnecessary",
-       subtitle = "y-axis gridlines don't add anything") +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
-                                     colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        panel.grid.major.x = element_blank(),
-        legend.position = "none")
-
-bar_lab <- tribble(
-  ~colA, ~n, 
-  "A", 30,
-  "B", 20,
-  "C", 25,
-  "D", 15,
-  "E", 10,
-  "F", 27
-) %>% 
-  ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
-  geom_col(fill = viridis_pal(option = "viridis")(1)) +
-  geom_text(aes(label = n), 
-            vjust = 1.5,
-            colour = "white",
-            size = 4,
-            family = "GT Walsheim Pro") +
-  labs(x = "Message Type",
-       y = "Number of posts",
-       title = "Good",
-       subtitle = "Values on the plot provide us necessary info") +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
-                                     colour = "grey50"),
-        panel.border = element_blank(),
-        panel.grid = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        legend.position = "none")
-
-bar_no_lab + bar_lab
-```
-* Gridlines should not be the same colour as the axis lines or font. A light grey balances utility and overpowering the plot. 
-```{r gg-grid-col, fig.cap = 'The difference gridline colours make', fig.height = 3}
-plot_1 <- example %>% 
-  mutate(created_time = floor_date(created_time,
-                                   unit = "day")) %>% 
-  count(created_time) %>% 
-  ggplot(aes(x = created_time, y = n)) +
-  geom_line(colour = viridis_pal(option = "viridis")(1),
-            linewidth = 1) +
-  labs(x = "Date",
-       y = "Number of posts",
-       title = "Bad") +
-  theme_bw() +
-  scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "black"),
-        axis.ticks = element_line(colour = "black"),
-        panel.grid = element_line(colour = "black"))
-
-plot_2 <- example %>% 
-  mutate(created_time = floor_date(created_time,
-                                   unit = "day")) %>% 
-  count(created_time) %>% 
-  ggplot(aes(x = created_time, y = n)) +
-  geom_line(colour = viridis_pal(option = "viridis")(1),
-            linewidth = 1) +
-  labs(x = "Date",
-       y = "Number of posts",
-       title = "Good") +
-  theme_bw() +
-  scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
-
-plot_1 + plot_2
-```
-
-The advice surrounding borders:
-
-* If the plot you are making is faceted (i.e. made of up of lots of little plots as in the case of WLO), then a border should be included around each plot to clearly show which data and information in contained in each individual plot.
-* If the plot is stand alone, but requires axis, then only the axes of interest (normally x and y axes) should be drawn, with no outer border.
-```{r gg-border, fig.height = 3, fig.cap = "Don't use borders for stand alone plots"}
-plot_1 <- tribble(
-  ~colA, ~n, 
-  "A", 30,
-  "B", 22,
-  "C", 27,
-  "D", 16,
-) %>% 
-  ggplot(aes(x = colA, y = n, fill = colA)) +
-  geom_col(fill = viridis_pal(option = "viridis")(1)) +
-  labs(x = "Message Type",
-       y = "Number of posts",
-       title = "Unnecessary",
-       subtitle = "Border adds clutter") +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
-                                     colour = "grey50"),
-        panel.border = element_rect(colour = "black",
-                                    size = 1),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        panel.grid.major.x = element_blank(),
-        legend.position = "none")
-
-plot_2 <- tribble(
-  ~colA, ~n, 
-  "A", 30,
-  "B", 22,
-  "C", 27,
-  "D", 16,
-) %>% 
-  ggplot(aes(x = colA, y = n, fill = colA)) +
-  geom_col(fill = viridis_pal(option = "viridis")(1)) +
-  labs(x = "Message Type",
-       y = "Number of posts",
-       title = "Good",
-       subtitle = "No border and just axes lines") +
-  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
-                                     colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        panel.grid.major.x = element_blank(),
-        legend.position = "none")
-
-plot_1 + plot_2
-```
-* Plots that do not contain any axes (e.g. a bigram) should not have a border around them.
-
-**Despite this, consistency is the name of the game here. If for whatever reason a client asks for a border to be around a plot (or a border removed), all similar plots in the deck should follow the same aesthetic.**
-
 ## Colours {#colours}
 
 The choice of colours is one of the most important aspect of any good visualisation, with incorrect usage turning a slick visualisation to a hot uninterpretable mess of sadness.
@@ -2670,6 +2230,447 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
 
 qual_likert + seq_likert + div_likert
 ```
+
+
+## Adding values to plot directly
+
+Sometimes we might want a really clean looking plot, or fully transparency of the exact value being visualised is paramount. 
+
+In this case, also including the raw values directly onto a figure can be extremely useful. Here we take the same bar chart we introduced earlier in the Cookbook but include the specific values that each of our bars represents as a label. Because we include these values, we can also remove our y axis as well as any plot gridlines as they no longer help us discern more information from the plot. 
+
+```{r gg-value, fig.cap = 'Bar chart showing the number of messages per category'}
+example %>% 
+  count(message_type_2) %>% 
+  ggplot(aes(x = message_type_2, y = n)) +
+  geom_col(fill = viridis_pal(option = "viridis")(1)) +
+  geom_text(aes(label = n), 
+            vjust = 1.5,
+            colour = "white",
+            size = 4,
+            family = "GT Walsheim Pro") +
+  labs(x = "Message Type",
+       y = NULL,
+       title = "Bar chart showing the number of messages per category") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_bw() +
+  scale_colour_viridis_c() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.line.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.grid = element_blank(),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
+```
+
+As mentioned in the pie chart section (REF), adding labels is highly recommended for pie charts and donught charts:
+
+```{r gg-value-2, fig.cap = 'Comparison between a Pie Chart and a Doughnut Chart showing the same data'}
+pie <- tribble(
+  ~colA, ~colB,
+  "a", 22,
+  "b", 30,
+  "c", 48
+) %>% 
+  mutate(colA = toupper(colA),
+         colC = cumsum(rev(colB)),
+         colD = (colC + lag(colC, default = 0)) / 2) %>% 
+  ggplot(aes(x = 2, y = colB, fill = colA)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) +
+  scale_fill_viridis_d() +
+  geom_text(aes(y = colD, label = paste0(colB, "%")), 
+            x = 2.63,
+            colour = "black",
+            size = 5,
+            family = "GT Walsheim Pro") +
+  labs(title = "Pie Chart") +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        panel.border = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none",
+        panel.grid = element_blank())
+
+doughnut <- tribble(
+  ~colA, ~colB,
+  "a", 22,
+  "b", 30,
+  "c", 48
+) %>% 
+  mutate(colA = toupper(colA),
+         colC = cumsum(rev(colB)),
+         colD = (colC + lag(colC, default = 0)) / 2,
+         sum_posts = sum(colB)) %>% 
+  ggplot(aes(x = 2, y = colB, fill = colA)) +
+  geom_bar(stat="identity", width=1) +
+  coord_polar("y", start=0) +
+  xlim(-0.5, 2.5) +
+  scale_fill_viridis_d() +
+  labs(title = "Doughnut Chart") +
+  annotate(geom = 'text', x = -0.5, y = 0, label = paste0("Number of posts: \n", 100, " posts"),
+           family = "GT Walsheim Pro", size = 6) +
+  geom_text(aes(y = colD, label = paste0(colB, "%")), 
+            x = 2.9,
+            colour = "black",
+            size = 5,
+            family = "GT Walsheim Pro") +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        panel.border = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none",
+        panel.grid = element_blank())
+
+pie + doughnut
+```
+
+## Adding labels to the plot directly
+
+Similarly, it is often good practice to add a category label directly to the plot too to avoid having a legend. This is because in general legends take too long to read (ones eyes have to go back and forth between legend and plot), they don't work great with many colours, and decrease accessibility of our plots.
+
+For example, let's see a plot where we have a legend:
+
+```{r gg-nolabel, fig.cap = 'Line chart showing daily trend of three categories'}
+set.seed(1234)
+example %>% 
+  mutate(created_time = floor_date(created_time,
+                                   unit = "day")) %>% 
+  count(created_time) %>% 
+  mutate(a = as.integer(n * runif(n = nrow(.), min = 0.1, max = 2) + 150),
+         b = as.integer(rev(a) * runif(n = nrow(.), min = 0.5, max = 1))) %>% 
+  pivot_longer(cols = c(n, a, b), values_to = "value") %>% 
+  mutate(name = case_when(name == "n" ~ "Category A",
+                          name == "b" ~ "Category B",
+                          T ~ "Category C")) %>% 
+  mutate(label = if_else(created_time == max(created_time), as.character(name), NA_character_),
+         created_time = as_date(created_time)) %>%
+  ggplot(aes(x = created_time, y = value)) +
+  geom_line(aes(colour = name),
+            linewidth = 1) +
+  scale_colour_manual(values = c(viridis_pal(option = "viridis")(1),
+                                 viridis_pal(option = "viridis")(10)[5],
+                                 viridis_pal(option = "viridis")(10)[9])) +
+  lims(x = c(as_date("2018-10-15"), as_date("2018-11-03"))) +
+  labs(x = "Date",
+       y = "Number of posts",
+       title = "Line chart showing daily trend of three categories",
+       colour = "Category") +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
+```
+
+Notice how you have to keep looking between the plot and the legend to fully understand which line represents which category? 
+
+When we plot the category label directly on the figure, this mental load is removed:
+
+```{r gg-label, fig.cap = 'Line chart showing daily trend of three categories'}
+set.seed(1234)
+example %>% 
+  mutate(created_time = floor_date(created_time,
+                                   unit = "day")) %>% 
+  count(created_time) %>% 
+  mutate(a = as.integer(n * runif(n = nrow(.), min = 0.1, max = 2) + 150),
+         b = as.integer(rev(a) * runif(n = nrow(.), min = 0.5, max = 1))) %>% 
+  pivot_longer(cols = c(n, a, b), values_to = "value") %>% 
+  mutate(name = case_when(name == "n" ~ "Category A",
+                          name == "b" ~ "Category B",
+                          T ~ "Category C")) %>% 
+  mutate(label = if_else(created_time == max(created_time), as.character(name), NA_character_),
+         created_time = as_date(created_time)) %>%
+  ggplot(aes(x = created_time, y = value)) +
+  geom_line(aes(colour = name),
+            linewidth = 1) +
+  # scale_colour_viridis_d(direction = -1) +
+  scale_colour_manual(values = c(viridis_pal(option = "viridis")(1),
+                                 viridis_pal(option = "viridis")(10)[5],
+                                 viridis_pal(option = "viridis")(10)[9])) +
+  geom_text(aes(label = label, colour = label),
+            nudge_x = 1.5,
+            vjust = -0.1,
+            na.rm = TRUE,
+            family = "GT Walsheim Pro",
+            size = 5) +
+  lims(x = c(as_date("2018-10-15"), as_date("2018-11-03"))) +
+  labs(x = "Date",
+       y = "Number of posts",
+       title = "Line chart showing daily trend of three categories") +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        legend.position = "none")
+```
+
+## Gridlines and borders
+
+We should aim to remove clutter from plots to strive for clean and elegant plots. I highly recommend anyone interested in data visualisations to read the works of Edward Tufte, but one of his most famous opinions is to "Maximise the data-ink ratio, within reason". Through this, Tufte proposes a minimalistic approach to data visualisation by removing most parts of a plot which do not display the data itself. This is certainly one extreme of data visualisation aesthetics, and we should look to find a a middle balance between including too much and too little 'non-data ink' (anything on a chart that doesn't display the actual data).
+
+With gridlines the advice should be:
+
+* Gridlines that run perpendicular to the variable of interest are the most useful
+* We do not need gridlines that go from the x axis on a bar chart where the x axis is a category (the bars themselves guide our eye the same way a gridline would).
+```{r gg-grid, fig.height = 3, fig.cap = 'Remove x axis gridlines when displaying categorical bdata'}
+bar_grid <- tribble(
+  ~colA, ~n, 
+  "A", 30,
+  "B", 20,
+  "C", 25,
+  "D", 15,
+  "E", 10,
+  "F", 27
+) %>% 
+  ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
+  geom_col(fill = viridis_pal(option = "viridis")(1)) +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Unnecessary",
+       subtitle = "Unnecessary x-axis gridlines") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        legend.position = "none")
+
+bar_no_grid <- tribble(
+  ~colA, ~n, 
+  "A", 30,
+  "B", 20,
+  "C", 25,
+  "D", 15,
+  "E", 10,
+  "F", 27
+) %>% 
+  ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
+  geom_col(fill = viridis_pal(option = "viridis")(1)) +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Good",
+       subtitle = "x-axis gridlines removed") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
+        panel.border = element_blank(),
+        panel.grid.major.x = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        legend.position = "none")
+
+bar_grid + bar_no_grid
+```
+
+* When the data values are specifically displayed on the chart (as in Figure \@ref(fig:gg-value)) then we do not need gridlines to help interpret these values.
+```{r gg-grid-2, fig.height = 3, fig.cap = 'Remove x axis gridlines when displaying categorical bdata'}
+bar_no_lab <- tribble(
+  ~colA, ~n, 
+  "A", 30,
+  "B", 20,
+  "C", 25,
+  "D", 15,
+  "E", 10,
+  "F", 27
+) %>% 
+  ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
+  geom_col(fill = viridis_pal(option = "viridis")(1)) +
+  geom_text(aes(label = n), 
+            vjust = 1.5,
+            colour = "white",
+            size = 4,
+            family = "GT Walsheim Pro") +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Unnecessary",
+       subtitle = "y-axis gridlines don't add anything") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        panel.grid.major.x = element_blank(),
+        legend.position = "none")
+
+bar_lab <- tribble(
+  ~colA, ~n, 
+  "A", 30,
+  "B", 20,
+  "C", 25,
+  "D", 15,
+  "E", 10,
+  "F", 27
+) %>% 
+  ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
+  geom_col(fill = viridis_pal(option = "viridis")(1)) +
+  geom_text(aes(label = n), 
+            vjust = 1.5,
+            colour = "white",
+            size = 4,
+            family = "GT Walsheim Pro") +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Good",
+       subtitle = "Values on the plot provide us necessary info") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_bw() +
+  scale_colour_viridis_c() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
+        panel.border = element_blank(),
+        panel.grid = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        legend.position = "none")
+
+bar_no_lab + bar_lab
+```
+* Gridlines should not be the same colour as the axis lines or font. A light grey balances utility and overpowering the plot. 
+```{r gg-grid-col, fig.cap = 'The difference gridline colours make', fig.height = 3}
+plot_1 <- example %>% 
+  mutate(created_time = floor_date(created_time,
+                                   unit = "day")) %>% 
+  count(created_time) %>% 
+  ggplot(aes(x = created_time, y = n)) +
+  geom_line(colour = viridis_pal(option = "viridis")(1),
+            linewidth = 1) +
+  labs(x = "Date",
+       y = "Number of posts",
+       title = "Bad") +
+  theme_bw() +
+  scale_colour_viridis_c() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "black"),
+        axis.ticks = element_line(colour = "black"),
+        panel.grid = element_line(colour = "black"))
+
+plot_2 <- example %>% 
+  mutate(created_time = floor_date(created_time,
+                                   unit = "day")) %>% 
+  count(created_time) %>% 
+  ggplot(aes(x = created_time, y = n)) +
+  geom_line(colour = viridis_pal(option = "viridis")(1),
+            linewidth = 1) +
+  labs(x = "Date",
+       y = "Number of posts",
+       title = "Good") +
+  theme_bw() +
+  scale_colour_viridis_c() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
+
+plot_1 + plot_2
+```
+
+The advice surrounding borders:
+
+* If the plot you are making is faceted (i.e. made of up of lots of little plots as in the case of WLO), then a border should be included around each plot to clearly show which data and information in contained in each individual plot.
+* If the plot is stand alone, but requires axis, then only the axes of interest (normally x and y axes) should be drawn, with no outer border.
+```{r gg-border, fig.height = 3, fig.cap = "Don't use borders for stand alone plots"}
+plot_1 <- tribble(
+  ~colA, ~n, 
+  "A", 30,
+  "B", 22,
+  "C", 27,
+  "D", 16,
+) %>% 
+  ggplot(aes(x = colA, y = n, fill = colA)) +
+  geom_col(fill = viridis_pal(option = "viridis")(1)) +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Unnecessary",
+       subtitle = "Border adds clutter") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
+        panel.border = element_rect(colour = "black",
+                                    size = 1),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        panel.grid.major.x = element_blank(),
+        legend.position = "none")
+
+plot_2 <- tribble(
+  ~colA, ~n, 
+  "A", 30,
+  "B", 22,
+  "C", 27,
+  "D", 16,
+) %>% 
+  ggplot(aes(x = colA, y = n, fill = colA)) +
+  geom_col(fill = viridis_pal(option = "viridis")(1)) +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Good",
+       subtitle = "No border and just axes lines") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        panel.grid.major.x = element_blank(),
+        legend.position = "none")
+
+plot_1 + plot_2
+```
+* Plots that do not contain any axes (e.g. a bigram) should not have a border around them.
+
+**Despite this, consistency is the name of the game here. If for whatever reason a client asks for a border to be around a plot (or a border removed), all similar plots in the deck should follow the same aesthetic.**
 
 ## Highlighting important data
 
