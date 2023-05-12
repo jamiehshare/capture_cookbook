@@ -74,7 +74,6 @@ example %>%
        y = "Number of posts",
        title = "Line chart showing daily trend") +
   theme_bw() +
-  scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
@@ -105,7 +104,6 @@ example %>%
        title = "Line chart showing weekly trend") +
   lims(y = c(0, 4000)) +
   theme_bw() +
-  scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
@@ -131,7 +129,6 @@ example %>%
        title = "Bar chart showing weekly trend") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
-  scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
@@ -157,7 +154,6 @@ example %>%
        title = "Bar chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
-  scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
@@ -183,7 +179,6 @@ example %>%
        title = "Bar chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
-  scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
@@ -221,7 +216,6 @@ tribble(
        title = "Bar chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
-  scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
@@ -264,7 +258,6 @@ tribble(
        title = "Lollipip chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
-  scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
@@ -561,7 +554,6 @@ tribble(
                                labels = c("Positive", "Neutral", "Negative")) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
-  scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
@@ -597,12 +589,8 @@ tribble(
        title = "Stacked bar chart showing sentiment percentage per category") +
   scale_fill_manual(values = c(my.cols[5], "grey85", my.cols[1]),
                                labels = c("Positive", "Neutral", "Negative")) +
-  # scale_fill_brewer(palette = "PRGn",
-  #                   direction = -1,
-  #                   labels = c("Positive", "Neutral", "Negative")) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
-  scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
@@ -635,7 +623,6 @@ normal_data %>%
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
   theme_bw() +
-  scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
@@ -666,7 +653,6 @@ left_skewed_dist <- left_skewed_data %>%
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
   theme_bw() +
-  scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
@@ -688,7 +674,6 @@ right_skewed_dist <- right_skewed_data %>%
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
   theme_bw() +
-  scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
@@ -711,7 +696,6 @@ bimodal_dist <- bimodal_data %>%
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
   theme_bw() +
-  scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
@@ -838,38 +822,6 @@ umap_tib %>%
         panel.border = element_blank(),
         panel.grid = element_blank(),
         axis.ticks = element_blank())
-
-# umap_2 <- umap_tib %>% 
-#   ggplot(aes(x = V1, y = V2, col = factor(cluster))) +
-#   geom_point(size = 0.3,
-#              alpha = 0.5) +
-#   scale_colour_viridis_d() +
-#   coord_fixed() +
-#   theme_bw() +
-#   theme(text = element_text(family = "GT Walsheim Pro"),
-#         plot.title = element_text(size = 15, hjust = 0.5),
-#         axis.text = element_blank(),
-#         axis.title = element_blank(),
-#         # panel.border = element_blank(),
-#         panel.grid = element_blank(),
-#         axis.ticks = element_blank(),
-#         legend.position = "none")
-# 
-# umap_3 <- umap_tib %>% 
-#   ggplot(aes(x = V1, y = V2, col = factor(cluster))) +
-#   geom_point(size = 0.3,
-#              alpha = 0.5) +
-#   scale_colour_viridis_d() +
-#   labs(x = "x",
-#        y = "y") +
-#   coord_fixed() +
-#   theme_bw() +
-#   theme(text = element_text(family = "GT Walsheim Pro"),
-#         plot.title = element_text(size = 15, hjust = 0.5),
-#         axis.line = element_line(colour = "grey20"),
-#         panel.border = element_blank(),
-#         panel.grid = element_blank(),
-#         legend.position = "none")
 ```
 
 ### Interpretation
@@ -1372,7 +1324,7 @@ The following are good data viz practices that should be kept in mind whenever w
 
 The choice of colours is one of the most important aspect of any good visualisation, with incorrect usage turning a slick visualisation to a hot uninterpretable mess of sadness.
 
-The Capture Intelligence colour palette is based on the `viridis` palette- a series of colour maps designed to improve graphic readability for those with common forms of colour blindness and/or colour vision deficiency. Plus these colours are super pretty. 
+The Capture Intelligence colour palette is based on the `viridis` collection of palettes- a series of colour palettes designed to improve graphic readability for those with common forms of colour blindness and/or colour vision deficiency. Plus these colours are super pretty. 
 
 Despite this, we are often tasked with using colour palettes that match the client we performing the work for. This section will not inform how to create your own specific colour palette, nor will it go into detailed colour theory, but rather aims to empower you to be able to make appropriate decisions on the best colours to chose for different visualisations. 
 
