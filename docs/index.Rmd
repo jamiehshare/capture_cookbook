@@ -26,6 +26,7 @@ library(gtable)
 library(gtExtras)
 library(gt)
 library(gghighlight)
+library(treemapify)
 ```
 
 # About the Capture Cookbook 
@@ -77,7 +78,10 @@ example %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"))
 ```
 
 ### Intepretation
@@ -105,7 +109,10 @@ example %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"))
 ```
 
 It's worth noting that we *can* also present the same data using a bar chart instead of a line chart. The interpretation remains the same, but bar charts may not be as effective at displaying trends. This is because the bars are discrete rather than continuous, and they emphasise the magnitude of individual intervals rather than the overall trend.
@@ -128,7 +135,10 @@ example %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"))
 ```
 
 ## Comparing categories
@@ -151,7 +161,10 @@ example %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"))
 ```
 
 #### Intepretation
@@ -174,7 +187,10 @@ example %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"))
 ```
 
 A significant challenge with bar plots arises when there are numerous categories. If these categories result in bars of similar lengths, a phenomenon known as the Moiré effect can occur. This effect leads to confusion and difficulty in focusing, making it challenging to distinguish between individual bars and accurately interpret the data.
@@ -209,7 +225,10 @@ tribble(
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"))
 ```
 
 We observe an example of the Moiré effect in the bar chart above. It manifests when we start perceiving "patterns" that are not actually present due to sensory overload. Furthermore, charts with more than approximately eight bars, even if they vary in size, can appear cluttered and overwhelming.
@@ -249,7 +268,10 @@ tribble(
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"))
 ```
 
 The lollipop chart offers a clearer visual representation that may be (hopefully is) more appealing to you. These charts can also serve as excellent alternatives to bar charts in general, particularly if you find yourself using bar charts excessively in a particular deck. Lollipop charts make better use of white space, avoiding the clutter often associated with busy bar charts.
@@ -282,7 +304,7 @@ bar <- tribble(
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 25, hjust = 0.5),
         panel.border = element_blank(),
-        # axis.line = element_line(),
+        # axis.line = element_line(colour = "grey20"),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         axis.title = element_blank(),
@@ -305,7 +327,7 @@ pie <- tribble(
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 25, hjust = 0.5),
         panel.border = element_blank(),
-        # axis.line = element_line(),
+        # axis.line = element_line(colour = "grey20"),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
         axis.title = element_blank(),
@@ -427,6 +449,68 @@ doughnut <- tribble(
 pie + doughnut
 ```
 
+#### Treemap
+
+An additional method of comparing part-to-whole relationships is through treemaps. These represent different categories as rectangles, where the sizes of the rectangles represent the proportions or volumes of different categories within a larger category. The total plot volume (i.e. the rectangle made up of all categories together) represents the total volume of the category of interest (in the case below, total mentions in 5 different platforms). We can compare the sizes of the rectangles to understand the relative volumes or proportions of the different categories- larger rectangles represent topics with higher volumes or proportions, while smaller rectangles represent topics with lower volumes or proportions. Note the use of a sequential colour scale (see the [colour section](#colours) below) to help guide the eye to the underlying values.
+
+```{r gg-treemap, fig.caption = "A treemap showing part-to-whole relationship of social media mentions within the whole conversation using the size and colour of rectangles to encode values", fig.width=6}
+treemap <- read_rds("~/Documents/R/capture_cookbook/data/treemap.rds")
+
+treemap %>%
+  mutate(social_network = str_to_title(social_network)) %>% 
+  arrange(desc(n)) %>% 
+  mutate(social_network = reorder(social_network, n)) %>% 
+  ggplot(aes(area = n, fill = social_network,
+             label = paste(social_network, paste(n, "posts", sep = " "),
+                           paste(perc, "%", sep = ""),
+                           sep = "\n"))) +
+  geom_treemap() +
+  geom_treemap_text(colour = c(rep("white", 4),
+                               rep("black", 1)),
+                    place = "centre",
+                    size = 12,
+                    family = "GT Walsheim Pro") +
+  scale_fill_viridis_d(direction = -1)+
+  labs(title = "Mentions per platform") +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        panel.border = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none",
+        panel.grid = element_blank())
+```
+
+```{r gg-treemap-2, fig.caption = "A treemap showing part-to-whole relationship of social media mentions within the whole conversation using the size and colour of rectangles to encode values", fig.width=6}
+treemap <- read_rds("~/Documents/R/capture_cookbook/data/treemap.rds")
+
+treemap %>%
+  mutate(social_network = str_to_title(social_network)) %>% 
+  arrange(desc(n)) %>% 
+  mutate(social_network = reorder(social_network, n)) %>% 
+  ggplot(aes(area = n, fill = social_network,
+             label = paste(social_network, paste(n, "posts", sep = " "),
+                           paste(perc, "%", sep = ""),
+                           sep = "\n"))) +
+  geom_treemap() +
+  geom_treemap_text(colour = c(rep("white", 4),
+                               rep("black", 1)),
+                    place = "centre",
+                    size = 12,
+                    family = "GT Walsheim Pro") +
+  scale_fill_brewer(palette = "YlGnBu") +
+  labs(title = "Mentions per platform") +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        panel.border = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none",
+        panel.grid = element_blank())
+```
+
 ## Comparing sub-categories within categories 
 
 A stacked bar chart can be a valuable tool for gaining deeper insights beyond a simple bar chart. It allows us to understand the relative composition of each bar (i.e. category) by considering the levels of a second categorical variable nested within.
@@ -471,19 +555,20 @@ tribble(
   geom_bar(position = "stack", stat = "identity") +
   labs(x = "Category",
        y = "Number of posts classified per topic",
+       fill = "Sentiment",
        title = "Stacked bar chart showing sentiment volume per category") +
   scale_fill_manual(values = c(my.cols[5], "grey85", my.cols[1]),
                                labels = c("Positive", "Neutral", "Negative")) +
-  # scale_fill_brewer(palette = "PRGn",
-  #                   direction = -1,
-  #                   labels = c("Positive", "Neutral", "Negative")) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_bw() +
   scale_colour_viridis_c() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
 ```
 
 ### Interpretation
@@ -508,6 +593,7 @@ tribble(
   geom_bar(position = "stack", stat = "identity") +
   labs(x = "Category",
        y = "Percentage of posts classified per topic",
+       fill = "Sentiment",
        title = "Stacked bar chart showing sentiment percentage per category") +
   scale_fill_manual(values = c(my.cols[5], "grey85", my.cols[1]),
                                labels = c("Positive", "Neutral", "Negative")) +
@@ -520,7 +606,10 @@ tribble(
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
 ```
 
 To address the potential challenges mentioned above, we can scale our data to show proportions or percentages of posts with each sentiment per category, rather than raw volumes. This approach makes it much easier to compare the sentiment makeup of categories with lower volume. However, it's essential to note that scaling the data in this way may lead clients to overlook the fact that each bar represents vastly different volumes in reality.
@@ -550,7 +639,10 @@ normal_data %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
 ```
 
 ### Interpretation
@@ -578,7 +670,10 @@ left_skewed_dist <- left_skewed_data %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
 
 # Generate random data with right-skewed distribution
 set.seed(123)
@@ -597,7 +692,10 @@ right_skewed_dist <- right_skewed_data %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
 
 # Generate random data with bimodal distribution
 set.seed(123)
@@ -617,7 +715,10 @@ bimodal_dist <- bimodal_data %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
 
 
 left_skewed_dist / right_skewed_dist / bimodal_dist 
@@ -712,69 +813,170 @@ UMAP (Uniform Manifold Approximation and Projection) is a powerful data visualiz
 
 We are often tasked with capturing a wide array of conversations on various topics. However, analysing and making sense of this vast amount of data can be challenging. UMAP provides a way to visualize and explore this conversational landscape, enabling us to identify clusters, patterns, and relationships within the data.
 
-```{r}
+### Example
+
+```{r gg-umap-1, fig.cap = "UMAP with different clusters mapped to colour"}
 umap_tib <- read_rds("~/Documents/R/capture_cookbook/data/umap.rds")
 
-umap_1 <- umap_tib %>% 
-  ggplot(aes(x = V1, y = V2, col = factor(cluster))) +
-  geom_point(size = 0.3,
-             alpha = 0.5) +
+umap_tib %>% 
+  ggplot(aes(x = V1, y = V2, colour = factor(cluster))) +
+  geom_point(alpha = 0.5, shape = 16,
+             stroke = 0,
+             size = 2) +
   scale_colour_viridis_d() +
+  labs(title = "UMAP with clusters coloured",
+       colour = "Cluster",
+       subtitle = "Colouring by cluster can help us identify regions of interest") +
   coord_fixed() +
   theme_bw() +
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
         axis.text = element_blank(),
         axis.title = element_blank(),
         panel.border = element_blank(),
         panel.grid = element_blank(),
-        axis.ticks = element_blank(),
-        legend.position = "none")
+        axis.ticks = element_blank())
 
-umap_2 <- umap_tib %>% 
-  ggplot(aes(x = V1, y = V2, col = factor(cluster))) +
-  geom_point(size = 0.3,
-             alpha = 0.5) +
-  scale_colour_viridis_d() +
-  coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        axis.text = element_blank(),
-        axis.title = element_blank(),
-        # panel.border = element_blank(),
-        panel.grid = element_blank(),
-        axis.ticks = element_blank(),
-        legend.position = "none")
-
-umap_3 <- umap_tib %>% 
-  ggplot(aes(x = V1, y = V2, col = factor(cluster))) +
-  geom_point(size = 0.3,
-             alpha = 0.5) +
-  scale_colour_viridis_d() +
-  labs(x = "x",
-       y = "y") +
-  coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        axis.line = element_line(),
-        panel.border = element_blank(),
-        panel.grid = element_blank(),
-        legend.position = "none")
-
-umap_1 + umap_2 + umap_3
+# umap_2 <- umap_tib %>% 
+#   ggplot(aes(x = V1, y = V2, col = factor(cluster))) +
+#   geom_point(size = 0.3,
+#              alpha = 0.5) +
+#   scale_colour_viridis_d() +
+#   coord_fixed() +
+#   theme_bw() +
+#   theme(text = element_text(family = "GT Walsheim Pro"),
+#         plot.title = element_text(size = 15, hjust = 0.5),
+#         axis.text = element_blank(),
+#         axis.title = element_blank(),
+#         # panel.border = element_blank(),
+#         panel.grid = element_blank(),
+#         axis.ticks = element_blank(),
+#         legend.position = "none")
+# 
+# umap_3 <- umap_tib %>% 
+#   ggplot(aes(x = V1, y = V2, col = factor(cluster))) +
+#   geom_point(size = 0.3,
+#              alpha = 0.5) +
+#   scale_colour_viridis_d() +
+#   labs(x = "x",
+#        y = "y") +
+#   coord_fixed() +
+#   theme_bw() +
+#   theme(text = element_text(family = "GT Walsheim Pro"),
+#         plot.title = element_text(size = 15, hjust = 0.5),
+#         axis.line = element_line(colour = "grey20"),
+#         panel.border = element_blank(),
+#         panel.grid = element_blank(),
+#         legend.position = "none")
 ```
 
 ### Interpretation
 
+*Please note that this is a very high level overview of UMAP. As explained previously, the purpose of this Cookbook is not to get a thorough understanding of statistics and Data Science, but rather empower solid data visualisation principles and understanding from an interpretation perspective. For a more thorough overview of UMAP please see REF*
+
 When applying UMAP to social media mentions, the technique projects the data into a lower-dimensional space, typically two dimensions, while preserving the underlying structure of the conversations. Each data point represents a post, and their proximity to each other on the UMAP plot indicates similarity in the context or content of the conversations (i.e. semantic similarity).
 
-UMAP reveals clusters or groups of mentions that are closer together on the plot. These clusters represent conversations that share common themes, topics, or sentiments. We can examine these clusters to identify distinct subtopics or communities within the larger conversational landscape. By exploring the content of these clusters, we can gain a deeper understanding of the prevailing narratives or discussions taking place on social media.
+The plot above is an example of this two-dimensional 'landscape' that is produced by UMAP. We can see that it is effectively a scatter plot, though the interpretation is much more complex that usual scatters. UMAP reveals clusters or groups of mentions that are closer together on the plot. These clusters represent conversations that share common themes, topics, or sentiments, and are represented by colour in the plot above. We can examine these clusters to identify distinct subtopics or communities within the larger conversational landscape. By exploring the content of these clusters, we can gain a deeper understanding of the prevailing narratives or discussions taking place on social media. Another way of visualising these clusters is by producing a faceted plot, as below, where each of our clusters appears separately as a small multiple on a single plot. This enables us to rapidly compare  clusters in different parts of the data and see how similar or different they are.
+
+```{r gg-umap-2, fig.cap = "UMAP presented faceted by a grouping variable"}
+ group_names <- umap_tib %>%
+    dplyr::pull(cluster) %>%
+    unique() %>%
+    sort()
+
+# Define the number of groups
+num_groups <- length(group_names)
+
+# Generate a color palette using viridis_pal()
+color_palette <- viridis_pal()(num_groups)
+
+plots <- purrr::map2(group_names, color_palette,
+  ~ umap_tib %>%
+    dplyr::slice_sample(n = nrow(umap_tib)) %>%
+    dplyr::mutate(
+      plotting_var = as.character(cluster),
+      highlight = ifelse(plotting_var == .x, "A", "B")
+    ) %>%
+    ggplot2::ggplot(ggplot2::aes(x = V1, y = V2, colour = factor(cluster))) + 
+    geom_point(data = . %>% filter(highlight == "B"),
+               alpha = 0.5, shape = 16,
+               stroke = 0,
+               size = 2,
+               colour = "grey80") +
+    geom_point(data = . %>% filter(highlight == "A"),
+               alpha = 1, shape = 16,
+               stroke = 0,
+               size = 2) +
+    scale_colour_manual(values = .y) +  # Use manual color palette
+    coord_fixed() +
+    theme_bw() +
+    ggplot2::labs(
+      title = paste0(.x),
+      x = "",
+      y = ""
+    ) +
+    theme(
+      text = element_text(family = "GT Walsheim Pro"),
+      plot.title = element_text(size = 15, hjust = 0.5),
+      legend.position = "none",
+      axis.text = element_blank(),
+      axis.title = element_blank(),
+      panel.border = element_blank(),
+      panel.grid = element_blank(),
+      axis.ticks = element_blank()
+    )
+)
+
+patchwork::wrap_plots(plots, nrow = 2) +
+  plot_annotation(
+  title = 'Facetted UMAP plots',
+  subtitle = 'Facets enable us to see the location of different clusters clearly on the same page'
+) &
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"))
+```
 
 UMAP visualizations also highlight outliers or mentions that are far apart from the main clusters. These outliers may represent unique or less common aspects of the conversation, such as alternative perspectives or rare events, or they might represent irrelevant posts which have snuck though our data cleaning steps. 
 
-The density of points in certain areas of the UMAP plot can indicate the volume of conversations or the prominence of specific themes. Areas with dense clusters may represent highly active or popular discussions, while sparser regions could indicate less popular or peripheral topics. Additionally, the distance between clusters can provide insights into the relationships or connections between different themes or conversations. Closer clusters may indicate related or overlapping discussions, while distant clusters suggest more distinct or separate topics.
+The density of points in certain areas of the UMAP plot can indicate the volume of conversations or the prominence of specific themes. Areas with dense clusters may represent highly active or popular discussions, while sparser regions could indicate less popular or peripheral topics. To identify density on a UMAP, it is mostly appropriate to plot using a monochromatic colour palette, as otherwise our eye gets distracted by colour:
+
+```{r gg-umap-3, fig.cap = "UMAP presented with single colour"}
+umap_tib %>% 
+  ggplot(aes(x = V1, y = V2)) +
+  geom_point(alpha = 0.5, shape = 16,
+             stroke = 0,
+             size = 2,
+             colour = viridis_pal(option = "viridis")(1)) +
+  labs(title = "Monochromatic UMAP",
+       subtitle = "Single colour helps accentuate regions of high densities") +
+  coord_fixed() +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        panel.border = element_blank(),
+        panel.grid = element_blank(),
+        axis.ticks = element_blank())
+```
+
+Finally, the distance between clusters can provide insights into the relationships or connections between different themes or conversations. Closer clusters may indicate related or overlapping discussions, while distant clusters suggest more distinct or separate topics.
+
+#### A word of warning for using UMAP visualisations in decks
+
+* Most of the time 'visualising the landscape' in a UMAP is something that is interesting for us as researchers, but is too complex and unnecessary for client deliveries. Often the client is interested in:
+
+    1) The number of clusters 
+    2) The size of the clusters
+    in this case, a Table summarising these two values for each cluster is more suitable and digestible.  
+* If presenting a UMAP like Figure \@ref(fig:gg-umap-1) (a UMAP coloured by cluster) or a faceted UMAP like Figure \@ref(fig:gg-umap-2), we must be confident that we can explain each of the clusters and/or they directly aid in understanding. Colours should only be used if a thorough clustering approach has been taken, with the name of each cluster clearly labelled on the plot. Often this approach could be relevant for thorough topic modelling or mapping colour to sentiment for example.
+* If we have not performed a clustering approach directly to the UMAP (i.e. the data is not labelled with a grouping variable), but we still want to present the landscape in this way, use the single colour approach (Figure \@ref(fig:gg-umap-3)). This is best when we just want to show the landscape at a very high level and point out regions of high density without confusing the client with the addition of colours.
 
 ## Comparing one or more categorical variables with a metric of interest
 
@@ -826,7 +1028,57 @@ data %>%
         axis.ticks = element_blank(),
         legend.position = "bottom",
         legend.text = element_text(size = 7),
-        legend.title = element_text(hjust = 0.5))
+        legend.title = element_text(hjust = 0.5),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
+```
+
+```{r gg-heatmap-3, fig.cap = 'Example heatmap showing branded conversation within different topics'}
+x <- LETTERS[1:6]
+y <- paste0("Topic ", seq(1, 5))
+
+set.seed(1234)
+data <- expand.grid(x = x, y = rev(y)) %>%
+  rename(brand = x,
+         topic = y) %>% 
+  mutate(z = round(runif(30, 1, 100)),
+         z_t = case_when(brand == "A" ~ z * 8,
+                       T ~ z),
+         z_t = case_when(brand == "E" & topic == "Topic 4" ~ z_t * 5,
+                         brand == "D" ~ z_t * 0.3,
+                         T ~ z_t)) %>% 
+  group_by(topic) %>% 
+  mutate(z_prop = z_t / sum(z_t),
+         z_prop2 = z / sum(z)) %>% 
+  ungroup()
+
+data %>% 
+  ggplot(aes(brand, topic, fill = z_prop)) + 
+  geom_tile() +
+  labs(x = "Brand",
+       y = NULL,
+       fill = "Percentage of Topic conversation that includes each Brand",
+       title = "Topic x Brand Heatmap") +
+  scale_fill_distiller(palette = "YlGnBu",
+                       direction = 1,
+                       labels = percent) +
+  guides(fill = guide_colourbar(title.position = 'top',
+                               direction = "horizontal",
+                               title.hjust = .5,
+                               barwidth = 22,
+                               barheight = 0.8)) +
+  coord_fixed() +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        panel.border = element_blank(),
+        panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "bottom",
+        legend.text = element_text(size = 7),
+        legend.title = element_text(hjust = 0.5),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
 ```
 
 ### Interpretation
@@ -880,7 +1132,56 @@ data.frame(x, hour, day) %>%
         axis.ticks = element_blank(),
         legend.position = "bottom",
         legend.text = element_text(size = 7),
-        legend.title = element_text(hjust = 0.5))
+        legend.title = element_text(hjust = 0.5),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
+```
+
+```{r gg-heatmap-2-v2, fig.cap = 'Example heatmap showing hourly social media brand mentions for each day of the week'}
+x <- 1:10000
+days <- factor(c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), 
+               levels = rev(c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")), 
+               ordered = TRUE)
+
+day <- sample(days, 10000, TRUE, 
+              c(0.5, 0.8, 0.8, 0.6, 0.5, 0.2, 0.3))
+
+set.seed(1234)
+hour <- round(rbeta(10000, 1, 2, 6) * 23) + 1
+
+data.frame(x, hour, day) %>% 
+  group_by(day, hour) %>% 
+  summarise(n = n()) %>% 
+  mutate(perc = n/sum(n),
+         perc = case_when(day == "Sat" | day == "Sun" ~ perc * 1.5,
+                          T ~ perc)) %>% 
+  ggplot(aes(factor(hour), day, fill = perc)) + 
+  geom_tile() +
+  labs(x = "Time of Day",
+       y = NULL,
+       fill = "Percentage of posts about Brand",
+       title = "Heatmap of Hourly Social Media Usage") +
+  scale_fill_distiller(palette = "YlGnBu",
+                       direction = 1,
+                       labels = percent) +
+  scale_x_discrete(breaks = 1:24, labels = 1:24) +
+  guides(fill = guide_colourbar(title.position = 'top',
+                               direction = "horizontal",
+                               title.hjust = .5,
+                               barwidth = 10,
+                               barheight = 0.8)) +
+  coord_fixed() +
+  theme_bw() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        panel.border = element_blank(),
+        panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "bottom",
+        legend.text = element_text(size = 7),
+        legend.title = element_text(hjust = 0.5),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
 ```
 
 ## Presenting precise numerical values
@@ -1092,11 +1393,14 @@ example %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
         axis.line.y = element_blank(),
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank(),
-        panel.grid = element_blank())
+        panel.grid = element_blank(),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
 ```
 
 As mentioned in the pie chart section (REF), adding labels is highly recommended for pie charts and donught charts:
@@ -1202,7 +1506,10 @@ example %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
 ```
 
 Notice how you have to keep looking between the plot and the legend to fully understand which line represents which category? 
@@ -1244,7 +1551,10 @@ example %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.position = "none")
 ```
 
@@ -1279,7 +1589,10 @@ bar_grid <- tribble(
         plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.position = "none")
 
 bar_no_grid <- tribble(
@@ -1305,7 +1618,10 @@ bar_no_grid <- tribble(
                                      colour = "grey50"),
         panel.border = element_blank(),
         panel.grid.major.x = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.position = "none")
 
 bar_grid + bar_no_grid
@@ -1340,7 +1656,10 @@ bar_no_lab <- tribble(
         plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         panel.grid.major.x = element_blank(),
         legend.position = "none")
 
@@ -1373,7 +1692,10 @@ bar_lab <- tribble(
                                      colour = "grey50"),
         panel.border = element_blank(),
         panel.grid = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.position = "none")
 
 bar_no_lab + bar_lab
@@ -1395,7 +1717,8 @@ plot_1 <- example %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "black"),
+        axis.ticks = element_line(colour = "black"),
         panel.grid = element_line(colour = "black"))
 
 plot_2 <- example %>% 
@@ -1413,7 +1736,10 @@ plot_2 <- example %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
 
 plot_1 + plot_2
 ```
@@ -1444,7 +1770,8 @@ plot_1 <- tribble(
                                      colour = "grey50"),
         panel.border = element_rect(colour = "black",
                                     size = 1),
-        # axis.line = element_line(),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         panel.grid.major.x = element_blank(),
         legend.position = "none")
 
@@ -1468,7 +1795,10 @@ plot_2 <- tribble(
         plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         panel.grid.major.x = element_blank(),
         legend.position = "none")
 
@@ -1478,7 +1808,7 @@ plot_1 + plot_2
 
 **Despite this, consistency is the name of the game here. If for whatever reason a client asks for a border to be around a plot (or a border removed), all similar plots in the deck should follow the same aesthetic.**
 
-## Colours
+## Colours {#colours}
 
 The choice of colours is one of the most important aspect of any good visualisation, with incorrect usage turning a slick visualisation to a hot uninterpretable mess of sadness.
 
@@ -1576,6 +1906,47 @@ seq_cont <- data.frame(colours = seq(1, 1000),
 seq_bin / seq_cont
 ```
 
+```{r sequential-col-2, fig.cap = 'Example sequential colours'}
+seq_bin <- data.frame(colours = seq(1, 7),
+                      values = seq(1, 7)) %>% 
+  ggplot(aes(x = colours, y = 0, fill = factor(values))) +
+  geom_tile() +
+  scale_fill_brewer(palette = "YlGnBu") +
+  labs(title = "Example Sequential Colour Palette - Binned Values") +
+  lims(y = c(-1, 1),
+       x = c((0.5 - ((7.5-0.5)*0.1)), ((7.5-0.5)*0.1 + 7.5))) +
+  theme_void() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        panel.border = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none",
+        panel.grid = element_blank())
+
+seq_cont <- data.frame(colours = seq(1, 1000),
+                      values = seq(1, 1000)) %>% 
+  ggplot(aes(x = colours, y = 0, fill = values)) +
+  geom_tile() +
+  scale_fill_distiller(palette = "YlGnBu",
+                       direction = 1) +
+  labs(title = "Example Sequential Colour Palette - Continuous Values") +
+  lims(y = c(-1, 1),
+       x = c((0.5 - ((1000.5-0.5)*0.1)), ((1000.5-0.5)*0.1 + 1000.5))) +
+  theme_void() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        panel.border = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank(),
+        legend.position = "none",
+        panel.grid = element_blank())
+
+seq_bin / seq_cont
+```
+
 ### Diverging colour palettes
 
 These palettes are best used when we want to represent a scale around a central value (i.e. a meaningful middle value such as zero, an average, a threshold, a target etc). Whereas sequential colour palettes go from low to high, diverging palettes utilise a neutral colour in the middle of the scale, with two opposite colours with varying shades diverging from this central value. These palettes are often use to visualise negative and positive values or Likert scales. There are two big advantages to using diverging scales: they emphasize the extremes, and they let readers see more differences in the data.
@@ -1651,7 +2022,9 @@ qual_bar <- tribble(
         plot.title = element_text(size = 15, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.position = "none")
 
 seq_bar <- tribble(
@@ -1678,7 +2051,9 @@ seq_bar <- tribble(
         plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.position = "none")
 
 div_bar <- tribble(
@@ -1704,17 +2079,15 @@ div_bar <- tribble(
         plot.title = element_text(size = 15, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.position = "none")
 
 qual_bar + seq_bar + div_bar
 ```
 
-Here we see how a simple bar chart can look vastly different when using different palettes. Qualitative colour palettes maximise the distinction between categories making it easy to different groups at a glance. Similarly, the use of a qualitative palette ensure the colours do not imply any inherent ordering or hierarchy. The sequential colour palette unintentionally convey a perceived hierarchy or sequence that doesn't exist and subtle differences in colour shades can make it difficult for viewers to distinguish between different categories. Applying a divergent palette to unrelated categories can create a false sense of order or relationship between them. The stark contrast in colours may also draw attention away from the actual values being compared, leading to misinterpretation or confusion.
-
-Despite this, sometimes using a sequential palette can be okay for such plots when we want to emphasise an underlying order. Remember when we said that we could rearrange a chart so the categorical values follow the order of the variable of interest? In this case, using a sequential colour palette actually helps to double-encode the value of "number of posts" by both position and colour
-
-```{r, col-ex-v2, fig.height = 3, fig.cap = 'When to use qualitative colour palette'}
+```{r, col-ex-2-v2, fig.height = 3, fig.cap = 'When to use qualitative colour palette'}
 qual_bar <- tribble(
   ~colA, ~n, 
   "A", 30,
@@ -1724,9 +2097,103 @@ qual_bar <- tribble(
   "E", 10,
   "F", 27
 ) %>% 
-  arrange(desc(n)) %>% 
+  ggplot(aes(x = colA, y = n, fill = colA)) +
+  geom_col() +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Good",
+       subtitle = "Qualitative Palette") +
+  scale_fill_manual(values = msft_cols) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_bw() +
+  scale_colour_viridis_c() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        legend.position = "none")
+
+seq_bar <- tribble(
+  ~colA, ~n, 
+  "A", 30,
+  "B", 20,
+  "C", 25,
+  "D", 15,
+  "E", 10,
+  "F", 27
+) %>% 
+  ggplot(aes(x = colA, y = n, fill = colA)) +
+  geom_col() +
+  scale_fill_viridis_d(direction = -1) +
+  scale_fill_brewer(palette = "YlGnBu") +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Not ideal",
+       subtitle = "Sequential Palette") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_bw() +
+  scale_colour_viridis_c() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        legend.position = "none")
+
+div_bar <- tribble(
+  ~colA, ~n, 
+  "A", 30,
+  "B", 20,
+  "C", 25,
+  "D", 15,
+  "E", 10,
+  "F", 27
+) %>% 
+  ggplot(aes(x = colA, y = n, fill = colA)) +
+  geom_col() +
+  scale_fill_brewer(palette = "PRGn") +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Bad",
+       subtitle = "Divergent Palette") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_bw() +
+  scale_colour_viridis_c() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        legend.position = "none")
+
+qual_bar + seq_bar + div_bar
+```
+
+Here we see how a simple bar chart can look vastly different when using different palettes. Qualitative colour palettes maximise the distinction between categories making it easy to different groups at a glance. Similarly, the use of a qualitative palette ensure the colours do not imply any inherent ordering or hierarchy. The sequential colour palette unintentionally convey a perceived hierarchy or sequence that doesn't exist and subtle differences in colour shades can make it difficult for viewers to distinguish between different categories. Applying a divergent palette to unrelated categories can create a false sense of order or relationship between them. The stark contrast in colours may also draw attention away from the actual values being compared, leading to misinterpretation or confusion.
+
+Despite this, sometimes using a sequential palette can be okay for such plots when we want to emphasise an underlying order. Remember when we said that we could rearrange a chart so the categorical values follow the order of the variable of interest? In this case, using a sequential colour palette actually helps to double-encode the value of "number of posts" by both position and colour
+
+```{r, col-ex-v2, fig.height = 3, fig.cap = 'We *can* use a sequential palette when we have already ordered categories based on the value of interest'}
+qual_bar <- tribble(
+  ~colA, ~n, 
+  "A", 30,
+  "B", 20,
+  "C", 25,
+  "D", 15,
+  "E", 10,
+  "F", 27
+) %>% 
+  arrange(n) %>% 
   mutate(colA = factor(colA, levels = colA)) %>% 
-  ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
+  ggplot(aes(x = reorder(colA, n), y = n, fill = colA)) +
   geom_col() +
   labs(x = "Message Type",
        y = "Number of posts",
@@ -1740,7 +2207,10 @@ qual_bar <- tribble(
         plot.title = element_text(size = 15, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.position = "none")
 
 seq_bar <- tribble(
@@ -1752,9 +2222,9 @@ seq_bar <- tribble(
   "E", 10,
   "F", 27
 ) %>% 
-  arrange(desc(n)) %>% 
+  arrange(n) %>% 
   mutate(colA = factor(colA, levels = colA)) %>% 
-  ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
+  ggplot(aes(x = reorder(colA, n), y = n, fill = colA)) +
   geom_col() +
   scale_fill_viridis_d(direction = -1) +
   labs(x = "Message Type",
@@ -1769,7 +2239,10 @@ seq_bar <- tribble(
         plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.position = "none")
 
 div_bar <- tribble(
@@ -1781,9 +2254,9 @@ div_bar <- tribble(
   "E", 10,
   "F", 27
 ) %>% 
-  arrange(desc(n)) %>% 
+  arrange(n) %>% 
   mutate(colA = factor(colA, levels = colA)) %>% 
-  ggplot(aes(x = reorder(colA, desc(n)), y = n, fill = colA)) +
+  ggplot(aes(x = reorder(colA, n), y = n, fill = colA)) +
   geom_col() +
   scale_fill_brewer(palette = "PRGn") +
   labs(x = "Message Type",
@@ -1797,7 +2270,108 @@ div_bar <- tribble(
         plot.title = element_text(size = 15, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        legend.position = "none")
+
+qual_bar + seq_bar + div_bar
+```
+
+```{r, col-ex-v2-2, fig.height = 3, fig.cap = 'We *can* use a sequential palette when we have already ordered categories based on the value of interest'}
+qual_bar <- tribble(
+  ~colA, ~n, 
+  "A", 30,
+  "B", 20,
+  "C", 25,
+  "D", 15,
+  "E", 10,
+  "F", 27
+) %>% 
+  arrange(n) %>% 
+  mutate(colA = factor(colA, levels = colA)) %>% 
+  ggplot(aes(x = reorder(colA, n), y = n, fill = colA)) +
+  geom_col() +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Fine",
+       subtitle = "Qualitative Palette") +
+  scale_fill_manual(values = msft_cols) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_bw() +
+  scale_colour_viridis_c() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        legend.position = "none")
+
+seq_bar <- tribble(
+  ~colA, ~n, 
+  "A", 30,
+  "B", 20,
+  "C", 25,
+  "D", 15,
+  "E", 10,
+  "F", 27
+) %>% 
+  arrange(n) %>% 
+  mutate(colA = factor(colA, levels = colA)) %>% 
+  ggplot(aes(x = reorder(colA, n), y = n, fill = colA)) +
+  geom_col() +
+  scale_fill_brewer(palette = "YlGnBu") +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Good",
+       subtitle = "Sequential Palette") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_bw() +
+  scale_colour_distiller(palette = "YlGnBu") +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
+        legend.position = "none")
+
+div_bar <- tribble(
+  ~colA, ~n, 
+  "A", 30,
+  "B", 20,
+  "C", 25,
+  "D", 15,
+  "E", 10,
+  "F", 27
+) %>% 
+  arrange(n) %>% 
+  mutate(colA = factor(colA, levels = colA)) %>% 
+  ggplot(aes(x = reorder(colA, n), y = n, fill = colA)) +
+  geom_col() +
+  scale_fill_brewer(palette = "PRGn") +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Bad",
+       subtitle = "Divergent Palette") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  theme_bw() +
+  scale_colour_viridis_c() +
+  theme(text = element_text(family = "GT Walsheim Pro"),
+        plot.title = element_text(size = 15, hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.position = "none")
 
 qual_bar + seq_bar + div_bar
@@ -1834,7 +2408,10 @@ ggplot(aes(x, y, fill = factor(z))) +
         plot.title = element_text(size = 15, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.8, "cm"),
         legend.position = "bottom",
@@ -1858,7 +2435,10 @@ ggplot(aes(x, y, fill = factor(z))) +
         plot.title = element_text(size = 15, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.8, "cm"),
         legend.position = "bottom",
@@ -1882,7 +2462,10 @@ ggplot(aes(x, y, fill = factor(z))) +
         plot.title = element_text(size = 15, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.8, "cm"),
         legend.position = "bottom",
@@ -1919,7 +2502,10 @@ ggplot(aes(x, y, fill = factor(z))) +
         plot.title = element_text(size = 15, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.8, "cm"),
         legend.position = "bottom",
@@ -1946,7 +2532,10 @@ ggplot(aes(x, y, fill = factor(z))) +
         plot.title = element_text(size = 15, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.8, "cm"),
         legend.position = "bottom",
@@ -1970,7 +2559,10 @@ ggplot(aes(x, y, fill = factor(z))) +
         plot.title = element_text(size = 15, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.8, "cm"),
         legend.position = "bottom",
@@ -2011,7 +2603,10 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
         plot.title = element_text(size = 15, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.4, "cm"),
         legend.text = element_text(size = 7),
@@ -2035,7 +2630,10 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
         plot.title = element_text(size = 15, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.4, "cm"),
         legend.text = element_text(size = 7),
@@ -2061,7 +2659,10 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
         plot.title = element_text(size = 15, hjust = 0.5),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.4, "cm"),
         legend.text = element_text(size = 7),
@@ -2110,7 +2711,10 @@ line_busy <- example %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.position = "none")
 
 seq_bar <- tribble(
@@ -2137,7 +2741,10 @@ seq_bar <- tribble(
                                      colour = "grey50"),
         panel.border = element_blank(),
         panel.grid.major.x = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.position = "none")
 
 line_busy + seq_bar
@@ -2192,7 +2799,10 @@ line_nice <- example %>%
   theme(text = element_text(family = "GT Walsheim Pro"),
         plot.title = element_text(size = 15, hjust = 0.5),
         panel.border = element_blank(),
-        axis.line = element_line())
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"))
 
 seq_bar <- tribble(
   ~colA, ~n, 
@@ -2220,7 +2830,10 @@ seq_bar <- tribble(
                                      colour = "grey50"),
         panel.border = element_blank(),
         panel.grid.major.x = element_blank(),
-        axis.line = element_line(),
+        axis.line = element_line(colour = "grey20"),
+        axis.ticks = element_line(colour = "grey20"),
+        axis.text = element_text(colour = "grey30"),
+        axis.title = element_text(colour = "grey30"),
         legend.position = "none")
 
 line_nice + seq_bar
