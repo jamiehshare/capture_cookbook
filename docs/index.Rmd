@@ -2155,7 +2155,8 @@ example %>%
   labs(x = "Date",
        y = "Number of posts",
        title = "Line chart showing daily trend of three categories") +
-  capture_theme()
+  capture_theme() +
+  theme(legend.position = "none")
 ```
 
 ## Gridlines and borders
