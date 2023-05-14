@@ -254,7 +254,7 @@ The lollipop chart offers a clearer visual representation that may be (hopefully
 
 One important consideration when comparing lollipop charts to bar charts is the level of importance attached to knowing the exact value of each category. In bar charts, it is evident where the top of the bar is located, but with lollipop charts, determining whether the centre, top, or bottom of the circle represents the value in question can be somewhat imprecise. To address this, it is possible to include the raw values directly on the lollipop chart. Despite this, it remains essential to consider the intended audience and the key message we aim to convey, whether it pertains to general trends or specific values.
 
-#### Pie Charts
+#### Pie Charts {#piechart}
 
 While pie charts are commonly used and provide a sense of familiarity, they are rarely the optimal choice for representing our data. Nevertheless, we often receive requests to include pie charts when comparing categories.
 
@@ -2022,7 +2022,7 @@ example %>%
         panel.grid = element_blank())
 ```
 
-As mentioned in the pie chart section (REF), adding labels is highly recommended for pie charts and donught charts:
+As mentioned in the [pie chart section](#piechart), adding labels is highly recommended for pie charts and donught charts:
 
 ```{r gg-value-2, fig.cap = 'Comparison between a Pie Chart and a Doughnut Chart showing the same data'}
 pie <- tribble(
