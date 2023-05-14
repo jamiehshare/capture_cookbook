@@ -27,6 +27,38 @@ library(gtExtras)
 library(gt)
 library(gghighlight)
 library(treemapify)
+
+capture_theme <- function(base_size = 11, base_family = "GT Walsheim Pro",
+                          base_line_size = base_size / 22,
+                          base_rect_size = base_size / 22, ...) {
+  
+  half_line <- base_size / 2
+  
+  ggplot2::theme_grey(base_size = base_size, 
+                      base_family = base_family, 
+                      base_line_size = base_line_size, 
+                      base_rect_size = base_rect_size) %+replace% 
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(size = 15,
+                                       hjust = 0.5,
+                                       vjust = 1,
+                                       margin = margin(b = half_line)),
+    panel.border = ggplot2::element_blank(),
+    panel.background = ggplot2::element_rect(fill = "white", 
+                                    colour = NA),
+    axis.line = ggplot2::element_line(colour = "grey20"),
+    axis.ticks = ggplot2::element_line(colour = "grey20"),
+    axis.text = ggplot2::element_text(colour = "grey30",
+                                      size = rel(0.8)),
+    axis.title = ggplot2::element_text(colour = "grey30"),
+    panel.grid = ggplot2::element_line(colour = "grey92"), 
+    panel.grid.minor = ggplot2::element_line(linewidth = rel(0.5)), 
+    strip.background = ggplot2::element_rect(fill = "grey85", 
+                                    colour = "grey20"), 
+    legend.key = ggplot2::element_rect(fill = "white", colour = NA), 
+    complete = TRUE)
+  
+}
 ```
 
 # About the Capture Cookbook 
@@ -73,14 +105,7 @@ example %>%
   labs(x = "Date",
        y = "Number of posts",
        title = "Line chart showing daily trend") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"))
+  capture_theme()
 ```
 
 ### Intepretation
@@ -103,14 +128,7 @@ example %>%
        y = "Number of posts",
        title = "Line chart showing weekly trend") +
   lims(y = c(0, 4000)) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"))
+  capture_theme()
 ```
 
 It's worth noting that we *can* also present the same data using a bar chart instead of a line chart. The interpretation remains the same, but bar charts may not be as effective at displaying trends. This is because the bars are discrete rather than continuous, and they emphasise the magnitude of individual intervals rather than the overall trend.
@@ -128,14 +146,7 @@ example %>%
        y = "Number of posts",
        title = "Bar chart showing weekly trend") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"))
+  capture_theme()
 ```
 
 ## Comparing categories
@@ -153,14 +164,7 @@ example %>%
        y = "Number of posts",
        title = "Bar chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"))
+  capture_theme()
 ```
 
 #### Intepretation
@@ -178,14 +182,7 @@ example %>%
        y = "Number of posts",
        title = "Bar chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"))
+  capture_theme()
 ```
 
 A significant challenge with bar plots arises when there are numerous categories. If these categories result in bars of similar lengths, a phenomenon known as the Moiré effect can occur. This effect leads to confusion and difficulty in focusing, making it challenging to distinguish between individual bars and accurately interpret the data.
@@ -215,14 +212,7 @@ tribble(
        y = "Number of posts",
        title = "Bar chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"))
+  capture_theme()
 ```
 
 We observe an example of the Moiré effect in the bar chart above. It manifests when we start perceiving "patterns" that are not actually present due to sensory overload. Furthermore, charts with more than approximately eight bars, even if they vary in size, can appear cluttered and overwhelming.
@@ -257,14 +247,7 @@ tribble(
        y = "Number of posts",
        title = "Lollipip chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"))
+  capture_theme()
 ```
 
 The lollipop chart offers a clearer visual representation that may be (hopefully is) more appealing to you. These charts can also serve as excellent alternatives to bar charts in general, particularly if you find yourself using bar charts excessively in a particular deck. Lollipop charts make better use of white space, avoiding the clutter often associated with busy bar charts.
@@ -293,16 +276,14 @@ bar <- tribble(
        title = "Not ideal") +
   lims(x = c(-1, 1)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 25, hjust = 0.5),
-        panel.border = element_blank(),
-        # axis.line = element_line(colour = "grey20"),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none",
-        panel.grid = element_blank())
+  capture_theme() +
+  theme(plot.title = element_text(size = 25, hjust = 0.5),
+                legend.position = "none",
+        axis.line = element_blank(),
+                panel.grid = element_blank(),
+                axis.text = element_blank(),
+                axis.ticks = element_blank(),
+                axis.title = element_blank())
 
 pie <- tribble(
   ~colA, ~colB,
@@ -316,17 +297,14 @@ pie <- tribble(
   coord_polar("y", start=0) +
   scale_fill_viridis_d() +
   labs(title = "Better") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 25, hjust = 0.5),
-        panel.border = element_blank(),
-        # axis.line = element_line(colour = "grey20"),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none",
-        panel.grid = element_blank())
-
+  capture_theme() +
+  theme(plot.title = element_text(size = 25, hjust = 0.5),
+                legend.position = "none",
+        axis.line = element_blank(),
+                panel.grid = element_blank(),
+                axis.text = element_blank(),
+                axis.ticks = element_blank(),
+                axis.title = element_blank())
 bar + pie
 ```
 
@@ -347,15 +325,14 @@ bar <- tribble(
   scale_fill_viridis_d() +
   labs(title = "Good") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 25, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none",
-        panel.grid = element_blank())
+  capture_theme() +
+  theme(plot.title = element_text(size = 25, hjust = 0.5),
+                legend.position = "none",
+        axis.line = element_blank(),
+                panel.grid = element_blank(),
+                axis.text = element_blank(),
+                axis.ticks = element_blank(),
+                axis.title = element_blank())
 
 pie <- tribble(
   ~colA, ~colB,
@@ -371,15 +348,14 @@ pie <- tribble(
   coord_polar("y", start=0) +
   scale_fill_viridis_d() +
   labs(title = "Bad") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 25, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none",
-        panel.grid = element_blank())
+  capture_theme() +
+  theme(plot.title = element_text(size = 25, hjust = 0.5),
+                legend.position = "none",
+        axis.line = element_blank(),
+                panel.grid = element_blank(),
+                axis.text = element_blank(),
+                axis.ticks = element_blank(),
+                axis.title = element_blank())
 
 bar + pie
 ```
@@ -403,15 +379,14 @@ pie <- tribble(
   coord_polar("y", start=0) +
   scale_fill_viridis_d() +
   labs(title = "Pie Chart") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 25, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none",
-        panel.grid = element_blank())
+  capture_theme() +
+  theme(plot.title = element_text(size = 25, hjust = 0.5),
+                legend.position = "none",
+        axis.line = element_blank(),
+                panel.grid = element_blank(),
+                axis.text = element_blank(),
+                axis.ticks = element_blank(),
+                axis.title = element_blank())
 
 doughnut <- tribble(
   ~colA, ~colB,
@@ -429,15 +404,14 @@ doughnut <- tribble(
   annotate(geom = 'text', x = -0.5, y = 0, label = "Number of posts: \nX posts",
            family = "GT Walsheim Pro",
            size = 6) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 25, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none",
-        panel.grid = element_blank())
+  capture_theme() +
+  theme(plot.title = element_text(size = 25, hjust = 0.5),
+                legend.position = "none",
+        axis.line = element_blank(),
+                panel.grid = element_blank(),
+                axis.text = element_blank(),
+                axis.ticks = element_blank(),
+                axis.title = element_blank())
 
 pie + doughnut
 ```
@@ -465,14 +439,14 @@ treemap %>%
                     family = "GT Walsheim Pro") +
   scale_fill_viridis_d(direction = -1)+
   labs(title = "Mentions per platform") +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
+  capture_theme() +
+  theme(plot.title = element_text(size = 25, hjust = 0.5),
+        legend.position = "none",
+        axis.line = element_blank(),
+        panel.grid = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        axis.title = element_blank(),
-        legend.position = "none",
-        panel.grid = element_blank())
+        axis.title = element_blank())
 ```
 
 ```{r gg-treemap-2, fig.caption = "A treemap showing part-to-whole relationship of social media mentions within the whole conversation using the size and colour of rectangles to encode values", fig.width=6}
@@ -494,14 +468,39 @@ treemap %>%
                     family = "GT Walsheim Pro") +
   scale_fill_brewer(palette = "YlGnBu") +
   labs(title = "Mentions per platform") +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
+  capture_theme() +
+  theme(plot.title = element_text(size = 25, hjust = 0.5),
+        legend.position = "none",
+        axis.line = element_blank(),
+        panel.grid = element_blank(),
         axis.text = element_blank(),
         axis.ticks = element_blank(),
-        axis.title = element_blank(),
+        axis.title = element_blank())
+
+treemap %>%
+  mutate(social_network = str_to_title(social_network)) %>% 
+  arrange(desc(n)) %>% 
+  mutate(social_network = reorder(social_network, n)) %>% 
+  ggplot(aes(area = n, fill = social_network,
+             label = paste(social_network, paste(n, "posts", sep = " "),
+                           paste(perc, "%", sep = ""),
+                           sep = "\n"))) +
+  geom_treemap() +
+  geom_treemap_text(colour = c(rep("white", 4),
+                               rep("black", 1)),
+                    place = "centre",
+                    size = 12,
+                    family = "GT Walsheim Pro") +
+  scale_fill_brewer(palette = "YlGnBu") +
+  labs(title = "Mentions per platform") +
+  capture_theme() +
+  theme(plot.title = element_text(size = 25, hjust = 0.5),
         legend.position = "none",
-        panel.grid = element_blank())
+        axis.line = element_blank(),
+        panel.grid = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank())
 ```
 
 ## Comparing sub-categories within categories 
@@ -553,14 +552,7 @@ tribble(
   scale_fill_manual(values = c(my.cols[5], "grey85", my.cols[1]),
                                labels = c("Positive", "Neutral", "Negative")) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
+  capture_theme()
 ```
 
 ### Interpretation
@@ -590,14 +582,7 @@ tribble(
   scale_fill_manual(values = c(my.cols[5], "grey85", my.cols[1]),
                                labels = c("Positive", "Neutral", "Negative")) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
+  capture_theme()
 ```
 
 To address the potential challenges mentioned above, we can scale our data to show proportions or percentages of posts with each sentiment per category, rather than raw volumes. This approach makes it much easier to compare the sentiment makeup of categories with lower volume. However, it's essential to note that scaling the data in this way may lead clients to overlook the fact that each bar represents vastly different volumes in reality.
@@ -622,14 +607,7 @@ normal_data %>%
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
+  capture_theme()
 ```
 
 ### Interpretation
@@ -644,7 +622,6 @@ set.seed(123)
 left_skewed_data <-   tibble(x = rnorm(1000, mean = 0.8, sd = 0.1)) %>% 
   filter(x <= 1)
 
-
 left_skewed_dist <- left_skewed_data %>%
   ggplot(aes(x = x)) +
   geom_histogram(fill = viridis_pal(option = "viridis")(1)) +
@@ -652,19 +629,11 @@ left_skewed_dist <- left_skewed_data %>%
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
+  capture_theme()
 
 # Generate random data with right-skewed distribution
 set.seed(123)
 right_skewed_data <- tibble(x = abs(rnorm(1000, mean = 0.2, sd = 0.1))) 
-
 
 right_skewed_dist <- right_skewed_data %>%
   ggplot(aes(x = x)) +
@@ -673,14 +642,7 @@ right_skewed_dist <- right_skewed_data %>%
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
+  capture_theme()
 
 # Generate random data with bimodal distribution
 set.seed(123)
@@ -695,15 +657,7 @@ bimodal_dist <- bimodal_data %>%
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
-
+  capture_theme()
 
 left_skewed_dist / right_skewed_dist / bimodal_dist 
 ```
@@ -812,14 +766,12 @@ umap_tib %>%
        colour = "Cluster",
        subtitle = "Colouring by cluster can help us identify regions of interest") +
   coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         axis.text = element_blank(),
         axis.title = element_blank(),
-        panel.border = element_blank(),
+        axis.line = element_blank(),
         panel.grid = element_blank(),
         axis.ticks = element_blank())
 ```
@@ -869,16 +821,14 @@ plots <- purrr::map2(group_names, color_palette,
       x = "",
       y = ""
     ) +
-    theme(
-      text = element_text(family = "GT Walsheim Pro"),
-      plot.title = element_text(size = 15, hjust = 0.5),
-      legend.position = "none",
-      axis.text = element_blank(),
-      axis.title = element_blank(),
-      panel.border = element_blank(),
-      panel.grid = element_blank(),
-      axis.ticks = element_blank()
-    )
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.line = element_blank(),
+        panel.grid = element_blank(),
+        axis.ticks = element_blank())
 )
 
 patchwork::wrap_plots(plots, nrow = 2) +
@@ -906,14 +856,12 @@ umap_tib %>%
   labs(title = "Monochromatic UMAP",
        subtitle = "Single colour helps accentuate regions of high densities") +
   coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         axis.text = element_blank(),
         axis.title = element_blank(),
-        panel.border = element_blank(),
+        axis.line = element_blank(),
         panel.grid = element_blank(),
         axis.ticks = element_blank())
 ```
@@ -972,17 +920,13 @@ data %>%
                                barwidth = 22,
                                barheight = 0.8)) +
   coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        panel.grid = element_blank(),
+  capture_theme() +
+  theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.position = "bottom",
         legend.text = element_text(size = 7),
         legend.title = element_text(hjust = 0.5),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
+        axis.line = element_blank())
 ```
 
 ```{r gg-heatmap-3, fig.cap = 'Example heatmap showing branded conversation within different topics'}
@@ -1020,17 +964,13 @@ data %>%
                                barwidth = 22,
                                barheight = 0.8)) +
   coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        panel.grid = element_blank(),
+  capture_theme() +
+  theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.position = "bottom",
         legend.text = element_text(size = 7),
         legend.title = element_text(hjust = 0.5),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
+        axis.line = element_blank())
 ```
 
 ### Interpretation
@@ -1076,17 +1016,13 @@ data.frame(x, hour, day) %>%
                                barwidth = 10,
                                barheight = 0.8)) +
   coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        panel.grid = element_blank(),
+  capture_theme() +
+  theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.position = "bottom",
         legend.text = element_text(size = 7),
         legend.title = element_text(hjust = 0.5),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
+        axis.line = element_blank())
 ```
 
 ```{r gg-heatmap-2-v2, fig.cap = 'Example heatmap showing hourly social media brand mentions for each day of the week'}
@@ -1123,17 +1059,13 @@ data.frame(x, hour, day) %>%
                                barwidth = 10,
                                barheight = 0.8)) +
   coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        panel.grid = element_blank(),
+  capture_theme() +
+  theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.position = "bottom",
         legend.text = element_text(size = 7),
         legend.title = element_text(hjust = 0.5),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
+        axis.line = element_blank())
 ```
 
 ## Presenting precise numerical values
@@ -1528,15 +1460,9 @@ qual_bar <- tribble(
        subtitle = "Qualitative Palette") +
   scale_fill_manual(values = msft_cols) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
   scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
 seq_bar <- tribble(
@@ -1556,16 +1482,9 @@ seq_bar <- tribble(
        title = "Not ideal",
        subtitle = "Sequential Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
   scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
-                                     colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
 div_bar <- tribble(
@@ -1585,15 +1504,9 @@ div_bar <- tribble(
        title = "Bad",
        subtitle = "Divergent Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
   scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
 qual_bar + seq_bar + div_bar
@@ -1617,15 +1530,9 @@ qual_bar <- tribble(
        subtitle = "Qualitative Palette") +
   scale_fill_manual(values = msft_cols) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
   scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
 seq_bar <- tribble(
@@ -1646,16 +1553,9 @@ seq_bar <- tribble(
        title = "Not ideal",
        subtitle = "Sequential Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
   scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
-                                     colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
 div_bar <- tribble(
@@ -1675,15 +1575,9 @@ div_bar <- tribble(
        title = "Bad",
        subtitle = "Divergent Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
   scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
 qual_bar + seq_bar + div_bar
@@ -1713,16 +1607,9 @@ qual_bar <- tribble(
        subtitle = "Qualitative Palette") +
   scale_fill_manual(values = msft_cols) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
   scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
 seq_bar <- tribble(
@@ -1744,17 +1631,9 @@ seq_bar <- tribble(
        title = "Good",
        subtitle = "Sequential Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
   scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
-                                     colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
 div_bar <- tribble(
@@ -1776,16 +1655,9 @@ div_bar <- tribble(
        title = "Bad",
        subtitle = "Divergent Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
   scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
 qual_bar + seq_bar + div_bar
@@ -1811,16 +1683,9 @@ qual_bar <- tribble(
        subtitle = "Qualitative Palette") +
   scale_fill_manual(values = msft_cols) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
   scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
 seq_bar <- tribble(
@@ -1842,17 +1707,9 @@ seq_bar <- tribble(
        title = "Good",
        subtitle = "Sequential Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  scale_colour_distiller(palette = "YlGnBu") +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
-                                     colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
+  scale_colour_viridis_c() +
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
 div_bar <- tribble(
@@ -1874,16 +1731,9 @@ div_bar <- tribble(
        title = "Bad",
        subtitle = "Divergent Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
   scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
 qual_bar + seq_bar + div_bar
@@ -1915,15 +1765,12 @@ ggplot(aes(x, y, fill = factor(z))) +
                     guide = guide_legend(label.position = "bottom",
                                          nrow = 1)) +
   coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+  capture_theme() +
+  theme(panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(hjust = 0.5),
+        axis.line = element_blank(),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.8, "cm"),
         legend.position = "bottom",
@@ -1942,15 +1789,12 @@ ggplot(aes(x, y, fill = factor(z))) +
                        guide = guide_legend(label.position = "bottom",
                                             nrow = 1)) +
   coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+  capture_theme() +
+  theme(panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(hjust = 0.5),
+        axis.line = element_blank(),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.8, "cm"),
         legend.position = "bottom",
@@ -1969,15 +1813,12 @@ ggplot(aes(x, y, fill = factor(z))) +
                     guide = guide_legend(label.position = "bottom",
                                          nrow = 1)) +
   coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+  capture_theme() +
+  theme(panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(hjust = 0.5),
+        axis.line = element_blank(),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.8, "cm"),
         legend.position = "bottom",
@@ -2009,15 +1850,12 @@ ggplot(aes(x, y, fill = factor(z))) +
                     guide = guide_legend(label.position = "bottom",
                                          nrow = 1)) +
   coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+  capture_theme() +
+  theme(panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(hjust = 0.5),
+        axis.line = element_blank(),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.8, "cm"),
         legend.position = "bottom",
@@ -2039,15 +1877,12 @@ ggplot(aes(x, y, fill = factor(z))) +
                     guide = guide_legend(label.position = "bottom",
                                             nrow = 1)) +
   coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+  capture_theme() +
+  theme(panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(hjust = 0.5),
+        axis.line = element_blank(),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.8, "cm"),
         legend.position = "bottom",
@@ -2066,15 +1901,12 @@ ggplot(aes(x, y, fill = factor(z))) +
                     guide = guide_legend(label.position = "bottom",
                                          nrow = 1)) +
   coord_fixed() +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
+  capture_theme() +
+  theme(panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        legend.title = element_text(hjust = 0.5),
+        axis.line = element_blank(),
         plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.8, "cm"),
         legend.position = "bottom",
@@ -2109,15 +1941,8 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
                     guide = guide_legend(ncol = 1)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   coord_flip() +
-  theme_bw() +
-  scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.4, "cm"),
@@ -2136,15 +1961,8 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
   scale_fill_viridis_d(guide = guide_legend(ncol = 1)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   coord_flip() +
-  theme_bw() +
-  scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.4, "cm"),
@@ -2165,15 +1983,8 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
                     guide = guide_legend(ncol = 1)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   coord_flip() +
-  theme_bw() +
-  scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
         legend.key.width = unit(0.4, "cm"),
@@ -2204,19 +2015,11 @@ example %>%
        y = NULL,
        title = "Bar chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.line.y = element_blank(),
+  capture_theme() +
+  theme(axis.line.y = element_blank(),
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank(),
-        panel.grid = element_blank(),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
+        panel.grid = element_blank())
 ```
 
 As mentioned in the pie chart section (REF), adding labels is highly recommended for pie charts and donught charts:
@@ -2241,15 +2044,13 @@ pie <- tribble(
             size = 5,
             family = "GT Walsheim Pro") +
   labs(title = "Pie Chart") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_blank(),
+  capture_theme() +
+  theme(axis.text = element_blank(),
         axis.ticks = element_blank(),
         axis.title = element_blank(),
         legend.position = "none",
-        panel.grid = element_blank())
+        panel.grid = element_blank(),
+        axis.line = element_blank())
 
 doughnut <- tribble(
   ~colA, ~colB,
@@ -2274,15 +2075,13 @@ doughnut <- tribble(
             colour = "black",
             size = 5,
             family = "GT Walsheim Pro") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.text = element_blank(),
+  capture_theme() +
+  theme(axis.text = element_blank(),
         axis.ticks = element_blank(),
         axis.title = element_blank(),
         legend.position = "none",
-        panel.grid = element_blank())
+        panel.grid = element_blank(),
+        axis.line = element_blank())
 
 pie + doughnut
 ```
@@ -2318,14 +2117,7 @@ example %>%
        y = "Number of posts",
        title = "Line chart showing daily trend of three categories",
        colour = "Category") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
+  capture_theme()
 ```
 
 Notice how you have to keep looking between the plot and the legend to fully understand which line represents which category? 
@@ -2363,15 +2155,7 @@ example %>%
   labs(x = "Date",
        y = "Number of posts",
        title = "Line chart showing daily trend of three categories") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        legend.position = "none")
+  capture_theme()
 ```
 
 ## Gridlines and borders
@@ -2399,17 +2183,9 @@ bar_grid <- tribble(
        title = "Unnecessary",
        subtitle = "Unnecessary x-axis gridlines") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
-                                     colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        legend.position = "none")
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"))
 
 bar_no_grid <- tribble(
   ~colA, ~n, 
@@ -2427,18 +2203,10 @@ bar_no_grid <- tribble(
        title = "Good",
        subtitle = "x-axis gridlines removed") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
-        panel.border = element_blank(),
-        panel.grid.major.x = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        legend.position = "none")
+        panel.grid.major.x = element_blank())
 
 bar_grid + bar_no_grid
 ```
@@ -2466,18 +2234,10 @@ bar_no_lab <- tribble(
        title = "Unnecessary",
        subtitle = "y-axis gridlines don't add anything") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        panel.grid.major.x = element_blank(),
-        legend.position = "none")
+        panel.grid.major.x = element_blank())
 
 bar_lab <- tribble(
   ~colA, ~n, 
@@ -2500,19 +2260,10 @@ bar_lab <- tribble(
        title = "Good",
        subtitle = "Values on the plot provide us necessary info") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
-        panel.border = element_blank(),
-        panel.grid = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        legend.position = "none")
+        panel.grid = element_blank())
 
 bar_no_lab + bar_lab
 ```
@@ -2528,12 +2279,8 @@ plot_1 <- example %>%
   labs(x = "Date",
        y = "Number of posts",
        title = "Bad") +
-  theme_bw() +
-  scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "black"),
+  capture_theme() +
+  theme(axis.line = element_line(colour = "black"),
         axis.ticks = element_line(colour = "black"),
         panel.grid = element_line(colour = "black"))
 
@@ -2547,15 +2294,7 @@ plot_2 <- example %>%
   labs(x = "Date",
        y = "Number of posts",
        title = "Good") +
-  theme_bw() +
-  scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
+  capture_theme() 
 
 plot_1 + plot_2
 ```
@@ -2579,17 +2318,13 @@ plot_1 <- tribble(
        title = "Unnecessary",
        subtitle = "Border adds clutter") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         panel.border = element_rect(colour = "black",
+                                    fill = NA,
                                     size = 1),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        panel.grid.major.x = element_blank(),
-        legend.position = "none")
+        panel.grid.major.x = element_blank())
 
 plot_2 <- tribble(
   ~colA, ~n, 
@@ -2605,18 +2340,10 @@ plot_2 <- tribble(
        title = "Good",
        subtitle = "No border and just axes lines") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        panel.grid.major.x = element_blank(),
-        legend.position = "none")
+        panel.grid.major.x = element_blank())
 
 plot_1 + plot_2
 ```
@@ -2660,15 +2387,8 @@ line_busy <- example %>%
        y = "Number of posts",
        title = "Busy",
        colour = "Brand") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        legend.position = "none")
+  capture_theme() +
+  theme(legend.position = "none")
 
 seq_bar <- tribble(
   ~colA, ~n, 
@@ -2686,19 +2406,8 @@ seq_bar <- tribble(
        y = "Number of posts",
        title = "Busy") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  theme_bw() +
-  scale_colour_viridis_c() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
-                                     colour = "grey50"),
-        panel.border = element_blank(),
-        panel.grid.major.x = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        legend.position = "none")
+  capture_theme() +
+  theme(legend.position = "none")
 
 line_busy + seq_bar
 ```
@@ -2748,14 +2457,8 @@ line_nice <- example %>%
        y = "Number of posts",
        title = "Clean",
        colour = "Brand") +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        panel.border = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"))
+  capture_theme() +
+  theme(legend.position = "none")
 
 seq_bar <- tribble(
   ~colA, ~n, 
@@ -2776,18 +2479,9 @@ seq_bar <- tribble(
               keep_scales = T,
               use_direct_label = FALSE,
               unhighlighted_params = list(alpha = 1, fill = "grey80")) +
-  theme_bw() +
-  theme(text = element_text(family = "GT Walsheim Pro"),
-        plot.title = element_text(size = 15, hjust = 0.5),
-        plot.subtitle = element_text(hjust = 0.5,
-                                     colour = "grey50"),
-        panel.border = element_blank(),
-        panel.grid.major.x = element_blank(),
-        axis.line = element_line(colour = "grey20"),
-        axis.ticks = element_line(colour = "grey20"),
-        axis.text = element_text(colour = "grey30"),
-        axis.title = element_text(colour = "grey30"),
-        legend.position = "none")
+  capture_theme() +
+  theme(legend.position = "none")
+  theme(panel.grid.major.x = element_blank())
 
 line_nice + seq_bar
 ```
