@@ -2122,7 +2122,7 @@ example %>%
 
 Notice how you have to keep looking between the plot and the legend to fully understand which line represents which category? 
 
-When we plot the category label directly on the figure, this mental load is removed:
+When we plot the category label directly on the figure, the reader no longer needs to zig zag their eyes back and forth between the lines and the legend.
 
 ```{r gg-label, fig.cap = 'Line chart showing daily trend of three categories'}
 set.seed(1234)
