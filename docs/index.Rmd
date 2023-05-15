@@ -92,6 +92,19 @@ example <- ParseR::sprinklr_export %>%
 write_rds(example, "~/Documents/R/capture_cookbook/data/example.rds")
 ```
 
+```{r, eval = FALSE, echo = TRUE}
+df %>% 
+  mutate(x_axis_variable = floor_date(date_variable,
+                                   unit = "day")) %>% 
+  ggplot(aes(x = x_axis_variable, y = y_axis_variable)) +
+  geom_line(colour = viridis_pal(option = "viridis")(1),
+            linewidth = 1) +
+  labs(x = "Date",
+       y = "Number of posts",
+       title = "Line chart showing daily trend") +
+  capture_theme()
+```
+
 ```{r gg-line, fig.cap = 'Line chart showing daily trend'}
 example <- read_rds("~/Documents/R/capture_cookbook/data/example.rds")
 
@@ -116,6 +129,20 @@ It's important to note that when creating trend plots, we typically need to grou
 
 In the example above, we binned the data on a daily basis. However, if we examine the plot below, which represents the data at a weekly scale, we can see how the view of volume fluctuations becomes less detailed.
 
+```{r, eval = FALSE, echo = TRUE}
+df %>% 
+  mutate(x_axis_variable = floor_date(date_variable,
+                                   unit = "week")) %>% 
+  ggplot(aes(x = x_axis_variable, y = y_axis_variable)) +
+  geom_line(colour = viridis_pal(option = "viridis")(1),
+            linewidth = 1) +
+  labs(x = "Date",
+       y = "Number of posts",
+       title = "Line chart showing daily trend") +
+  capture_theme()
+```
+
+
 ```{r gg-line-week, fig.cap = 'Line chart showing weekly trend'}
 example %>% 
   mutate(created_time = floor_date(created_time,
@@ -134,6 +161,20 @@ example %>%
 It's worth noting that we *can* also present the same data using a bar chart instead of a line chart. The interpretation remains the same, but bar charts may not be as effective at displaying trends. This is because the bars are discrete rather than continuous, and they emphasise the magnitude of individual intervals rather than the overall trend.
 
 Therefore, bar charts can be thought of as more useful when the absolute value of a data point is relevant for understanding a trend, or when we want to supplement an existing line chart with additional information (for example, representing volume alongside the proportion already plotted with time).
+
+```{r, eval = FALSE, echo = TRUE}
+df %>% 
+  mutate(x_axis_variable = floor_date(date_variable,
+                                   unit = "day")) %>% 
+  count(x_axis_variable) %>% 
+  ggplot(aes(x = created_time, y = n)) +
+  geom_col(fill = viridis_pal(option = "viridis")(1)) +
+  labs(x = "Date",
+       y = "Number of posts",
+       title = "Bar chart showing weekly trend") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  capture_theme()
+```
 
 ```{r gg-bar-trend, fig.cap = 'Bar chart showing weekly trend'}
 example %>% 
