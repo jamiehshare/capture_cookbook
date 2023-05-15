@@ -960,10 +960,10 @@ The plot above is an example of this two-dimensional 'landscape' that is produce
 # Define the number of groups
 num_groups <- length(group_names)
 
-# Generate a color palette using viridis_pal()
-color_palette <- viridis_pal()(num_groups)
+# Generate a colour palette using viridis_pal()
+colour_palette <- viridis_pal()(num_groups)
 
-plots <- purrr::map2(group_names, color_palette,
+plots <- purrr::map2(group_names, colour_palette,
   ~ umap_tib %>%
     dplyr::slice_sample(n = nrow(umap_tib)) %>%
     dplyr::mutate(
@@ -980,7 +980,7 @@ plots <- purrr::map2(group_names, color_palette,
                alpha = 1, shape = 16,
                stroke = 0,
                size = 2) +
-    scale_colour_manual(values = .y) +  # Use manual color palette
+    scale_colour_manual(values = .y) +  # Use manual colour palette
     coord_fixed() +
     theme_bw() +
     ggplot2::labs(
