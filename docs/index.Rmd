@@ -6,6 +6,7 @@ output:
   rmdformats::readthedown:
     css: custom.css
     toc_depth: 2
+    code_folding: hide
     use_bookdown: true
 ---
 
@@ -69,7 +70,7 @@ The BBC has provided an excellent summary of this topic in their own graphics co
 
 >A reference manual, rather than a tutorial, it might not tell you how to make your very first chart in R, but is a useful collection of little tips and tricks.
 
-In line with this, this document will not teach you R or the technical aspects of creating these plots. Instead, its primary goal is to help you grasp the purpose and appropriate usage of visualisations in our work. By doing so, it empowers everyone to confidently explain the key insights, strengths, and weaknesses conveyed by different types of plots.
+In line with this, this document will not teach you R or the technical aspects of creating these plots. Whilst there is some code provided for some plots- showing 'how the plots are made', there is minimum explanation of the code in the hope of avoiding too much boilerplate and to try and make this document as coding language/software-agnostic as possible. Instead, its primary goal is to help you grasp the purpose and appropriate usage of visualisations in our work. By doing so, it empowers everyone to confidently explain the key insights, strengths, and weaknesses conveyed by different types of plots. Once the building blocks of this are in place, it is much easier to apply this knowledge to different coding languages and software.
 
 The cookbook begins by introducing various types of visualisations, each serving a specific purpose based on the type of task you want to perform. This approach is adopted because there are often multiple ways to present the same data, and each visualisation has its own merits and drawbacks. Within this section, you will find examples of the business questions we commonly encounter, accompanied by appropriate visualisations and explanations for interpreting them.
 
@@ -142,7 +143,6 @@ df %>%
   capture_theme()
 ```
 
-
 ```{r gg-line-week, fig.cap = 'Line chart showing weekly trend'}
 example %>% 
   mutate(created_time = floor_date(created_time,
@@ -167,7 +167,7 @@ df %>%
   mutate(x_axis_variable = floor_date(date_variable,
                                    unit = "day")) %>% 
   count(x_axis_variable) %>% 
-  ggplot(aes(x = created_time, y = n)) +
+  ggplot(aes(x = x_axis_variable, y = n)) +
   geom_col(fill = viridis_pal(option = "viridis")(1)) +
   labs(x = "Date",
        y = "Number of posts",
@@ -196,6 +196,18 @@ It is often necessary to compare different groups or categories in relation of a
 
 ### Example
 
+```{r, eval = FALSE, echo = TRUE}
+df %>% 
+  count(x_axis_variable) %>% 
+  ggplot(aes(x = x_axis_variable, y = n)) +
+  geom_col(fill = viridis_pal(option = "viridis")(1)) +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Bar chart showing the number of messages per category") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  capture_theme()
+```
+
 ```{r gg-bar, fig.cap = 'Bar chart showing the number of messages per category'}
 example %>% 
   count(message_type_2) %>% 
@@ -214,6 +226,18 @@ Similar to the aforementioned trend charts, interpreting a classic bar chart is 
 
 One such modification involves reordering the categories on the x-axis. We may choose to arrange them alphabetically if that order has been used previously in the project. Alternatively, it can be useful to display the bars in descending order based on the y-axis value, in this case, "Number of posts."
 
+```{r, eval = FALSE, echo = TRUE}
+df %>% 
+  count(x_axis_variable) %>% 
+  ggplot(aes(x = reorder(x_axis_variable, desc(n), y = n)) +
+  geom_col(fill = viridis_pal(option = "viridis")(1)) +
+  labs(x = "Message Type",
+       y = "Number of posts",
+       title = "Bar chart showing the number of messages per category (ordered)") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  capture_theme()
+```
+
 ```{r gg-bar-order, fig.cap = 'Bar chart showing the number of messages per category'}
 example %>% 
   count(message_type_2) %>% 
@@ -221,7 +245,7 @@ example %>%
   geom_col(fill = viridis_pal(option = "viridis")(1)) +
   labs(x = "Message Type",
        y = "Number of posts",
-       title = "Bar chart showing the number of messages per category") +
+       title = "Bar chart showing the number of messages per category (ordered)") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   capture_theme()
 ```
@@ -262,6 +286,22 @@ We observe an example of the Moiré effect in the bar chart above. It manifests 
 
 In order to address this challenge, we can employ lollipop charts to present the data in a different way:
 
+```{r, eval = FALSE, echo = TRUE}
+df %>% 
+  ggplot(aes(x = x_axis_variable, y = y_axis_variable)) +
+  geom_segment(aes(x = x_axis_variable, xend = x_axis_variable,
+                   y = 0, yend = y_axis_variable),
+               col = "grey50", 
+               size = 0.8) +
+  geom_point(size = 6,
+             col = viridis_pal(option = "viridis")(1)) +
+  labs(x = "Category",
+       y = "Number of posts",
+       title = "Lollipip chart showing the number of messages per category") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  capture_theme()
+```
+
 ```{r gg-lollipop, fig.cap = 'Lollipop chart showing the number of messages per category'}
 
 tribble(
@@ -281,7 +321,7 @@ tribble(
   geom_segment(aes(x = colA, xend = colA,
                    y = 0, yend = colB),
                col = "grey50", 
-               size = 0.5) +
+               size = 0.8) +
   geom_point(size = 6,
              col = viridis_pal(option = "viridis")(1)) +
   labs(x = "Category",
@@ -401,7 +441,7 @@ pie <- tribble(
 bar + pie
 ```
 
-This limitation can be somewhat mitigated by directly adding values onto the plot, but we will delve into that aspect later in this cookbook
+This limitation can be somewhat mitigated by directly adding values onto the plot, but we will delve into that aspect [later in this cookbook](#values)
 
 #### Doughnut Charts
 
@@ -461,6 +501,31 @@ pie + doughnut
 
 An additional method of comparing part-to-whole relationships is through treemaps. These represent different categories as rectangles, where the sizes of the rectangles represent the proportions or volumes of different categories within a larger category. The total plot volume (i.e. the rectangle made up of all categories together) represents the total volume of the category of interest (in the case below, total mentions in 5 different platforms). We can compare the sizes of the rectangles to understand the relative volumes or proportions of the different categories- larger rectangles represent topics with higher volumes or proportions, while smaller rectangles represent topics with lower volumes or proportions. Note the use of a sequential colour scale (see the [colour section](#colours) below) to help guide the eye to the underlying values.
 
+```{r, eval = FALSE, echo = TRUE}
+df %>%
+  ggplot(aes(area = number_posts, fill = social_network,
+             label = paste(social_network, paste(number_posts, "posts", sep = " "),
+                           paste(perc, "%", sep = ""),
+                           sep = "\n"))) +
+  geom_treemap() +
+  geom_treemap_text(colour = c(rep("white", 4),
+                               rep("black", 1)),
+                    place = "centre",
+                    size = 12,
+                    family = "GT Walsheim Pro") +
+  scale_fill_viridis_d(direction = -1)+
+  labs(title = "Mentions per platform") +
+  capture_theme() +
+  theme(plot.title = element_text(size = 25, hjust = 0.5),
+        legend.position = "none",
+        axis.line = element_blank(),
+        panel.grid = element_blank(),
+        axis.text = element_blank(),
+        axis.ticks = element_blank(),
+        axis.title = element_blank())
+```
+
+
 ```{r gg-treemap, fig.caption = "A treemap showing part-to-whole relationship of social media mentions within the whole conversation using the size and colour of rectangles to encode values", fig.width=6}
 treemap <- read_rds("~/Documents/R/capture_cookbook/data/treemap.rds")
 
@@ -481,8 +546,7 @@ treemap %>%
   scale_fill_viridis_d(direction = -1)+
   labs(title = "Mentions per platform") +
   capture_theme() +
-  theme(plot.title = element_text(size = 25, hjust = 0.5),
-        legend.position = "none",
+  theme(legend.position = "none",
         axis.line = element_blank(),
         panel.grid = element_blank(),
         axis.text = element_blank(),
@@ -510,33 +574,7 @@ treemap %>%
   scale_fill_brewer(palette = "YlGnBu") +
   labs(title = "Mentions per platform") +
   capture_theme() +
-  theme(plot.title = element_text(size = 25, hjust = 0.5),
-        legend.position = "none",
-        axis.line = element_blank(),
-        panel.grid = element_blank(),
-        axis.text = element_blank(),
-        axis.ticks = element_blank(),
-        axis.title = element_blank())
-
-treemap %>%
-  mutate(social_network = str_to_title(social_network)) %>% 
-  arrange(desc(n)) %>% 
-  mutate(social_network = reorder(social_network, n)) %>% 
-  ggplot(aes(area = n, fill = social_network,
-             label = paste(social_network, paste(n, "posts", sep = " "),
-                           paste(perc, "%", sep = ""),
-                           sep = "\n"))) +
-  geom_treemap() +
-  geom_treemap_text(colour = c(rep("white", 4),
-                               rep("black", 1)),
-                    place = "centre",
-                    size = 12,
-                    family = "GT Walsheim Pro") +
-  scale_fill_brewer(palette = "YlGnBu") +
-  labs(title = "Mentions per platform") +
-  capture_theme() +
-  theme(plot.title = element_text(size = 25, hjust = 0.5),
-        legend.position = "none",
+  theme(legend.position = "none",
         axis.line = element_blank(),
         panel.grid = element_blank(),
         axis.text = element_blank(),
@@ -553,6 +591,22 @@ In the context of our marketing company, stacked bar charts can help us answer i
 A key business question that may be answered with this is to visualise how sentiment varies between between topics or brands, or any other categorical variable of interest.
 
 ### Example
+
+```{r, eval = FALSE, echo = TRUE}
+my.cols <- RColorBrewer::brewer.pal(5, "PRGn")
+
+df %>% 
+  ggplot(aes(x = category, y = count_of_sentiment, fill = sentiment)) +
+  geom_bar(position = "stack", stat = "identity") +
+  labs(x = "Category",
+       y = "Number of posts classified per topic",
+       fill = "Sentiment",
+       title = "Stacked bar chart showing sentiment volume per category") +
+  scale_fill_manual(values = c(my.cols[5], "grey85", my.cols[1]),
+                               labels = c("Positive", "Neutral", "Negative")) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  capture_theme()
+```
 
 ```{r gg-stacked, fig.cap = 'Stacked bar chart showing sentiment volume per category'}
 my.cols <- RColorBrewer::brewer.pal(5, "PRGn")
@@ -602,6 +656,22 @@ Interpreting stacked bar charts requires careful consideration, especially when 
 
 Comparing stacks between different categories can also be challenging. While it's evident which category contains the largest number of negative posts in the baseline stack (purple), it becomes more difficult to compare the neutral and positive stacks since they don't share the same baseline (ask yourself, are there more neutral posts in category C or D- it's not clear is it?). Being mindful of this limitation is crucial. Finally, stacked bar charts can be particularly challenging to interpret when the total bar size varies significantly. In such cases, the individual stacks can become squashed, making it harder to discern the relative proportions accurately.
 
+```{r, eval = FALSE, echo = TRUE}
+my.cols <- RColorBrewer::brewer.pal(5, "PRGn")
+
+df %>% 
+  ggplot(aes(x = category, y = percentage_of_sentiment, fill = sentiment)) +
+  geom_bar(position = "stack", stat = "identity") +
+  labs(x = "Category",
+       y = "Percentage of posts classified per topic",
+       fill = "Sentiment",
+       title = "Stacked bar chart showing sentiment percentage per category") +
+  scale_fill_manual(values = c(my.cols[5], "grey85", my.cols[1]),
+                               labels = c("Positive", "Neutral", "Negative")) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  capture_theme()
+```
+
 ```{r gg-stacked-perc, fig.cap = 'Stacked bar chart showing sentiment percentage per category'}
 tribble(
   ~colA, ~pos, ~neu, ~neg,
@@ -635,6 +705,17 @@ To navigate this potential pitfall, it is crucial to provide clear explanations 
 Sometimes we will want to understand the distribution of a **continuous variable** in our data to gain insights. For instance, if we have calculated valence using the ParseR package, we might want to examine the distribution. Although these types of visualisations are typically used for exploratory data analysis (EDA) rather than client presentations, it is still an extremely powerful and useful string to have in your data exploration bow.
 
 ### Example
+
+```{r, eval = FALSE, echo = TRUE}
+df %>%
+  ggplot(aes(x = continuous_variable)) +
+  geom_histogram(fill = viridis_pal(option = "viridis")(1)) +
+  labs(title = "Histogram showing the (normal) distribution of sentiment") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  labs(x = "Sentiment Score") +
+  lims(x = c(0, 1)) +
+  capture_theme()
+```
 
 ```{r gg-hist, fig.cap = 'Histogram showing the (normal) distribution of sentiment'}
 # Generate sample data for normal distribution
@@ -713,6 +794,20 @@ N.B. The term *bi*-gram refers to a sequence of two adjacent terms. If we were t
 
 ### Example
 
+```{r, eval = FALSE, echo = TRUE}
+ngram_df <- df %>%
+  ParseR::count_ngram(text_var = message, 
+                      n = 2, 
+                      top_n = 25,
+                      clean_text = TRUE,
+                      remove_stops = TRUE) 
+
+ngram_df %>% 
+  purrr::pluck("viz") %>%
+  ParseR::viz_ngram(emphasis = TRUE)
+```
+
+
 ```{r, eval=FALSE}
 # Generate a sample
 set.seed(1)
@@ -750,6 +845,16 @@ For a more detailed overview of bigrams and more specific business-specific inte
 Often we will be interested in comparing language use between groups/categories. These categories could be audiences, posts of differing sentiment, posts from different quarters etc.If we can classify different posts into distinct groups, we can compare language.
 
 ### Example
+
+```{r, eval = FALSE, echo = TRUE}
+wlos <- ParseR::calculate_wlos(df, 
+                               topic_var = gender,
+                               text_var = message,
+                               top_n = 30)
+
+wlos$viz
+```
+
 
 ```{r gg-wlo, eval=FALSE, fig.cap = 'Weighted Log Odds plots showing different word usage between two categories- Male and Female'}
 example3 <- example %>% 
@@ -794,6 +899,27 @@ We are often tasked with capturing a wide array of conversations on various topi
 
 ### Example
 
+```{r, eval = FALSE, echo = TRUE}
+df %>% 
+  ggplot(aes(x = V1, y = V2, colour = factor(cluster))) +
+  geom_point(alpha = 0.5, shape = 16,
+             stroke = 0,
+             size = 2) +
+  scale_colour_viridis_d() +
+  labs(title = "UMAP with clusters coloured",
+       colour = "Cluster",
+       subtitle = "Colouring by cluster can help us identify regions of interest") +
+  coord_fixed() +
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.line = element_blank(),
+        panel.grid = element_blank(),
+        axis.ticks = element_blank())
+```
+
 ```{r gg-umap-1, fig.cap = "UMAP with different clusters mapped to colour"}
 umap_tib <- read_rds("~/Documents/R/capture_cookbook/data/umap.rds")
 
@@ -819,7 +945,7 @@ umap_tib %>%
 
 ### Interpretation
 
-*Please note that this is a very high level overview of UMAP. As explained previously, the purpose of this Cookbook is not to get a thorough understanding of statistics and Data Science, but rather empower solid data visualisation principles and understanding from an interpretation perspective. For a more thorough overview of UMAP please see REF*
+*Please note that this is a very high level overview of UMAP. As explained previously, the purpose of this Cookbook is not to get a thorough understanding of statistics and Data Science, but rather empower solid data visualisation principles and understanding from an interpretation perspective*
 
 When applying UMAP to social media mentions, the technique projects the data into a lower-dimensional space, typically two dimensions, while preserving the underlying structure of the conversations. Each data point represents a post, and their proximity to each other on the UMAP plot indicates similarity in the context or content of the conversations (i.e. semantic similarity).
 
@@ -887,6 +1013,27 @@ UMAP visualizations also highlight outliers or mentions that are far apart from 
 
 The density of points in certain areas of the UMAP plot can indicate the volume of conversations or the prominence of specific themes. Areas with dense clusters may represent highly active or popular discussions, while sparser regions could indicate less popular or peripheral topics. To identify density on a UMAP, it is mostly appropriate to plot using a monochromatic colour palette, as otherwise our eye gets distracted by colour:
 
+```{r, eval = FALSE, echo = TRUE}
+df %>% 
+  ggplot(aes(x = V1, y = V2)) +
+  geom_point(alpha = 0.5, shape = 16,
+             stroke = 0,
+             size = 2,
+             colour = viridis_pal(option = "viridis")(1)) +
+  labs(title = "Monochromatic UMAP",
+       subtitle = "Single colour helps accentuate regions of high densities") +
+  coord_fixed() +
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5,
+                                     colour = "grey50"),
+        axis.text = element_blank(),
+        axis.title = element_blank(),
+        axis.line = element_blank(),
+        panel.grid = element_blank(),
+        axis.ticks = element_blank())
+```
+
+
 ```{r gg-umap-3, fig.cap = "UMAP presented with single colour"}
 umap_tib %>% 
   ggplot(aes(x = V1, y = V2)) +
@@ -926,6 +1073,31 @@ Heatmaps are powerful visualisations that use colours to help us identify patter
 For instance, heatmaps can be utilized to determine the topics in which certain brands are mentioned more frequently, or to identify specific time periods when discussions are more intense.
 
 ### Example
+
+```{r, eval = FALSE, echo = TRUE}
+df %>% 
+  ggplot(aes(x_axis_category, y_axis_category, fill = fill_variable)) + 
+  geom_tile() +
+  labs(x = "Brand",
+       y = NULL,
+       fill = "Percentage of Topic conversation that includes each Brand",
+       title = "Topic x Brand Heatmap") +
+  scale_fill_viridis_c(direction = -1,
+                       labels = percent) +
+  guides(fill = guide_colourbar(title.position = 'top',
+                               direction = "horizontal",
+                               title.hjust = .5,
+                               barwidth = 22,
+                               barheight = 0.8)) +
+  coord_fixed() +
+  capture_theme() +
+  theme(panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "bottom",
+        legend.text = element_text(size = 7),
+        legend.title = element_text(hjust = 0.5),
+        axis.line = element_blank())
+```
 
 ```{r gg-heatmap, fig.cap = 'Example heatmap showing branded conversation within different topics'}
 x <- LETTERS[1:6]
@@ -2036,11 +2208,31 @@ qual_likert + seq_likert + div_likert
 ```
 
 
-## Adding values to plot directly
+## Adding values to plot directly {#values}
 
 Sometimes we might want a really clean looking plot, or fully transparency of the exact value being visualised is paramount. 
 
 In this case, also including the raw values directly onto a figure can be extremely useful. Here we take the same bar chart we introduced earlier in the Cookbook but include the specific values that each of our bars represents as a label. Because we include these values, we can also remove our y axis as well as any plot gridlines as they no longer help us discern more information from the plot. 
+
+```{r, eval = FALSE, echo = TRUE}
+df %>%
+  ggplot(aes(x = x_axis_variable, y = y_axis_variable)) +
+  geom_col(fill = viridis_pal(option = "viridis")(1)) +
+  geom_text(aes(label = y_axis_variable), 
+            vjust = 1.5,
+            colour = "white",
+            size = 4,
+            family = "GT Walsheim Pro") +
+  labs(x = "Message Type",
+       y = NULL,
+       title = "Bar chart showing the number of messages per category") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  capture_theme() +
+  theme(axis.line.y = element_blank(),
+        axis.text.y = element_blank(),
+        axis.ticks.y = element_blank(),
+        panel.grid = element_blank())
+```
 
 ```{r gg-value, fig.cap = 'Bar chart showing the number of messages per category'}
 example %>% 
@@ -2063,7 +2255,7 @@ example %>%
         panel.grid = element_blank())
 ```
 
-As mentioned in the [pie chart section](#piechart), adding labels is highly recommended for pie charts and donught charts:
+As mentioned in the [pie chart section](#piechart), adding labels is highly recommended for pie charts and doughnut charts:
 
 ```{r gg-value-2, fig.cap = 'Comparison between a Pie Chart and a Doughnut Chart showing the same data'}
 pie <- tribble(
@@ -2165,6 +2357,25 @@ Notice how you have to keep looking between the plot and the legend to fully und
 
 When we plot the category label directly on the figure, the reader no longer needs to zig zag their eyes back and forth between the lines and the legend.
 
+```{r, eval = FALSE, echo = TRUE}
+df %>%
+  ggplot(aes(x = x_axis_variable, y = y_axis_variable, colour = category)) +
+  geom_line(linewidth = 1) +
+  scale_colour_viridis_d(direction = -1) +
+  geom_text(aes(label = label, colour = label),
+            nudge_x = 1.5,
+            vjust = 0.5,
+            na.rm = TRUE,
+            family = "GT Walsheim Pro",
+            size = 5) +
+  labs(x = "Date",
+       y = "Number of posts",
+       title = "Line chart showing daily trend of three categories") +
+  capture_theme() +
+  theme(legend.position = "none")
+```
+
+
 ```{r gg-label, fig.cap = 'Line chart showing daily trend of three categories'}
 set.seed(1234)
 example %>% 
@@ -2188,7 +2399,7 @@ example %>%
                                  viridis_pal(option = "viridis")(10)[9])) +
   geom_text(aes(label = label, colour = label),
             nudge_x = 1.5,
-            vjust = -0.1,
+            vjust = 0.5,
             na.rm = TRUE,
             family = "GT Walsheim Pro",
             size = 5) +
@@ -2208,6 +2419,12 @@ With gridlines the advice should be:
 
 * Gridlines that run perpendicular to the variable of interest are the most useful
 * We do not need gridlines that go from the x axis on a bar chart where the x axis is a category (the bars themselves guide our eye the same way a gridline would).
+
+```{r, eval = FALSE, echo = TRUE}
+# Add the below code to the theme() argument of your ggplot
+theme(panel.grid.major.x = element_blank())
+```
+
 ```{r gg-grid, fig.height = 3, fig.cap = 'Remove x axis gridlines when displaying categorical bdata'}
 bar_grid <- tribble(
   ~colA, ~n, 
@@ -2254,6 +2471,12 @@ bar_grid + bar_no_grid
 ```
 
 * When the data values are specifically displayed on the chart (as in Figure \@ref(fig:gg-value)) then we do not need gridlines to help interpret these values.
+
+```{r, eval = FALSE, echo = TRUE}
+# Add the below code to the theme() argument of your ggplot
+theme(panel.grid = element_blank())
+```
+
 ```{r gg-grid-2, fig.height = 3, fig.cap = 'Remove x axis gridlines when displaying categorical bdata'}
 bar_no_lab <- tribble(
   ~colA, ~n, 
@@ -2310,6 +2533,12 @@ bar_lab <- tribble(
 bar_no_lab + bar_lab
 ```
 * Gridlines should not be the same colour as the axis lines or font. A light grey balances utility and overpowering the plot. 
+```{r, eval = FALSE, echo = TRUE}
+## This is the default aesthetics when using the capture_theme() function
+... +
+  capture_theme()
+```
+
 ```{r gg-grid-col, fig.cap = 'The difference gridline colours make', fig.height = 3}
 plot_1 <- example %>% 
   mutate(created_time = floor_date(created_time,
@@ -2344,7 +2573,23 @@ plot_1 + plot_2
 The advice surrounding borders:
 
 * If the plot you are making is faceted (i.e. made of up of lots of little plots as in the case of WLO), then a border should be included around each plot to clearly show which data and information in contained in each individual plot.
-* If the plot is stand alone, but requires axis, then only the axes of interest (normally x and y axes) should be drawn, with no outer border.
+* If the plot is stand alone, but requires axes, then only the axes of interest (normally x and y axes) should be drawn, with no outer border.
+```{r, eval = FALSE, echo = TRUE}
+## To have a border add the below code to the theme() argument of your ggplot
+... +
+  theme(panel.border = element_rect(colour = "black",
+                                    fill = NA,
+                                    size = 1))
+
+## No border, but axis lines included is the default aesthetics when using the capture_theme() function
+... +
+  capture_theme()
+
+## To have border or axis lines add the below code to the theme() argument of your ggplot
+... +
+  theme(panel.border = element_blank(),
+        axis.line = element_blank())
+```
 ```{r gg-border, fig.height = 3, fig.cap = "Don't use borders for stand alone plots"}
 plot_1 <- tribble(
   ~colA, ~n, 
@@ -2419,11 +2664,6 @@ line_busy <- example %>%
   geom_line(aes(colour = name),
             linewidth = 1) +
   scale_colour_manual(values = msft_cols) +
-  # scale_colour_manual(values = c(viridis_pal(option = "viridis")(1),
-  #                                viridis_pal(option = "viridis")(15)[4],
-  #                                viridis_pal(option = "viridis")(15)[7],
-  #                                viridis_pal(option = "viridis")(15)[11],
-  #                                viridis_pal(option = "viridis")(100)[97])) +
   lims(x = c(as_date("2018-10-15"), as_date("2018-11-03"))) +
   labs(x = "Date",
        y = "Number of posts",
@@ -2458,6 +2698,46 @@ Imagine we are visualising some metric across different brands, such as in the p
 
 To address this issue, we actually want to make grey the most common colour of our chart! By assigning grey to less important elements, we create a contrast that makes our highlighted colours stand out even more. To align with our narrative, we can highlight the key element in each plot that corresponds to the most important brand. This approach significantly enhances clarity and enables viewers to quickly identify the relevant data points related to the key brand under consideration.
 
+```{r, eval = FALSE, echo = TRUE}
+## Line chart
+df %>%
+  ggplot(aes(x = x_axis_variable, y = y_axis_variable, colour = category)) +
+  geom_line(linewidth = 1) +
+  scale_colour_manual(values = msft_cols) +
+  gghighlight(name == "Brand C", 
+              keep_scales = T,
+              unhighlighted_params = list(alpha = 1, 
+                                          fill = "grey80", 
+                                          linewidth = 0.8),
+              label_params = list(label.size=NA,
+                                  nudge_x = 1,
+                                  nudge_y = -2,
+                                  family = "GT Walsheim Pro")) +
+  labs(x = "Date",
+       y = "Number of posts",
+       title = "Clean",
+       colour = "Brand") +
+  capture_theme() +
+  theme(legend.position = "none")
+
+## Bar chart
+df %>% 
+  ggplot(aes(x = x_axis_variable, y = y_axis_variable, fill = x_axis_variable)) +
+  geom_col() +
+  scale_fill_manual(values = msft_cols) +
+  labs(x = "Brand",
+       y = "Number of posts",
+       title = "Clean") +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  gghighlight(x_axis_variable == "Brand C", 
+              keep_scales = T,
+              use_direct_label = FALSE,
+              unhighlighted_params = list(alpha = 1, fill = "grey80")) +
+  capture_theme() +
+  theme(legend.position = "none",
+        panel.grid.major.x = element_blank())
+```
+
 ```{r gg-highlight-good, fig.height=3}
 set.seed(1234)
 line_nice <- example %>% 
@@ -2480,11 +2760,6 @@ line_nice <- example %>%
   geom_line(aes(colour = name),
             linewidth = 1) +
   scale_colour_manual(values = msft_cols) +
-  # scale_colour_manual(values = c(viridis_pal(option = "viridis")(1),
-  #                                viridis_pal(option = "viridis")(15)[4],
-  #                                viridis_pal(option = "viridis")(15)[7],
-  #                                viridis_pal(option = "viridis")(15)[11],
-  #                                viridis_pal(option = "viridis")(100)[97])) +
   gghighlight(name == "Brand C", 
               keep_scales = T,
               unhighlighted_params = list(alpha = 1, 
@@ -2522,8 +2797,8 @@ seq_bar <- tribble(
               use_direct_label = FALSE,
               unhighlighted_params = list(alpha = 1, fill = "grey80")) +
   capture_theme() +
-  theme(legend.position = "none")
-  theme(panel.grid.major.x = element_blank())
+  theme(legend.position = "none",
+        panel.grid.major.x = element_blank())
 
 line_nice + seq_bar
 ```
