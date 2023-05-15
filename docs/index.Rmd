@@ -969,7 +969,7 @@ data %>%
         legend.title = element_text(hjust = 0.5),
         axis.line = element_blank())
 ```
-
+ **Note, for a bunch of plots I've also created the same plot but with a more 'obvious' sequential colour palette. Just testing to see whether some plots need this "Yellow, Green, Blue" palette for a clearer interpretation of both saturation and hue changing with values**
 ```{r gg-heatmap-3, fig.cap = 'Example heatmap showing branded conversation within different topics'}
 x <- LETTERS[1:6]
 y <- paste0("Topic ", seq(1, 5))
