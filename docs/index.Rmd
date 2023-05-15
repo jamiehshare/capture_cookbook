@@ -710,7 +710,7 @@ Sometimes we will want to understand the distribution of a **continuous variable
 df %>%
   ggplot(aes(x = continuous_variable)) +
   geom_histogram(fill = viridis_pal(option = "viridis")(1)) +
-  labs(title = "Histogram showing the (normal) distribution of sentiment") +
+  labs(title = "Histogram showing a (normal) distribution of sentiment") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
@@ -725,7 +725,7 @@ normal_data <- tibble(x = rnorm(1000, mean = 0.5, sd = 0.1))
 normal_data %>%
   ggplot(aes(x = x)) +
   geom_histogram(fill = viridis_pal(option = "viridis")(1)) +
-  labs(title = "Histogram showing the (normal) distribution of sentiment") +
+  labs(title = "Histogram showing a (normal) distribution of sentiment") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
