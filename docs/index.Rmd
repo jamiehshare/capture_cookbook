@@ -2815,7 +2815,7 @@ df %>%
         panel.grid.major.x = element_blank())
 ```
 
-```{r gg-highlight-good, fig.height=3, fig.cap = 'By highlighting a key element of the chart, it clearly enables the audience to know what is the important category in our data driven narative and the key take home message}
+```{r gg-highlight-good, fig.height=3, fig.cap = 'By highlighting a key element of the chart, it clearly enables the audience to know what is the important category in our data-driven narrative and the key take home message'}
 set.seed(1234)
 line_nice <- example %>% 
   mutate(created_time = floor_date(created_time,
