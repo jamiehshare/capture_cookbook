@@ -106,7 +106,7 @@ df %>%
   capture_theme()
 ```
 
-```{r gg-line, fig.cap = 'Line chart showing daily trend'}
+```{r gg-line, fig.cap = 'We can use line charts to see daily trends, for example'}
 example <- read_rds("~/Documents/R/capture_cookbook/data/example.rds")
 
 example %>% 
@@ -143,7 +143,7 @@ df %>%
   capture_theme()
 ```
 
-```{r gg-line-week, fig.cap = 'Line chart showing weekly trend'}
+```{r gg-line-week, fig.cap = 'We can visualise a different date interval, visualising a weekly trend in this case'}
 example %>% 
   mutate(created_time = floor_date(created_time,
                                    unit = "week")) %>% 
@@ -176,7 +176,7 @@ df %>%
   capture_theme()
 ```
 
-```{r gg-bar-trend, fig.cap = 'Bar chart showing weekly trend'}
+```{r gg-bar-trend, fig.cap = 'Trends can also be visualised using bars, though are more difficult to see smaller changes in the trend'}
 example %>% 
   mutate(created_time = floor_date(created_time,
                                    unit = "day")) %>% 
@@ -238,7 +238,7 @@ df %>%
   capture_theme()
 ```
 
-```{r gg-bar-order, fig.cap = 'Bar chart showing the number of messages per category'}
+```{r gg-bar-order, fig.cap = 'Reordering the categories on the x axis by the value we are displaying can help improve plot clarity and is a useful storytelling technique'}
 example %>% 
   count(message_type_2) %>% 
   ggplot(aes(x = reorder(message_type_2, desc(n)), y = n)) +
@@ -252,7 +252,7 @@ example %>%
 
 A significant challenge with bar plots arises when there are numerous categories. If these categories result in bars of similar lengths, a phenomenon known as the Moiré effect can occur. This effect leads to confusion and difficulty in focusing, making it challenging to distinguish between individual bars and accurately interpret the data.
 
-```{r gg-bar-moire, fig.cap = 'Bar chart showing the number of messages per category'}
+```{r gg-bar-moire, fig.cap = 'A visual example of the Moiré effect with many similar bars'}
 colB <- c(runif(4, min = 50, max = 55),
           runif(4, min = 20, max = 25))
 
@@ -302,7 +302,7 @@ df %>%
   capture_theme()
 ```
 
-```{r gg-lollipop, fig.cap = 'Lollipop chart showing the number of messages per category'}
+```{r gg-lollipop, fig.cap = 'Lollipop charts utilise whitespace better, sacrificing value precision for an all round more visually appealing chart'}
 
 tribble(
   ~colA,
@@ -339,9 +339,9 @@ One important consideration when comparing lollipop charts to bar charts is the 
 
 While pie charts are commonly used and provide a sense of familiarity, they are rarely the optimal choice for representing our data. Nevertheless, we often receive requests to include pie charts when comparing categories.
 
-**Pie charts are most effective when** when values are approximately 25%, 50%, or 75%. These percentages are easier to interpret within a pie chart compared to a stacked bar chart.
+**Pie charts are most effective when** we are comparing part-to-whole values, and not comparing category to category. Furthermore, they are also useful when values are approximately 25%, 50%, or 75%. These percentages are easier to interpret within a pie chart compared to a stacked bar chart.
 
-```{r gg-pie, fig.cap = 'When a pie chart is better than a stacked bar chart', out.width="60%"}
+```{r gg-pie, fig.cap = 'Pie charts are better than a stacked charts when the sum of individual parts add up to a meaningful whole', out.width="60%"}
 bar <- tribble(
   ~colA, ~colB,
   "a", 22,
@@ -389,9 +389,9 @@ pie <- tribble(
 bar + pie
 ```
 
-**Pie charts are not suitable** when we want clients to be able to accurately compare the size of different segments.
+**Pie charts are not suitable** when we want clients to be able to accurately compare the size of different segments- i.e when we want to just compare category size to category size.
 
-```{r, gg-pie-2, fig.cap = 'When a bar chart is better than a pie bar chart', out.width="60%"}
+```{r, gg-pie-2, fig.cap = 'Bar charts are more appropriate when we want to accurately compare segment size', out.width="60%"}
 bar <- tribble(
   ~colA, ~colB,
   "a", 45,
@@ -526,7 +526,8 @@ df %>%
 ```
 
 
-```{r gg-treemap, fig.caption = "A treemap showing part-to-whole relationship of social media mentions within the whole conversation using the size and colour of rectangles to encode values", fig.width=6}
+```{r gg-treemap, fig.cap = "A treemap showing part-to-whole relationship of social media mentions within the whole conversation using the size and colour of rectangles to encode values", fig.width=6}
+
 treemap <- read_rds("~/Documents/R/capture_cookbook/data/treemap.rds")
 
 treemap %>%
@@ -554,7 +555,7 @@ treemap %>%
         axis.title = element_blank())
 ```
 
-```{r gg-treemap-2, fig.caption = "A treemap showing part-to-whole relationship of social media mentions within the whole conversation using the size and colour of rectangles to encode values", fig.width=6}
+```{r gg-treemap-2, fig.cap = "A treemap showing part-to-whole relationship of social media mentions within the whole conversation using the size and colour of rectangles to encode values", fig.width=6}
 treemap <- read_rds("~/Documents/R/capture_cookbook/data/treemap.rds")
 
 treemap %>%
@@ -608,7 +609,7 @@ df %>%
   capture_theme()
 ```
 
-```{r gg-stacked, fig.cap = 'Stacked bar chart showing sentiment volume per category'}
+```{r gg-stacked, fig.cap = 'Stacked bar chart show how larger categories are divided into smaler categories'}
 my.cols <- RColorBrewer::brewer.pal(5, "PRGn")
 
 tribble(
@@ -672,7 +673,7 @@ df %>%
   capture_theme()
 ```
 
-```{r gg-stacked-perc, fig.cap = 'Stacked bar chart showing sentiment percentage per category'}
+```{r gg-stacked-perc, fig.cap = 'Stacked bar chart may be more interpretable when the y axis is normalised to a percentage or a proportion'}
 tribble(
   ~colA, ~pos, ~neu, ~neg,
   "A", 25, 50, 25,
@@ -717,7 +718,7 @@ df %>%
   capture_theme()
 ```
 
-```{r gg-hist, fig.cap = 'Histogram showing the (normal) distribution of sentiment'}
+```{r gg-hist, fig.cap = 'Histograms can showcase the distrbution of a continuous variable in our data'}
 # Generate sample data for normal distribution
 set.seed(123)
 normal_data <- tibble(x = rnorm(1000, mean = 0.5, sd = 0.1))
@@ -875,7 +876,7 @@ wlos <- ParseR::calculate_wlos(example3,
 write_rds(wlos, "~/Documents/R/capture_cookbook/data/wlos.rds")
 ```
 
-```{r}
+```{r, gg-wlo, fig.cap = 'WLO plot shows how word usage changes between categories within our data'}
 wlos <- read_rds("~/Documents/R/capture_cookbook/data/wlos.rds")
 
 wlos$viz
@@ -1226,7 +1227,7 @@ data.frame(x, hour, day) %>%
   guides(fill = guide_colourbar(title.position = 'top',
                                direction = "horizontal",
                                title.hjust = .5,
-                               barwidth = 10,
+                               barwidth = 12,
                                barheight = 0.8)) +
   coord_fixed() +
   capture_theme() +
@@ -1269,7 +1270,7 @@ data.frame(x, hour, day) %>%
   guides(fill = guide_colourbar(title.position = 'top',
                                direction = "horizontal",
                                title.hjust = .5,
-                               barwidth = 10,
+                               barwidth = 12,
                                barheight = 0.8)) +
   coord_fixed() +
   capture_theme() +
@@ -1487,7 +1488,7 @@ These colours are different hues (i.e. different colours), and are sometimes cal
 
 The default Microsoft colour palette we use is an example of a qualitative (or discrete) colour palette:
 
-```{r qualitative-col, fig.cap = 'Example qualitative colours', fig.height = 2}
+```{r qualitative-col, fig.cap = 'Example qualitative colours - taken from the Microsoft colour palette', fig.height = 2}
 msft_cols <- c("#D83B01", # Orange
              "#FFB900", # Yellow
              "#107C10", # Green
@@ -1523,7 +1524,7 @@ These palettes use multiple shade variations- effectively going from a light sha
 
 Whilst you can use only one colour (e.g. light purple to dark purple), using multiple colours (blue to dark purple) increases the colour contrast and makes it easier to distinguish between values.
 
-```{r sequential-col, fig.cap = 'Example sequential colours'}
+```{r sequential-col, fig.cap = 'Example sequential colours. These are powerful as they vary both in hue and saturation'}
 seq_bin <- data.frame(colours = seq(1, 7),
                       values = seq(1, 7)) %>% 
   ggplot(aes(x = colours, y = 0, fill = factor(values))) +
@@ -1563,7 +1564,7 @@ seq_cont <- data.frame(colours = seq(1, 1000),
 seq_bin / seq_cont
 ```
 
-```{r sequential-col-2, fig.cap = 'Example sequential colours'}
+```{r sequential-col-2, fig.cap = 'Example sequential colours. These are powerful as they vary both in hue and saturation'}
 seq_bin <- data.frame(colours = seq(1, 7),
                       values = seq(1, 7)) %>% 
   ggplot(aes(x = colours, y = 0, fill = factor(values))) +
@@ -1610,7 +1611,7 @@ These palettes are best used when we want to represent a scale around a central 
 
 An example of this could be scores of valence than range from 1 (positive) to -1 (negative) with a central value of 0 (neutral).
 
-```{r divergent-col, fig.cap = 'Example divergent colours'}
+```{r divergent-col, fig.cap = 'Example divergent colours - used to represent a scale around a central value'}
 
 div_bin <- data.frame(colours = seq(1, 7),
                       values = seq(-3, 3)) %>% 
@@ -2040,7 +2041,7 @@ ggplot(aes(x, y, fill = factor(z))) +
 
 qual_heatmap + seq_heatmap + div_heatmap
 ```
-**NTS, TO DECIDE WHETHER TO KEEP WITH VIRIDIS DEFAULT OR CHANGE TO A 'NICER' SEQUENTIAL PALETTE THAT ALSO CHANGES SATURATION I.E BELOW**
+
 ```{r, col-ex-2-2, fig.height = 3, fig.cap = 'When to use sequential colour palette'}
 x <- LETTERS[1:7]
 y <- paste0("var", seq(1, 4))
@@ -2207,6 +2208,82 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
 qual_likert + seq_likert + div_likert
 ```
 
+```{r, col-ex-5, fig.height = 4, fig.cap = 'When to use divergent colour palette'}
+likert <- data.frame(sentiment = rep(c("Highly Negative", "Quite Negative",
+                                        "Neutral", "Quite Positive", "Very Positive"), 4),
+                          category = rep(LETTERS[1:4], each = , times = 1),
+                          n = runif(20, 10, 90)) %>% 
+  group_by(category) %>% 
+  mutate(prop = n/sum(n) * 100) %>% 
+  ungroup() %>% 
+  mutate(sentiment = factor(sentiment, levels = rev(c("Highly Negative", "Quite Negative", "Neutral", "Quite Positive", "Very Positive"))))
+
+qual_likert <- likert %>% 
+ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
+  geom_bar(position = "stack", stat = "identity",
+           width = 0.6) +
+  labs(x = "Category",
+       y = "No. of posts classified per topic",
+       title = "Bad",
+       subtitle = "Qualitative Palette",
+       fill = NULL) +
+  scale_fill_manual(values = msft_cols,
+                    guide = guide_legend(ncol = 1)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  coord_flip() +
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
+        axis.title = element_text(colour = "grey30"),
+        legend.key.height = unit(0.4, "cm"),  
+        legend.key.width = unit(0.4, "cm"),
+        legend.text = element_text(size = 7),
+        legend.position = "bottom")
+
+seq_likert <- likert %>% 
+ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
+  geom_bar(position = "stack", stat = "identity",
+           width = 0.6) +
+  labs(x = "Category",
+       y = "No. of posts classified per topic",
+       title = "Bad",
+       subtitle = "Sequential Palette",
+       fill = NULL) +
+  scale_fill_brewer(palette = "YlGnBu",
+                    guide = guide_legend(ncol = 1)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  coord_flip() +
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
+        axis.title = element_text(colour = "grey30"),
+        legend.key.height = unit(0.4, "cm"),  
+        legend.key.width = unit(0.4, "cm"),
+        legend.text = element_text(size = 7),
+        legend.position = "bottom")
+
+div_likert <- likert %>% 
+ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
+  geom_bar(position = "stack", stat = "identity",
+           width = 0.6) +
+  labs(x = "Category",
+       y = "No. of posts classified per topic",
+       subtitle = "Divergent Palette",
+       title = "Good",
+       fill = NULL) +
+  scale_fill_brewer(palette = "PRGn",
+                    direction = -1,
+                    guide = guide_legend(ncol = 1)) +
+  scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
+  coord_flip() +
+  capture_theme() +
+  theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
+        axis.title = element_text(colour = "grey30"),
+        legend.key.height = unit(0.4, "cm"),  
+        legend.key.width = unit(0.4, "cm"),
+        legend.text = element_text(size = 7),
+        legend.position = "bottom")
+
+qual_likert + seq_likert + div_likert
+```
 
 ## Adding values to plot directly {#values}
 
@@ -2234,7 +2311,7 @@ df %>%
         panel.grid = element_blank())
 ```
 
-```{r gg-value, fig.cap = 'Bar chart showing the number of messages per category'}
+```{r gg-value, fig.cap = 'We can directly add bar values to the chart'}
 example %>% 
   count(message_type_2) %>% 
   ggplot(aes(x = message_type_2, y = n)) +
@@ -2257,7 +2334,7 @@ example %>%
 
 As mentioned in the [pie chart section](#piechart), adding labels is highly recommended for pie charts and doughnut charts:
 
-```{r gg-value-2, fig.cap = 'Comparison between a Pie Chart and a Doughnut Chart showing the same data'}
+```{r gg-value-2, fig.cap = 'It's extremly difficult to estimate quantity from angles or segments, so adding values directly to pie and doughnut charts is recommended'}
 pie <- tribble(
   ~colA, ~colB,
   "a", 22,
@@ -2325,7 +2402,7 @@ Similarly, it is often good practice to add a category label directly to the plo
 
 For example, let's see a plot where we have a legend:
 
-```{r gg-nolabel, fig.cap = 'Line chart showing daily trend of three categories'}
+```{r gg-nolabel, fig.cap = 'Line chart showing daily trend of three categories with a legend'}
 set.seed(1234)
 example %>% 
   mutate(created_time = floor_date(created_time,
@@ -2376,7 +2453,7 @@ df %>%
 ```
 
 
-```{r gg-label, fig.cap = 'Line chart showing daily trend of three categories'}
+```{r gg-label, fig.cap = 'Adding the label of each category directly to the plot reduces the need for the reader to keep moving concentration from the main elements of the chart (the lines representing values) and the legend'}
 set.seed(1234)
 example %>% 
   mutate(created_time = floor_date(created_time,
@@ -2477,7 +2554,7 @@ bar_grid + bar_no_grid
 theme(panel.grid = element_blank())
 ```
 
-```{r gg-grid-2, fig.height = 3, fig.cap = 'Remove x axis gridlines when displaying categorical bdata'}
+```{r gg-grid-2, fig.height = 3, fig.cap = 'Remove y axis gridlines too when the value of the bar is represented by a label'}
 bar_no_lab <- tribble(
   ~colA, ~n, 
   "A", 30,
@@ -2642,7 +2719,7 @@ plot_1 + plot_2
 
 There are many reasons why we might want to draw attention to significant information within a chart. Highlighting specific data elements can help us emphasize key findings, convey essential messages or insights, and enable viewers to discern patterns, differences, or relationships more effectively. By highlighting particular data points, we facilitate easy comparison and contrast between different groups, categories, or time periods, while also providing additional context and information.
 
-```{r gg-highlight-bad, fig.height=3}
+```{r gg-highlight-bad, fig.height=3, fig.cap = 'Plots with multiple categories can look busy, overwhelming and be difficult for the audience to know where to concentrate}
 set.seed(1234)
 line_busy <- example %>% 
   mutate(created_time = floor_date(created_time,
@@ -2738,7 +2815,7 @@ df %>%
         panel.grid.major.x = element_blank())
 ```
 
-```{r gg-highlight-good, fig.height=3}
+```{r gg-highlight-good, fig.height=3, fig.cap = 'By highlighting a key element of the chart, it clearly enables the audience to know what is the important category in our data driven narative and the key take home message}
 set.seed(1234)
 line_nice <- example %>% 
   mutate(created_time = floor_date(created_time,
