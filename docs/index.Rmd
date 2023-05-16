@@ -2719,7 +2719,7 @@ plot_1 + plot_2
 
 There are many reasons why we might want to draw attention to significant information within a chart. Highlighting specific data elements can help us emphasize key findings, convey essential messages or insights, and enable viewers to discern patterns, differences, or relationships more effectively. By highlighting particular data points, we facilitate easy comparison and contrast between different groups, categories, or time periods, while also providing additional context and information.
 
-```{r gg-highlight-bad, fig.height=3, fig.cap = 'Plots with multiple categories can look busy, overwhelming and be difficult for the audience to know where to concentrate}
+```{r gg-highlight-bad, fig.height=3, fig.cap = 'Plots with multiple categories can look busy, overwhelming and be difficult for the audience to know where to concentrate'}
 set.seed(1234)
 line_busy <- example %>% 
   mutate(created_time = floor_date(created_time,
