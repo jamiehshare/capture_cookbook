@@ -703,7 +703,7 @@ To navigate this potential pitfall, it is crucial to provide clear explanations 
 
 ## Visualise distribution of a continuous variable
 
-Sometimes we will want to understand the distribution of a **continuous variable** in our data to gain insights. For instance, if we have calculated valence using the ParseR package, we might want to examine the distribution. Although these types of visualisations are typically used for exploratory data analysis (EDA) rather than client presentations, it is still an extremely powerful and useful string to have in your data exploration bow.
+Sometimes we will want to understand the distribution of a **continuous variable** in our data to gain insights. For instance, if we have calculated a score of sentiment ranging from 0 (negative) to 1 (positive) for each post in our dataset, we might want to examine the distribution. Although these types of visualisations are typically used for exploratory data analysis (EDA) rather than client presentations, it is still an extremely powerful and useful string to have in your data exploration bow.
 
 ### Example
 
