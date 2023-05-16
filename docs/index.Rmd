@@ -857,7 +857,7 @@ wlos$viz
 ```
 
 
-```{r gg-wlo, eval=FALSE, fig.cap = 'Weighted Log Odds plots showing different word usage between two categories- Male and Female'}
+```{r gg-wlo, eval=FALSE}
 example3 <- example %>% 
   ParseR::clean_text(text_var = message) %>% 
   dplyr::mutate(message = tm::removeWords(x = message, c(tm::stopwords(kind = "SMART"), 
@@ -876,7 +876,7 @@ wlos <- ParseR::calculate_wlos(example3,
 write_rds(wlos, "~/Documents/R/capture_cookbook/data/wlos.rds")
 ```
 
-```{r, gg-wlo, fig.cap = 'WLO plot shows how word usage changes between categories within our data'}
+```{r, gg-wlo-2, fig.cap = 'Weighted Log Odds plots show how word usage changes between categories within our data'}
 wlos <- read_rds("~/Documents/R/capture_cookbook/data/wlos.rds")
 
 wlos$viz
@@ -2334,7 +2334,7 @@ example %>%
 
 As mentioned in the [pie chart section](#piechart), adding labels is highly recommended for pie charts and doughnut charts:
 
-```{r gg-value-2, fig.cap = 'It's extremly difficult to estimate quantity from angles or segments, so adding values directly to pie and doughnut charts is recommended'}
+```{r gg-value-2, fig.cap = "It's extremly difficult to estimate quantity from angles or segments, so adding values directly to pie and doughnut charts is recommended"}
 pie <- tribble(
   ~colA, ~colB,
   "a", 22,
