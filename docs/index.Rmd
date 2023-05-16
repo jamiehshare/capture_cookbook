@@ -28,38 +28,7 @@ library(gtExtras)
 library(gt)
 library(gghighlight)
 library(treemapify)
-
-capture_theme <- function(base_size = 11, base_family = "GT Walsheim Pro",
-                          base_line_size = base_size / 22,
-                          base_rect_size = base_size / 22, ...) {
-  
-  half_line <- base_size / 2
-  
-  ggplot2::theme_grey(base_size = base_size, 
-                      base_family = base_family, 
-                      base_line_size = base_line_size, 
-                      base_rect_size = base_rect_size) %+replace% 
-  ggplot2::theme(
-    plot.title = ggplot2::element_text(size = 15,
-                                       hjust = 0.5,
-                                       vjust = 1,
-                                       margin = margin(b = half_line)),
-    panel.border = ggplot2::element_blank(),
-    panel.background = ggplot2::element_rect(fill = "white", 
-                                    colour = NA),
-    axis.line = ggplot2::element_line(colour = "grey20"),
-    axis.ticks = ggplot2::element_line(colour = "grey20"),
-    axis.text = ggplot2::element_text(colour = "grey30",
-                                      size = rel(0.8)),
-    axis.title = ggplot2::element_text(colour = "grey30"),
-    panel.grid = ggplot2::element_line(colour = "grey92"), 
-    panel.grid.minor = ggplot2::element_line(linewidth = rel(0.5)), 
-    strip.background = ggplot2::element_rect(fill = "grey85", 
-                                    colour = "grey20"), 
-    legend.key = ggplot2::element_rect(fill = "white", colour = NA), 
-    complete = TRUE)
-  
-}
+library(rivendell)
 ```
 
 # About the Capture Cookbook 
@@ -70,7 +39,7 @@ The BBC has provided an excellent summary of this topic in their own graphics co
 
 >A reference manual, rather than a tutorial, it might not tell you how to make your very first chart in R, but is a useful collection of little tips and tricks.
 
-In line with this, this document will not teach you R or the technical aspects of creating these plots. Whilst there is some code provided for some plots- showing 'how the plots are made', there is minimum explanation of the code in the hope of avoiding too much boilerplate and to try and make this document as coding language/software-agnostic as possible. Instead, its primary goal is to help you grasp the purpose and appropriate usage of visualisations in our work. By doing so, it empowers everyone to confidently explain the key insights, strengths, and weaknesses conveyed by different types of plots. Once the building blocks of this are in place, it is much easier to apply this knowledge to different coding languages and software. *Note that if you do look at the code for the plots, there is a function called `capture_theme()` that is used. This is not yet available for wider use, but will eventually appear in the `HelpR` package to enable consistent 'Capture aesthetics' for each plot*
+In line with this, this document will not teach you R or the technical aspects of creating these plots. Whilst there is some code provided for some plots- showing 'how the plots are made', there is minimum explanation of the code in the hope of avoiding too much boilerplate and to try and make this document as coding language/software-agnostic as possible. Instead, its primary goal is to help you grasp the purpose and appropriate usage of visualisations in our work. By doing so, it empowers everyone to confidently explain the key insights, strengths, and weaknesses conveyed by different types of plots. Once the building blocks of this are in place, it is much easier to apply this knowledge to different coding languages and software. *Note that if you do look at the code for the plots, there is a function called `theme_capture()` that is used. This is not yet available for wider use, but will eventually appear in the `HelpR` package to enable consistent 'Capture aesthetics' for each plot*
 
 The cookbook begins by introducing various types of visualisations, each serving a specific purpose based on the type of task you want to perform. This approach is adopted because there are often multiple ways to present the same data, and each visualisation has its own merits and drawbacks. Within this section, you will find examples of the business questions we commonly encounter, accompanied by appropriate visualisations and explanations for interpreting them.
 
@@ -103,7 +72,7 @@ df %>%
   labs(x = "Date",
        y = "Number of posts",
        title = "Line chart showing daily trend") +
-  capture_theme()
+  theme_capture()
 ```
 
 ```{r gg-line, fig.cap = 'We can use line charts to see daily trends, for example'}
@@ -119,7 +88,7 @@ example %>%
   labs(x = "Date",
        y = "Number of posts",
        title = "Line chart showing daily trend") +
-  capture_theme()
+  theme_capture()
 ```
 
 ### Intepretation
@@ -140,7 +109,7 @@ df %>%
   labs(x = "Date",
        y = "Number of posts",
        title = "Line chart showing daily trend") +
-  capture_theme()
+  theme_capture()
 ```
 
 ```{r gg-line-week, fig.cap = 'We can visualise a different date interval, visualising a weekly trend in this case'}
@@ -155,7 +124,7 @@ example %>%
        y = "Number of posts",
        title = "Line chart showing weekly trend") +
   lims(y = c(0, 4000)) +
-  capture_theme()
+  theme_capture()
 ```
 
 It's worth noting that we *can* also present the same data using a bar chart instead of a line chart. The interpretation remains the same, but bar charts may not be as effective at displaying trends. This is because the bars are discrete rather than continuous, and they emphasise the magnitude of individual intervals rather than the overall trend.
@@ -173,7 +142,7 @@ df %>%
        y = "Number of posts",
        title = "Bar chart showing weekly trend") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme()
+  theme_capture()
 ```
 
 ```{r gg-bar-trend, fig.cap = 'Trends can also be visualised using bars, though are more difficult to see smaller changes in the trend'}
@@ -187,7 +156,7 @@ example %>%
        y = "Number of posts",
        title = "Bar chart showing weekly trend") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme()
+  theme_capture()
 ```
 
 ## Comparing categories
@@ -205,7 +174,7 @@ df %>%
        y = "Number of posts",
        title = "Bar chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme()
+  theme_capture()
 ```
 
 ```{r gg-bar, fig.cap = 'Bar chart showing the number of messages per category'}
@@ -217,7 +186,7 @@ example %>%
        y = "Number of posts",
        title = "Bar chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme()
+  theme_capture()
 ```
 
 #### Intepretation
@@ -235,7 +204,7 @@ df %>%
        y = "Number of posts",
        title = "Bar chart showing the number of messages per category (ordered)") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme()
+  theme_capture()
 ```
 
 ```{r gg-bar-order, fig.cap = 'Reordering the categories on the x axis by the value we are displaying can help improve plot clarity and is a useful storytelling technique'}
@@ -247,7 +216,7 @@ example %>%
        y = "Number of posts",
        title = "Bar chart showing the number of messages per category (ordered)") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme()
+  theme_capture()
 ```
 
 A significant challenge with bar plots arises when there are numerous categories. If these categories result in bars of similar lengths, a phenomenon known as the Moiré effect can occur. This effect leads to confusion and difficulty in focusing, making it challenging to distinguish between individual bars and accurately interpret the data.
@@ -277,7 +246,7 @@ tribble(
        y = "Number of posts",
        title = "Bar chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme()
+  theme_capture()
 ```
 
 We observe an example of the Moiré effect in the bar chart above. It manifests when we start perceiving "patterns" that are not actually present due to sensory overload. Furthermore, charts with more than approximately eight bars, even if they vary in size, can appear cluttered and overwhelming.
@@ -299,7 +268,7 @@ df %>%
        y = "Number of posts",
        title = "Lollipip chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme()
+  theme_capture()
 ```
 
 ```{r gg-lollipop, fig.cap = 'Lollipop charts utilise whitespace better, sacrificing value precision for an all round more visually appealing chart'}
@@ -328,7 +297,7 @@ tribble(
        y = "Number of posts",
        title = "Lollipip chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme()
+  theme_capture()
 ```
 
 The lollipop chart offers a clearer visual representation that may be (hopefully is) more appealing to you. These charts can also serve as excellent alternatives to bar charts in general, particularly if you find yourself using bar charts excessively in a particular deck. Lollipop charts make better use of white space, avoiding the clutter often associated with busy bar charts.
@@ -357,7 +326,7 @@ bar <- tribble(
        title = "Not ideal") +
   lims(x = c(-1, 1)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme() +
+  theme_capture() +
   theme(plot.title = element_text(size = 25, hjust = 0.5),
                 legend.position = "none",
         axis.line = element_blank(),
@@ -378,7 +347,7 @@ pie <- tribble(
   coord_polar("y", start=0) +
   scale_fill_viridis_d() +
   labs(title = "Better") +
-  capture_theme() +
+  theme_capture() +
   theme(plot.title = element_text(size = 25, hjust = 0.5),
                 legend.position = "none",
         axis.line = element_blank(),
@@ -406,7 +375,7 @@ bar <- tribble(
   scale_fill_viridis_d() +
   labs(title = "Good") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme() +
+  theme_capture() +
   theme(plot.title = element_text(size = 25, hjust = 0.5),
                 legend.position = "none",
         axis.line = element_blank(),
@@ -429,7 +398,7 @@ pie <- tribble(
   coord_polar("y", start=0) +
   scale_fill_viridis_d() +
   labs(title = "Bad") +
-  capture_theme() +
+  theme_capture() +
   theme(plot.title = element_text(size = 25, hjust = 0.5),
                 legend.position = "none",
         axis.line = element_blank(),
@@ -460,7 +429,7 @@ pie <- tribble(
   coord_polar("y", start=0) +
   scale_fill_viridis_d() +
   labs(title = "Pie Chart") +
-  capture_theme() +
+  theme_capture() +
   theme(plot.title = element_text(size = 25, hjust = 0.5),
                 legend.position = "none",
         axis.line = element_blank(),
@@ -485,7 +454,7 @@ doughnut <- tribble(
   annotate(geom = 'text', x = -0.5, y = 0, label = "Number of posts: \nX posts",
            family = "GT Walsheim Pro",
            size = 6) +
-  capture_theme() +
+  theme_capture() +
   theme(plot.title = element_text(size = 25, hjust = 0.5),
                 legend.position = "none",
         axis.line = element_blank(),
@@ -515,7 +484,7 @@ df %>%
                     family = "GT Walsheim Pro") +
   scale_fill_viridis_d(direction = -1)+
   labs(title = "Mentions per platform") +
-  capture_theme() +
+  theme_capture() +
   theme(plot.title = element_text(size = 25, hjust = 0.5),
         legend.position = "none",
         axis.line = element_blank(),
@@ -546,7 +515,7 @@ treemap %>%
                     family = "GT Walsheim Pro") +
   scale_fill_viridis_d(direction = -1)+
   labs(title = "Mentions per platform") +
-  capture_theme() +
+  theme_capture() +
   theme(legend.position = "none",
         axis.line = element_blank(),
         panel.grid = element_blank(),
@@ -574,7 +543,7 @@ treemap %>%
                     family = "GT Walsheim Pro") +
   scale_fill_brewer(palette = "YlGnBu") +
   labs(title = "Mentions per platform") +
-  capture_theme() +
+  theme_capture() +
   theme(legend.position = "none",
         axis.line = element_blank(),
         panel.grid = element_blank(),
@@ -606,7 +575,7 @@ df %>%
   scale_fill_manual(values = c(my.cols[5], "grey85", my.cols[1]),
                                labels = c("Positive", "Neutral", "Negative")) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme()
+  theme_capture()
 ```
 
 ```{r gg-stacked, fig.cap = 'Stacked bar chart show how larger categories are divided into smaler categories'}
@@ -648,7 +617,7 @@ tribble(
   scale_fill_manual(values = c(my.cols[5], "grey85", my.cols[1]),
                                labels = c("Positive", "Neutral", "Negative")) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme()
+  theme_capture()
 ```
 
 ### Interpretation
@@ -670,7 +639,7 @@ df %>%
   scale_fill_manual(values = c(my.cols[5], "grey85", my.cols[1]),
                                labels = c("Positive", "Neutral", "Negative")) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme()
+  theme_capture()
 ```
 
 ```{r gg-stacked-perc, fig.cap = 'Stacked bar chart may be more interpretable when the y axis is normalised to a percentage or a proportion'}
@@ -694,7 +663,7 @@ tribble(
   scale_fill_manual(values = c(my.cols[5], "grey85", my.cols[1]),
                                labels = c("Positive", "Neutral", "Negative")) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme()
+  theme_capture()
 ```
 
 To address the potential challenges mentioned above, we can scale our data to show proportions or percentages of posts with each sentiment per category, rather than raw volumes. This approach makes it much easier to compare the sentiment makeup of categories with lower volume. However, it's essential to note that scaling the data in this way may lead clients to overlook the fact that each bar represents vastly different volumes in reality.
@@ -715,7 +684,7 @@ df %>%
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
-  capture_theme()
+  theme_capture()
 ```
 
 ```{r gg-hist, fig.cap = 'Histograms can showcase the distrbution of a continuous variable in our data'}
@@ -730,7 +699,7 @@ normal_data %>%
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
-  capture_theme()
+  theme_capture()
 ```
 
 ### Interpretation
@@ -752,7 +721,7 @@ left_skewed_dist <- left_skewed_data %>%
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
-  capture_theme()
+  theme_capture()
 
 # Generate random data with right-skewed distribution
 set.seed(123)
@@ -765,7 +734,7 @@ right_skewed_dist <- right_skewed_data %>%
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
-  capture_theme()
+  theme_capture()
 
 # Generate random data with bimodal distribution
 set.seed(123)
@@ -780,7 +749,7 @@ bimodal_dist <- bimodal_data %>%
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   labs(x = "Sentiment Score") +
   lims(x = c(0, 1)) +
-  capture_theme()
+  theme_capture()
 
 left_skewed_dist / right_skewed_dist / bimodal_dist 
 ```
@@ -911,7 +880,7 @@ df %>%
        colour = "Cluster",
        subtitle = "Colouring by cluster can help us identify regions of interest") +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         axis.text = element_blank(),
@@ -934,7 +903,7 @@ umap_tib %>%
        colour = "Cluster",
        subtitle = "Colouring by cluster can help us identify regions of interest") +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         axis.text = element_blank(),
@@ -989,7 +958,7 @@ plots <- purrr::map2(group_names, colour_palette,
       x = "",
       y = ""
     ) +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         axis.text = element_blank(),
@@ -1024,7 +993,7 @@ df %>%
   labs(title = "Monochromatic UMAP",
        subtitle = "Single colour helps accentuate regions of high densities") +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         axis.text = element_blank(),
@@ -1045,7 +1014,7 @@ umap_tib %>%
   labs(title = "Monochromatic UMAP",
        subtitle = "Single colour helps accentuate regions of high densities") +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         axis.text = element_blank(),
@@ -1091,7 +1060,7 @@ df %>%
                                barwidth = 22,
                                barheight = 0.8)) +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.position = "bottom",
@@ -1134,7 +1103,7 @@ data %>%
                                barwidth = 22,
                                barheight = 0.8)) +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.position = "bottom",
@@ -1178,7 +1147,7 @@ data %>%
                                barwidth = 22,
                                barheight = 0.8)) +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.position = "bottom",
@@ -1230,7 +1199,7 @@ data.frame(x, hour, day) %>%
                                barwidth = 12,
                                barheight = 0.8)) +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.position = "bottom",
@@ -1273,7 +1242,7 @@ data.frame(x, hour, day) %>%
                                barwidth = 12,
                                barheight = 0.8)) +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.position = "bottom",
@@ -1675,7 +1644,7 @@ qual_bar <- tribble(
   scale_fill_manual(values = msft_cols) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   scale_colour_viridis_c() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
@@ -1697,7 +1666,7 @@ seq_bar <- tribble(
        subtitle = "Sequential Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   scale_colour_viridis_c() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
@@ -1719,7 +1688,7 @@ div_bar <- tribble(
        subtitle = "Divergent Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   scale_colour_viridis_c() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
@@ -1745,7 +1714,7 @@ qual_bar <- tribble(
   scale_fill_manual(values = msft_cols) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   scale_colour_viridis_c() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
@@ -1768,7 +1737,7 @@ seq_bar <- tribble(
        subtitle = "Sequential Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   scale_colour_viridis_c() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
@@ -1790,7 +1759,7 @@ div_bar <- tribble(
        subtitle = "Divergent Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   scale_colour_viridis_c() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
@@ -1822,7 +1791,7 @@ qual_bar <- tribble(
   scale_fill_manual(values = msft_cols) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   scale_colour_viridis_c() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
@@ -1846,7 +1815,7 @@ seq_bar <- tribble(
        subtitle = "Sequential Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   scale_colour_viridis_c() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
@@ -1870,7 +1839,7 @@ div_bar <- tribble(
        subtitle = "Divergent Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   scale_colour_viridis_c() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
@@ -1898,7 +1867,7 @@ qual_bar <- tribble(
   scale_fill_manual(values = msft_cols) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   scale_colour_viridis_c() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
@@ -1922,7 +1891,7 @@ seq_bar <- tribble(
        subtitle = "Sequential Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   scale_colour_viridis_c() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
@@ -1946,7 +1915,7 @@ div_bar <- tribble(
        subtitle = "Divergent Palette") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   scale_colour_viridis_c() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         legend.position = "none")
 
@@ -1979,7 +1948,7 @@ ggplot(aes(x, y, fill = factor(z))) +
                     guide = guide_legend(label.position = "bottom",
                                          nrow = 1)) +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(hjust = 0.5),
@@ -2003,7 +1972,7 @@ ggplot(aes(x, y, fill = factor(z))) +
                        guide = guide_legend(label.position = "bottom",
                                             nrow = 1)) +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(hjust = 0.5),
@@ -2027,7 +1996,7 @@ ggplot(aes(x, y, fill = factor(z))) +
                     guide = guide_legend(label.position = "bottom",
                                          nrow = 1)) +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(hjust = 0.5),
@@ -2064,7 +2033,7 @@ ggplot(aes(x, y, fill = factor(z))) +
                     guide = guide_legend(label.position = "bottom",
                                          nrow = 1)) +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(hjust = 0.5),
@@ -2091,7 +2060,7 @@ ggplot(aes(x, y, fill = factor(z))) +
                     guide = guide_legend(label.position = "bottom",
                                             nrow = 1)) +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(hjust = 0.5),
@@ -2115,7 +2084,7 @@ ggplot(aes(x, y, fill = factor(z))) +
                     guide = guide_legend(label.position = "bottom",
                                          nrow = 1)) +
   coord_fixed() +
-  capture_theme() +
+  theme_capture() +
   theme(panel.grid = element_blank(),
         axis.ticks = element_blank(),
         legend.title = element_text(hjust = 0.5),
@@ -2155,7 +2124,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
                     guide = guide_legend(ncol = 1)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   coord_flip() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
@@ -2175,7 +2144,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
   scale_fill_viridis_d(guide = guide_legend(ncol = 1)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   coord_flip() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
@@ -2197,7 +2166,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
                     guide = guide_legend(ncol = 1)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   coord_flip() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
@@ -2231,7 +2200,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
                     guide = guide_legend(ncol = 1)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   coord_flip() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
@@ -2252,7 +2221,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
                     guide = guide_legend(ncol = 1)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   coord_flip() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
@@ -2274,7 +2243,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
                     guide = guide_legend(ncol = 1)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   coord_flip() +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5, colour = "grey50"),
         axis.title = element_text(colour = "grey30"),
         legend.key.height = unit(0.4, "cm"),  
@@ -2304,7 +2273,7 @@ df %>%
        y = NULL,
        title = "Bar chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme() +
+  theme_capture() +
   theme(axis.line.y = element_blank(),
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank(),
@@ -2325,7 +2294,7 @@ example %>%
        y = NULL,
        title = "Bar chart showing the number of messages per category") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme() +
+  theme_capture() +
   theme(axis.line.y = element_blank(),
         axis.text.y = element_blank(),
         axis.ticks.y = element_blank(),
@@ -2354,7 +2323,7 @@ pie <- tribble(
             size = 5,
             family = "GT Walsheim Pro") +
   labs(title = "Pie Chart") +
-  capture_theme() +
+  theme_capture() +
   theme(axis.text = element_blank(),
         axis.ticks = element_blank(),
         axis.title = element_blank(),
@@ -2385,7 +2354,7 @@ doughnut <- tribble(
             colour = "black",
             size = 5,
             family = "GT Walsheim Pro") +
-  capture_theme() +
+  theme_capture() +
   theme(axis.text = element_blank(),
         axis.ticks = element_blank(),
         axis.title = element_blank(),
@@ -2427,7 +2396,7 @@ example %>%
        y = "Number of posts",
        title = "Line chart showing daily trend of three categories",
        colour = "Category") +
-  capture_theme()
+  theme_capture()
 ```
 
 Notice how you have to keep looking between the plot and the legend to fully understand which line represents which category? 
@@ -2448,7 +2417,7 @@ df %>%
   labs(x = "Date",
        y = "Number of posts",
        title = "Line chart showing daily trend of three categories") +
-  capture_theme() +
+  theme_capture() +
   theme(legend.position = "none")
 ```
 
@@ -2484,7 +2453,7 @@ example %>%
   labs(x = "Date",
        y = "Number of posts",
        title = "Line chart showing daily trend of three categories") +
-  capture_theme() +
+  theme_capture() +
   theme(legend.position = "none")
 ```
 
@@ -2519,7 +2488,7 @@ bar_grid <- tribble(
        title = "Unnecessary",
        subtitle = "Unnecessary x-axis gridlines") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"))
 
@@ -2539,7 +2508,7 @@ bar_no_grid <- tribble(
        title = "Good",
        subtitle = "x-axis gridlines removed") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         panel.grid.major.x = element_blank())
@@ -2576,7 +2545,7 @@ bar_no_lab <- tribble(
        title = "Unnecessary",
        subtitle = "y-axis gridlines don't add anything") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         panel.grid.major.x = element_blank())
@@ -2602,7 +2571,7 @@ bar_lab <- tribble(
        title = "Good",
        subtitle = "Values on the plot provide us necessary info") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         panel.grid = element_blank())
@@ -2611,9 +2580,9 @@ bar_no_lab + bar_lab
 ```
 * Gridlines should not be the same colour as the axis lines or font. A light grey balances utility and overpowering the plot. 
 ```{r, eval = FALSE, echo = TRUE}
-## This is the default aesthetics when using the capture_theme() function
+## This is the default aesthetics when using the theme_capture() function
 ... +
-  capture_theme()
+  theme_capture()
 ```
 
 ```{r gg-grid-col, fig.cap = 'The difference gridline colours make', fig.height = 3}
@@ -2627,7 +2596,7 @@ plot_1 <- example %>%
   labs(x = "Date",
        y = "Number of posts",
        title = "Bad") +
-  capture_theme() +
+  theme_capture() +
   theme(axis.line = element_line(colour = "black"),
         axis.ticks = element_line(colour = "black"),
         panel.grid = element_line(colour = "black"))
@@ -2642,7 +2611,7 @@ plot_2 <- example %>%
   labs(x = "Date",
        y = "Number of posts",
        title = "Good") +
-  capture_theme() 
+  theme_capture() 
 
 plot_1 + plot_2
 ```
@@ -2658,9 +2627,9 @@ The advice surrounding borders:
                                     fill = NA,
                                     size = 1))
 
-## No border, but axis lines included is the default aesthetics when using the capture_theme() function
+## No border, but axis lines included is the default aesthetics when using the theme_capture() function
 ... +
-  capture_theme()
+  theme_capture()
 
 ## To have border or axis lines add the below code to the theme() argument of your ggplot
 ... +
@@ -2682,7 +2651,7 @@ plot_1 <- tribble(
        title = "Unnecessary",
        subtitle = "Border adds clutter") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         panel.border = element_rect(colour = "black",
@@ -2704,7 +2673,7 @@ plot_2 <- tribble(
        title = "Good",
        subtitle = "No border and just axes lines") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme() +
+  theme_capture() +
   theme(plot.subtitle = element_text(hjust = 0.5,
                                      colour = "grey50"),
         panel.grid.major.x = element_blank())
@@ -2746,7 +2715,7 @@ line_busy <- example %>%
        y = "Number of posts",
        title = "Busy",
        colour = "Brand") +
-  capture_theme() +
+  theme_capture() +
   theme(legend.position = "none")
 
 seq_bar <- tribble(
@@ -2765,7 +2734,7 @@ seq_bar <- tribble(
        y = "Number of posts",
        title = "Busy") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
-  capture_theme() +
+  theme_capture() +
   theme(legend.position = "none")
 
 line_busy + seq_bar
@@ -2794,7 +2763,7 @@ df %>%
        y = "Number of posts",
        title = "Clean",
        colour = "Brand") +
-  capture_theme() +
+  theme_capture() +
   theme(legend.position = "none")
 
 ## Bar chart
@@ -2810,7 +2779,7 @@ df %>%
               keep_scales = T,
               use_direct_label = FALSE,
               unhighlighted_params = list(alpha = 1, fill = "grey80")) +
-  capture_theme() +
+  theme_capture() +
   theme(legend.position = "none",
         panel.grid.major.x = element_blank())
 ```
@@ -2851,7 +2820,7 @@ line_nice <- example %>%
        y = "Number of posts",
        title = "Clean",
        colour = "Brand") +
-  capture_theme() +
+  theme_capture() +
   theme(legend.position = "none")
 
 seq_bar <- tribble(
@@ -2873,7 +2842,7 @@ seq_bar <- tribble(
               keep_scales = T,
               use_direct_label = FALSE,
               unhighlighted_params = list(alpha = 1, fill = "grey80")) +
-  capture_theme() +
+  theme_capture() +
   theme(legend.position = "none",
         panel.grid.major.x = element_blank())
 
