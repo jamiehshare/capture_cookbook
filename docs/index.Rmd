@@ -1,5 +1,5 @@
 --- 
-title: "Capture Cookbook 📈🧑‍🍳"
+title: "Capture Charts 📈"
 author: "Capture Intelligence Data Science Team"
 date: "*Last updated: `r Sys.Date()`*"
 output: 
@@ -35,7 +35,7 @@ library(chorddiag)
 library(viridis)
 ```
 
-# About the Capture Cookbook 
+# From insights to impact
 
 The aim of this document is to serve as a valuable resource for everyone at SHARE Creative or Capture Intelligence, enabling them to understand the commonly used visualisations created for client projects. It is important to appreciate when and how to use these visualisations, as well as how to interpret them.
 
@@ -58,7 +58,7 @@ If you do look at the code for the plots, you will notice many plots use a funct
 ::::
 
 <br>
-The cookbook begins by introducing various types of visualisations, each serving a specific purpose based on the type of task you want to perform. This approach is adopted because there are often multiple ways to present the same data, and each visualisation has its own merits and drawbacks. Within this section, you will find examples of the business questions we commonly encounter, accompanied by appropriate visualisations and explanations for interpreting them.
+The document begins by introducing various types of visualisations, each serving a specific purpose based on the type of task you want to perform. This approach is adopted because there are often multiple ways to present the same data, and each visualisation has its own merits and drawbacks. Within this section, you will find examples of the business questions we commonly encounter, accompanied by appropriate visualisations and explanations for interpreting them.
 
 Subsequently, there is a section dedicated to enhancing the overall aesthetics of plots. These tips not only contribute to visually pleasing outputs but also assist in effective storytelling. Moreover, they introduce fundamental principles of data visualisation that we should all be mindful of.
 
@@ -428,7 +428,7 @@ pie <- tribble(
 bar + pie
 ```
 
-This limitation can be somewhat mitigated by directly adding values onto the plot, but we will delve into that aspect [later in this cookbook](#values)
+This limitation can be somewhat mitigated by directly adding values onto the plot, but we will delve into that aspect [later in this document](#values)
 
 #### Doughnut Charts {#doughnut}
 
@@ -1029,7 +1029,7 @@ umap_tib %>%
 **Note**
 :::
 
-This is a very high level overview of UMAP. As explained previously, the purpose of this Cookbook is not to get a thorough understanding of statistics and Data Science, but rather empower solid data visualisation principles and understanding from an interpretation perspective
+This is a very high level overview of UMAP. As explained previously, the purpose of this document is not to get a thorough understanding of statistics and Data Science, but rather empower solid data visualisation principles and understanding from an interpretation perspective
 ::::
 <br>
 When applying UMAP to social media mentions, the technique projects the data into a lower-dimensional space, typically two dimensions, while preserving the underlying structure of the conversations. Each data point represents a post, and their proximity to each other on the UMAP plot indicates similarity in the context or content of the conversations (i.e. semantic similarity).
@@ -2481,7 +2481,7 @@ qual_likert + seq_likert + div_likert
 
 Sometimes we might want a really clean looking plot, or fully transparency of the exact value being visualised is paramount. 
 
-In this case, also including the raw values directly onto a figure can be extremely useful. Here we take the same bar chart we introduced earlier in the Cookbook but include the specific values that each of our bars represents as a label. Because we include these values, we can also remove our y axis as well as any plot gridlines as they no longer help us discern more information from the plot. 
+In this case, also including the raw values directly onto a figure can be extremely useful. Here we take the same bar chart we introduced earlier in the document but include the specific values that each of our bars represents as a label. Because we include these values, we can also remove our y axis as well as any plot gridlines as they no longer help us discern more information from the plot. 
 
 ```{r, eval = FALSE, echo = TRUE}
 df %>%
