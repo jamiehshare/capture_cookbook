@@ -2682,7 +2682,7 @@ example %>%
 
 ## Gridlines and borders
 
-We should aim to remove clutter from plots to strive for clean and elegant plots. I highly recommend anyone interested in data visualisations to read the works of Edward Tufte, but one of his most famous opinions is to "Maximise the data-ink ratio, within reason". Through this, Tufte proposes a minimalistic approach to data visualisation by removing most parts of a plot which do not display the data itself. This is certainly one extreme of data visualisation aesthetics, and we should look to find a a middle balance between including too much and too little 'non-data ink' (anything on a chart that doesn't display the actual data).
+We should aim to remove clutter from plots to strive for clean and elegant plots. A popular mantra you may see in the world of data visualisation is to "maximise the data-ink ratio, within reason". This proposes a minimalistic approach to data visualisation by removing most parts of a plot which do not display the data itself. This is certainly one extreme of data visualisation aesthetics, and we should look to find a a middle balance between including too much and too little 'non-data ink' (anything on a chart that doesn't display the actual data).
 
 The advice surrounding gridlines is:
 
