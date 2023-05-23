@@ -29,6 +29,10 @@ library(gt)
 library(gghighlight)
 library(treemapify)
 library(rivendell)
+library(formatR)
+library(circlize)
+library(chorddiag)
+library(viridis)
 ```
 
 # About the Capture Cookbook 
@@ -39,8 +43,21 @@ The BBC has provided an excellent summary of this topic in their own graphics co
 
 >A reference manual, rather than a tutorial, it might not tell you how to make your very first chart in R, but is a useful collection of little tips and tricks.
 
-In line with this, this document will not teach you R or the technical aspects of creating these plots. Whilst there is some code provided for some plots- showing 'how the plots are made', there is minimum explanation of the code in the hope of avoiding too much boilerplate and to try and make this document as coding language/software-agnostic as possible. Instead, its primary goal is to help you grasp the purpose and appropriate usage of visualisations in our work. By doing so, it empowers everyone to confidently explain the key insights, strengths, and weaknesses conveyed by different types of plots. Once the building blocks of this are in place, it is much easier to apply this knowledge to different coding languages and software. *Note that if you do look at the code for the plots, there is a function called `theme_capture()` that is used. This is not yet available for wider use, but will eventually appear in the `HelpR` package to enable consistent 'Capture aesthetics' for each plot*
+In line with this, this document will not teach you R or the technical aspects of creating these plots. Whilst there is some code provided for some plots- showing 'how the plots are made', there is minimum explanation of the code in the hope of avoiding boilerplate and to try and make this document as coding language/software-agnostic as possible. Instead, its primary goal is to help you grasp the purpose and appropriate usage of visualisations in our work. By doing so, it empowers everyone to confidently explain the key insights, strengths, and weaknesses conveyed by different types of plots. Once the building blocks of this are in place, it is much easier to apply this knowledge to different coding languages and software. 
 
+```{r, echo = TRUE, class.source = 'fold-show', eval = FALSE, tidy=TRUE, tidy_source(width.cutoff = 60)}
+# The code blocks can be accessed by clicking `code`/`hide` towards the right hand side of each block. Alternatively, at the top of the page is an option to open up all code blocks at once. 
+```
+
+:::: {.blackbox data-latex=""}
+::: {.center data-latex=""}
+**Note**
+:::
+
+If you do look at the code for the plots, you will notice many plots use a function called `theme_capture()`. This is not yet available for wider use, but will eventually appear in the `DisplayR` package to enable consistent 'Capture aesthetics' for each plot.
+::::
+
+<br>
 The cookbook begins by introducing various types of visualisations, each serving a specific purpose based on the type of task you want to perform. This approach is adopted because there are often multiple ways to present the same data, and each visualisation has its own merits and drawbacks. Within this section, you will find examples of the business questions we commonly encounter, accompanied by appropriate visualisations and explanations for interpreting them.
 
 Subsequently, there is a section dedicated to enhancing the overall aesthetics of plots. These tips not only contribute to visually pleasing outputs but also assist in effective storytelling. Moreover, they introduce fundamental principles of data visualisation that we should all be mindful of.
@@ -53,7 +70,7 @@ One of the fundamental purposes of data visualisation is to gain insights into h
 
 When analysing trends over time, we often focus on metrics such as volume, proportion, or percentage. By plotting these values on a line chart, we can easily observe their fluctuations and patterns.
 
-### Example
+### Example {#linechart}
 
 ```{r, eval = FALSE}
 example <- ParseR::sprinklr_export %>% 
@@ -163,7 +180,7 @@ example %>%
 
 It is often necessary to compare different groups or categories in relation of a specific metric or variable. For instance, we may want to examine the volume of posts for different topics. The crucial aspect here is that these variables we are measuring represent distinct groups and may not follow a logical order (e.g., Platform). In such cases, a bar chart is commonly used and a popular way to go.
 
-### Example
+### Example {#barchart}
 
 ```{r, eval = FALSE, echo = TRUE}
 df %>% 
@@ -222,6 +239,7 @@ example %>%
 A significant challenge with bar plots arises when there are numerous categories. If these categories result in bars of similar lengths, a phenomenon known as the Moiré effect can occur. This effect leads to confusion and difficulty in focusing, making it challenging to distinguish between individual bars and accurately interpret the data.
 
 ```{r gg-bar-moire, fig.cap = 'A visual example of the Moiré effect with many similar bars'}
+set.seed(1234)
 colB <- c(runif(4, min = 50, max = 55),
           runif(4, min = 20, max = 25))
 
@@ -251,7 +269,7 @@ tribble(
 
 We observe an example of the Moiré effect in the bar chart above. It manifests when we start perceiving "patterns" that are not actually present due to sensory overload. Furthermore, charts with more than approximately eight bars, even if they vary in size, can appear cluttered and overwhelming.
 
-##### Lollipop Charts
+##### Lollipop Charts {#lollipop}
 
 In order to address this challenge, we can employ lollipop charts to present the data in a different way:
 
@@ -304,7 +322,7 @@ The lollipop chart offers a clearer visual representation that may be (hopefully
 
 One important consideration when comparing lollipop charts to bar charts is the level of importance attached to knowing the exact value of each category. In bar charts, it is evident where the top of the bar is located, but with lollipop charts, determining whether the centre, top, or bottom of the circle represents the value in question can be somewhat imprecise. To address this, it is possible to include the raw values directly on the lollipop chart. Despite this, it remains essential to consider the intended audience and the key message we aim to convey, whether it pertains to general trends or specific values.
 
-#### Pie Charts {#piechart}
+#### Pie Charts {#pie}
 
 While pie charts are commonly used and provide a sense of familiarity, they are rarely the optimal choice for representing our data. Nevertheless, we often receive requests to include pie charts when comparing categories.
 
@@ -412,7 +430,7 @@ bar + pie
 
 This limitation can be somewhat mitigated by directly adding values onto the plot, but we will delve into that aspect [later in this cookbook](#values)
 
-#### Doughnut Charts
+#### Doughnut Charts {#doughnut}
 
 The sibling of the Pie Chart, a doughnut chart displays the same information as a pie chart though the centre is removed. This allows information to be reported within the centre of the chart itself. However, whereas the proportion of slices represents the values of interest in pie charts, doughnut charts use the length of each arc to represent the values being presented. The same precautions should be kept in mind when making and presenting doughnut chart as mentioned above for pie charts (in fact, if anything, the number of categories that can appropriately be displayed is lower- up to 5).
 
@@ -466,7 +484,7 @@ doughnut <- tribble(
 pie + doughnut
 ```
 
-#### Treemap
+#### Treemap {#treemap}
 
 An additional method of comparing part-to-whole relationships is through treemaps. These represent different categories as rectangles, where the sizes of the rectangles represent the proportions or volumes of different categories within a larger category. The total plot volume (i.e. the rectangle made up of all categories together) represents the total volume of the category of interest (in the case below, total mentions in 5 different platforms). We can compare the sizes of the rectangles to understand the relative volumes or proportions of the different categories- larger rectangles represent topics with higher volumes or proportions, while smaller rectangles represent topics with lower volumes or proportions. Note the use of a sequential colour scale (see the [colour section](#colours) below) to help guide the eye to the underlying values.
 
@@ -524,7 +542,7 @@ treemap %>%
         axis.title = element_blank())
 ```
 
-```{r gg-treemap-2, fig.cap = "A treemap showing part-to-whole relationship of social media mentions within the whole conversation using the size and colour of rectangles to encode values", fig.width=6}
+```{r gg-treemap-2, fig.cap = "A treemap showing part-to-whole relationship of social media mentions within the whole conversation using the size and colour of rectangles to encode values", eval = FALSE, fig.width=6}
 treemap <- read_rds("~/Documents/R/capture_cookbook/data/treemap.rds")
 
 treemap %>%
@@ -560,7 +578,7 @@ In the context of our marketing company, stacked bar charts can help us answer i
 
 A key business question that may be answered with this is to visualise how sentiment varies between between topics or brands, or any other categorical variable of interest.
 
-### Example
+### Example {#stacked}
 
 ```{r, eval = FALSE, echo = TRUE}
 my.cols <- RColorBrewer::brewer.pal(5, "PRGn")
@@ -666,15 +684,15 @@ tribble(
   theme_capture()
 ```
 
-To address the potential challenges mentioned above, we can scale our data to show proportions or percentages of posts with each sentiment per category, rather than raw volumes. This approach makes it much easier to compare the sentiment makeup of categories with lower volume. However, it's essential to note that scaling the data in this way may lead clients to overlook the fact that each bar represents vastly different volumes in reality.
+To address the potential challenges mentioned above, we can scale our data to show proportions or percentages of posts with each sentiment per category, rather than raw volumes. This approach makes it much easier to compare the sentiment make-up of categories with lower volume. However, it's essential to note that scaling the data in this way may lead clients to overlook the fact that each bar represents vastly different volumes in reality.
 
 To navigate this potential pitfall, it is crucial to provide clear explanations of what the chart represents, whether it shows volume or proportion, and to determine a specific narrative or story that the visualisation aims to convey (such as comparing sentiments *between* categories or exploring sentiment variations *within* a specific category).
 
-## Visualise distribution of a continuous variable
+## Visualising the distribution of a continuous variable
 
 Sometimes we will want to understand the distribution of a **continuous variable** in our data to gain insights. For instance, if we have calculated a score of sentiment ranging from 0 (negative) to 1 (positive) for each post in our dataset, we might want to examine the distribution. Although these types of visualisations are typically used for exploratory data analysis (EDA) rather than client presentations, it is still an extremely powerful and useful string to have in your data exploration bow.
 
-### Example
+### Example {#histogram}
 
 ```{r, eval = FALSE, echo = TRUE}
 df %>%
@@ -756,13 +774,13 @@ left_skewed_dist / right_skewed_dist / bimodal_dist
 
 From these examples, our interpretation should be that the left-skewed distribution appears as a curve skewed to the left, with most values clustered towards the upper end of our scale (closer to 1). On the other hand, the right-skewed distribution appears as a curve skewed to the right, with most values clustered towards the lower end (closer to 0). Lastly, the bimodal distribution displays two distinct peaks, with most values concentrated around two different means (0.3 and 0.7 in this particular example).
 
-## Visualise most frequent terms (Bigram network)
+## Visualising most frequent terms
 
 The objective of a bigram network is to provide a comprehensive overview of a specific conversation by identifying frequently occurring pairs of words.
 
 N.B. The term *bi*-gram refers to a sequence of two adjacent terms. If we were to examine three adjacent terms, this would be referred to as a *tr*-igram, and so on. In other words, a bigram specficially refers to an *n*-gram where n = 2. The plot we present is known as a bigram *network*, which displays these pairs of words. Whilst it may seem like splitting hairs, it is important to be precise in our terminology.
 
-### Example
+### Example {#bigram}
 
 ```{r, eval = FALSE, echo = TRUE}
 ngram_df <- df %>%
@@ -810,11 +828,11 @@ Interpreting a bigram network is more complex compared to the simpler plots we h
 
 For a more detailed overview of bigrams and more specific business-specific interpretation, please see the [ParseR vignette](http://parser.shareldn.com/articles/ngrams.html)
 
-## Differences in language between categories (WLO)
+## Differences in language between categories
 
 Often we will be interested in comparing language use between groups/categories. These categories could be audiences, posts of differing sentiment, posts from different quarters etc.If we can classify different posts into distinct groups, we can compare language.
 
-### Example
+### Example {#wlo}
 
 ```{r, eval = FALSE, echo = TRUE}
 wlos <- ParseR::calculate_wlos(df, 
@@ -861,13 +879,104 @@ Despite the complexity involved, it's crucial to emphasize that the magnitude of
 
 Therefore, when reporting WLO to clients, one must refrain from using phrases such as "This term is X times as likely to appear in Category A than Category B and C". Instead use phrases such as "**This term has a stronger association with Category A than Category B and C**".
 
-## Visualising complex conversational landscapes (UMAP)
+### Network visualisation of language use across categories {#ttn}
+
+There is another way of visualising differences in language across categories that has been developed internally. 
+
+We can plot a network where the largest nodes symbolise the categorical variables in our data, with terms radiating from these nodes based on whether they are relevant to that specific category. With these plots, terms that are only relevant to a single category will only be connected to a single category and appear towards the edge of the plot. Terms that are relevant to multiple categories, however, will appear towards the the centre. As there are no labelled axes in this plot, we cannot determine whether two terms that are both connected to the same node are more or less associated to that category than each other. Note that whilst the general interpretation of this plot will be consistent throughout its use, how we decide which terms can appear in the plot will change the specific interpretation. For example, the below plot shows the most frequent terms across two categories, however we could also show the terms with the highest log-odds ratio for difference categories. This would effectively recreate a standard WLO plot but visualise it as a network. Because there are no numerical axes, it might actually be an easier way to visualise that certain terms have a stronger association with certain categories than others than a standard WLO in some cases.
+
+```{r}
+plot_group_term_network_jh <- function(data, group_var = brand, text_var = message, n_terms = 20,
+                                    with_ties = FALSE){
+
+  #Some tidy evaluate variables
+  group_sym <- rlang::ensym(group_var)
+  text_sym <- rlang::ensym(text_var)
+
+  #Get tokens, count by group then slice n_terms tokens per group
+  group_tokens <- data %>%
+    tidytext::unnest_tokens(words, {{text_var}}) %>%
+    dplyr::count({{group_var}}, words) %>%
+    dplyr::group_by({{group_var}}) %>%
+    dplyr::slice_max(order_by = n, n = n_terms, with_ties = with_ties) %>%
+    dplyr::ungroup()
+
+  #Make edges
+  edges <- group_tokens %>% dplyr::rename(from = {{group_var}},
+                                          to = 2)
+
+  groups <- unique(edges$from)
+
+  #Make a group - group set of rows, wherein the size is going to be large.
+  group_frame <- tibble::tibble(from = groups, to = groups) %>%
+    dplyr::mutate(size = 50)
+
+  edges <- edges %>% dplyr::bind_rows(group_frame)
+
+  nodes <- edges %>%
+    dplyr::select(from, to) %>%
+    tidyr::pivot_longer(cols = everything(), values_to = "node_name") %>%
+    dplyr::distinct(node_name) %>%
+    dplyr::mutate(size = ifelse(node_name %in% groups, 50, 1))
+
+  colour_join <- edges %>% dplyr::select(-c(from, size))
+
+  edges <- edges %>%
+    dplyr::mutate(size = ifelse(to %in% groups, size, 0))
+
+  nodes <- nodes %>%
+    dplyr::left_join(colour_join, by = c("node_name" = "to")) %>%
+    dplyr::group_by(node_name) %>%
+    dplyr::mutate(n = mean(n, na.rm = TRUE)) %>%
+    dplyr::ungroup() %>%
+    dplyr::mutate(my_colour = ifelse(node_name %in% groups, "GROUP", "NOTGROUP")) %>%
+    dplyr::distinct(node_name, .keep_all = TRUE) %>%
+    dplyr::mutate(n = ifelse(is.na(n), 1, n),
+                  n = ifelse(node_name %in% groups, max(n), n))
+
+  tidygraph::tbl_graph(nodes = nodes, edges = edges) %>%
+    ggraph::ggraph(layout = "nicely") +
+    ggraph::geom_edge_link(edge_alpha = .5, edge_color = "grey70")+
+    # ggraph::geom_edge_link(edge_alpha = .5, edge_color = "grey70",
+    #                        aes(edge_width = n))+
+    ggraph::geom_node_point(aes(size = size, colour = my_colour)) +
+    shadowtext::geom_shadowtext(ggplot2::aes(label = node_name, x ,y),
+                                size = 3, colour = "black", repel = TRUE,
+                                bg.colour = "white", fontface = "bold", 
+                                vjust = 0.5, bg.r = 0.25, 
+                                family = "GT Walsheim Pro")+
+    ggplot2::theme_void() +
+    ggplot2::scale_colour_manual(values = c("GROUP" =  "#fde725",
+                                            "NOTGROUP" = "#21918c"), guide = "none") +
+    # ggplot2::scale_colour_viridis_c(guide = "none")+
+    ggraph::scale_edge_colour_viridis(guide = "none") +
+    ggplot2::scale_size_continuous(aes(size = size), guide = "none", range = c(0, 10)) #+
+  # ggraph::scale_edge_width(aes(size = n),range = c(0.5, 4), guide = "none")
+
+}
+```
+
+```{r group-term-network, fig.cap = "A network showing overlapping and distinct terms between different categories"}
+set.seed(1234)
+example %>% 
+  ParseR::clean_text(text_var = message) %>% 
+  dplyr::mutate(message = tm::removeWords(x = message, c(tm::stopwords(kind = "SMART"), 
+                                              "ll", "de", "don", "ve", "didn", "doesn", 
+                                              "isn", "bit", "ly", "pic", "htt"))) %>% 
+  dplyr::filter(sender_gender != 'NA') %>% 
+  mutate(sender_gender = case_when(sender_gender == "F" ~ "Female",
+                                   sender_gender == "M" ~ "Male",
+                                   T ~ sender_gender)) %>% 
+  plot_group_term_network_jh(group_var = sender_gender, text_var = message)
+```
+
+## Visualising complex conversational landscapes
 
 UMAP (Uniform Manifold Approximation and Projection) is a powerful data visualization technique that can help analysts gain insights into complex datasets, such as the conversational landscape of social media mentions.
 
 We are often tasked with capturing a wide array of conversations on various topics. However, analysing and making sense of this vast amount of data can be challenging. UMAP provides a way to visualize and explore this conversational landscape, enabling us to identify clusters, patterns, and relationships within the data.
 
-### Example
+### Example {#umap}
 
 ```{r, eval = FALSE, echo = TRUE}
 df %>% 
@@ -915,7 +1024,13 @@ umap_tib %>%
 
 ### Interpretation
 
-*Please note that this is a very high level overview of UMAP. As explained previously, the purpose of this Cookbook is not to get a thorough understanding of statistics and Data Science, but rather empower solid data visualisation principles and understanding from an interpretation perspective*
+:::: {.blackbox data-latex=""}
+::: {.center data-latex=""}
+**Note**
+:::
+
+This is a very high level overview of UMAP. As explained previously, the purpose of this Cookbook is not to get a thorough understanding of statistics and Data Science, but rather empower solid data visualisation principles and understanding from an interpretation perspective
+::::
 
 When applying UMAP to social media mentions, the technique projects the data into a lower-dimensional space, typically two dimensions, while preserving the underlying structure of the conversations. Each data point represents a post, and their proximity to each other on the UMAP plot indicates similarity in the context or content of the conversations (i.e. semantic similarity).
 
@@ -1042,32 +1157,7 @@ Heatmaps are powerful visualisations that use colours to help us identify patter
 
 For instance, heatmaps can be utilized to determine the topics in which certain brands are mentioned more frequently, or to identify specific time periods when discussions are more intense.
 
-### Example
-
-```{r, eval = FALSE, echo = TRUE}
-df %>% 
-  ggplot(aes(x_axis_category, y_axis_category, fill = fill_variable)) + 
-  geom_tile() +
-  labs(x = "Brand",
-       y = NULL,
-       fill = "Percentage of Topic conversation that includes each Brand",
-       title = "Topic x Brand Heatmap") +
-  scale_fill_viridis_c(direction = -1,
-                       labels = percent) +
-  guides(fill = guide_colourbar(title.position = 'top',
-                               direction = "horizontal",
-                               title.hjust = .5,
-                               barwidth = 22,
-                               barheight = 0.8)) +
-  coord_fixed() +
-  theme_capture() +
-  theme(panel.grid = element_blank(),
-        axis.ticks = element_blank(),
-        legend.position = "bottom",
-        legend.text = element_text(size = 7),
-        legend.title = element_text(hjust = 0.5),
-        axis.line = element_blank())
-```
+### Example {#heatmap}
 
 ```{r gg-heatmap, fig.cap = 'Example heatmap showing branded conversation within different topics'}
 x <- LETTERS[1:6]
@@ -1111,8 +1201,8 @@ data %>%
         legend.title = element_text(hjust = 0.5),
         axis.line = element_blank())
 ```
- **Note, for a bunch of plots I've also created the same plot but with a more 'obvious' sequential colour palette. Just testing to see whether some plots need this "Yellow, Green, Blue" palette for a clearer interpretation of both saturation and hue changing with values**
-```{r gg-heatmap-3, fig.cap = 'Example heatmap showing branded conversation within different topics'}
+
+```{r gg-heatmap-3, fig.cap = 'Example heatmap showing branded conversation within different topics', eval = FALSE}
 x <- LETTERS[1:6]
 y <- paste0("Topic ", seq(1, 5))
 
@@ -1166,7 +1256,7 @@ Heatmaps are particularly useful for providing a generalized view of the data ra
 
 To further illustrate the interpretation of heatmaps, let's consider the following example. The heatmap shown here effectively functions as a calendar, with each row representing a different day and each column representing an hour of the day. We can interpret this plot as depicting the proportion of branded conversations occurring at different times throughout the week. Immediately, two clear patterns emerge. Firstly, for each day, the majority of users posting about this brand do so between 16:00 and 21:00 (indicated by darker colours when reading rows from left to right). Secondly, when comparing the days, we observe that Saturday and Sunday have more posts at most hours than weekdays (indicated by darker coluors when reading columns up and down).
 
-```{r gg-heatmap-2, fig.cap = 'Example heatmap showing hourly social media brand mentions for each day of the week'}
+```{r gg-heatmap-2, fig.cap = 'Example heatmap showing hourly social media brand mentions for each day of the week', eval = FALSE}
 x <- 1:10000
 days <- factor(c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), 
                levels = rev(c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")), 
@@ -1251,7 +1341,133 @@ data.frame(x, hour, day) %>%
         axis.line = element_blank())
 ```
 
+## Showcasing inter-relationships between categories
+
+Sometimes we might want to visualise how different categories share information/data. The information displayed can be flow (i.e. directed from one category to another) or connection (i.e shared between categories).
+
+We can use a chord diagram to showcase this, where flow or connections between categories are represented by arcs between categories positioned in a circular layout. 
+
+### Example {#chord}
+
+```{r chord-diag, fig.cap = 'Example chord diagram showcasing the flow of information/data between categories'}
+switch_summary_table <- read_rds("~/Documents/R/capture_cookbook/data/chord.rds")
+
+circos.clear()
+  circos.par(start.degree = 90, gap.degree = 4, track.margin = c(-0.1, 0.1), points.overflow.warning = FALSE)
+  par(mar = rep(0, 4))
+  
+  mycolor <- viridis(4, alpha = 1, begin = 0, end = 1, option = "D")
+  
+  par(family = "GT Walsheim Pro")
+  
+  chordDiagram(
+    x = switch_summary_table,
+    grid.col = mycolor,
+    transparency = 0.25,
+    directional = 1,
+    direction.type = c("arrows", "diffHeight"),
+    diffHeight  = -0.04,
+    annotationTrack = "grid",
+    annotationTrackHeight = c(0.05, 0.1),
+    link.arr.type = "big.arrow",
+    link.arr.length = 0.05,
+    link.sort = TRUE,
+    link.largest.ontop = TRUE)
+  
+  circos.trackPlotRegion(
+    track.index = 1,
+    bg.border = NA,
+    panel.fun = function(x, y) {
+      xlim = get.cell.meta.data("xlim")
+      sector.index = get.cell.meta.data("sector.index")
+      
+      # Add names to the sector.
+      circos.text(
+        x = mean(xlim),
+        y = 4,
+        labels = sector.index,
+        facing = "bending",
+        cex = 1
+      )
+      
+      # Add graduation on axis
+      circos.axis(
+        h = "top",
+        major.at = NULL,
+        minor.ticks = 0,
+        labels.cex = 0.75,
+        major.tick.length = 0.5,
+        labels.niceFacing = TRUE
+      )
+    }
+  )
+```
+
+```{r, eval = FALSE, echo = TRUE}
+
+  circos.clear()
+  circos.par(start.degree = 90, gap.degree = 4, track.margin = c(-0.1, 0.1), points.overflow.warning = FALSE)
+  par(mar = rep(0, 4))
+  
+  mycolor <- viridis(4, alpha = 1, begin = 0, end = 1, option = "D")
+  
+  par(family = "GT Walsheim Pro")
+  
+  chordDiagram(
+    x = df,
+    grid.col = mycolor,
+    transparency = 0.25,
+    directional = 1,
+    direction.type = c("arrows", "diffHeight"),
+    diffHeight  = -0.04,
+    annotationTrack = "grid",
+    annotationTrackHeight = c(0.05, 0.1),
+    link.arr.type = "big.arrow",
+    link.arr.length = 0.05,
+    link.sort = TRUE,
+    link.largest.ontop = TRUE)
+  
+  circos.trackPlotRegion(
+    track.index = 1,
+    bg.border = NA,
+    panel.fun = function(x, y) {
+      xlim = get.cell.meta.data("xlim")
+      sector.index = get.cell.meta.data("sector.index")
+      
+      # Add names to the sector.
+      circos.text(
+        x = mean(xlim),
+        y = 4,
+        labels = sector.index,
+        facing = "bending",
+        cex = 1
+      )
+      
+      # Add graduation on axis
+      circos.axis(
+        h = "top",
+        major.at = NULL,
+        minor.ticks = 0,
+        labels.cex = 0.75,
+        major.tick.length = 0.5,
+        labels.niceFacing = TRUE
+      )
+    }
+  )
+```
+
+### Interpretation
+
+Each category is represented by a fragment on the outer part of the circular layout. Then, arcs are drawn between categories to depict the information flow or shared connections between categories. The size of the arc is proportional to the size of the flow. The presence of an arrow at the end of an arc indicates the flow of data, with the arrowhead indicating the direction of the flow. In the given example, the arrows represent consumers transitioning from one Brand to another.
+
+When working with chord diagrams, the following factors should be taken into account:
+
+* Minimize the number of arc crossings by arranging the categories around the circle strategically. This improves the legibility and clarity of the plot.
+* Avoid overcrowding the diagram by considering the relevance of smaller connections. If certain connections are of lesser significance, they can be excluded from the plot, accompanied by a note such as "Values less than N are excluded for visual clarity."
+* Provide a comprehensive explanation of the plot to the client. While chord diagrams are visually appealing, they can be challenging to understand. Breaking down each segment separately can help guide the client through the data journey and ensure a thorough understanding.
 ## Presenting precise numerical values
+
+## Presenting precise numerical values {#tables}
 
 Sometimes we need to provide a comprehensive view of the data and allow the reader to examine the exact values of our analyses and make detailed comparisons themselves. Therefore, if precision is crucial for your analysis and you want to provide specific values or facilitate precise calculations, a table may be more appropriate. Tables can also be suitable when we want to either summarise a lot of information that would require multiple charts over multiple slides.
 
@@ -1491,7 +1707,7 @@ tribble(
 
 These palettes use multiple shade variations- effectively going from a light shade to a dark shade. They are suitable for representing numbers that go from low to high. This means that a reader can see a value represented by a "light colour" and inherently understand that this represents a lower value than a "darker colour", without even having to look at a legend yet. 
 
-Whilst you can use only one colour (e.g. light purple to dark purple), using multiple colours (blue to dark purple) increases the colour contrast and makes it easier to distinguish between values.
+Whilst you can use only one colour (e.g. light purple to dark purple), using multiple colours (light yellow to dark purple) increases the colour contrast and makes it easier to distinguish between values.
 
 ```{r sequential-col, fig.cap = 'Example sequential colours. These are powerful as they vary both in hue and saturation'}
 seq_bin <- data.frame(colours = seq(1, 7),
@@ -1532,6 +1748,14 @@ seq_cont <- data.frame(colours = seq(1, 1000),
 
 seq_bin / seq_cont
 ```
+
+:::: {.blackbox data-latex=""}
+::: {.center data-latex=""}
+**Note**
+:::
+
+Whilst the colour palette above matches the Capture Intelligence colour palette, and is a sequential palette, there are also colour palettes that not only use multiple colours but also change the lightness/brightness of the colour too. This can be thought of as effectively changing the colour from an intense colour to something more muted. Sometimes palettes which change brightness along with colour can be more effective in showcasing the benefits of certain data visualisation principles applied to different plots. As such, we also introduce the below sequential colour scheme in this section for the purpose of exaggerating the pros and cons of different palettes.
+::::
 
 ```{r sequential-col-2, fig.cap = 'Example sequential colours. These are powerful as they vary both in hue and saturation'}
 seq_bin <- data.frame(colours = seq(1, 7),
@@ -1625,7 +1849,7 @@ As you can see, the difference between sequential and divergent palettes is very
 
 To show why these different palettes are important, let's see them in some example plots:
 
-```{r, col-ex, fig.height = 3, fig.cap = 'When to use qualitative colour palette'}
+```{r, col-ex, fig.height = 3, fig.cap = 'When to use qualitative colour palette', eval = FALSE}
 qual_bar <- tribble(
   ~colA, ~n, 
   "A", 30,
@@ -1770,7 +1994,7 @@ Here we see how a simple bar chart can look vastly different when using differen
 
 Despite this, sometimes using a sequential palette can be okay for such plots when we want to emphasise an underlying order. Remember when we said that we could rearrange a chart so the categorical values follow the order of the variable of interest? In this case, using a sequential colour palette actually helps to double-encode the value of "number of posts" by both position and colour
 
-```{r, col-ex-v2, fig.height = 3, fig.cap = 'We *can* use a sequential palette when we have already ordered categories based on the value of interest'}
+```{r, col-ex-v2, fig.height = 3, fig.cap = 'We *can* use a sequential palette when we have already ordered categories based on the value of interest', eval = FALSE}
 qual_bar <- tribble(
   ~colA, ~n, 
   "A", 30,
@@ -1926,7 +2150,7 @@ Here we can see that to be honest the sequential bar chart with the sequential p
 
 Below is another example, this time visualising a heatmap. We can see the value we are visualising with colour (percentage) has a clear order. Using our qualitative palette, which has no inherent order, produces a lego-like mess where it is not clear what each colour represents. The divergent palette is slightly better, but still creates the impression there is a significant distinction between 10% and 40%, when in fact they form a continuous range. The best approach here is the sequential palette that provides a smooth progression of colours to represent the increasing percentages. This ensures a more accurate representation of the data and help users perceive the gradual change in values without introducing unnecessary confusion or bias.
 
-```{r, col-ex-2, fig.height = 3, fig.cap = 'When to use sequential colour palette'}
+```{r, col-ex-2, fig.height = 3, fig.cap = 'When to use sequential colour palette', eval = FALSE}
 x <- LETTERS[1:7]
 y <- paste0("var", seq(1, 4))
 
@@ -2053,9 +2277,6 @@ ggplot(aes(x, y, fill = factor(z))) +
        fill = NULL,
        title = "Good",
        subtitle = "Sequential Palette") +
-  # scale_fill_viridis_d(direction = -1,
-  #                      guide = guide_legend(label.position = "bottom",
-  #                                           nrow = 1)) +
   scale_fill_brewer(palette = "YlGnBu",
                     guide = guide_legend(label.position = "bottom",
                                             nrow = 1)) +
@@ -2101,7 +2322,7 @@ qual_heatmap + seq_heatmap + div_heatmap
 
 Despite being "text" rather than "numbers, something like a Likert scale has inherent order to it and hence a qualitative colour palette is unsuitable for this particular visualisation. Whilst this palette enables easy differentiation between groups at a glance, it fails to represent the underlying scale or intensity of the Likert scale. The sequential colour palette is also unsuitable. Its subtle differences in colour shades can make it challenging for viewers to distinguish between the different categories accurately. The sequential palette may inadvertently suggest a progression or intensity within the Likert scale, misleading the interpretation of the data. In contrast, the divergent colour palette can be considered suitable for the Likert scale stacked bar charts. By using a divergent palette, meaningful thresholds or midpoints within the scale can be highlighted effectively. It enables the representation of both positive and negative values, accentuating the contrast between categories. 
 
-```{r, col-ex-3, fig.height = 4, fig.cap = 'When to use divergent colour palette'}
+```{r, col-ex-3, fig.height = 4, fig.cap = 'When to use divergent colour palette', eval = FALSE}
 likert <- data.frame(sentiment = rep(c("Highly Negative", "Quite Negative",
                                         "Neutral", "Quite Positive", "Very Positive"), 4),
                           category = rep(LETTERS[1:4], each = , times = 1),
@@ -2218,6 +2439,7 @@ ggplot(aes(x = fct_rev(category), y = prop, fill = sentiment)) +
        subtitle = "Sequential Palette",
        fill = NULL) +
   scale_fill_brewer(palette = "YlGnBu",
+                    direction = -1,
                     guide = guide_legend(ncol = 1)) +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   coord_flip() +
@@ -2461,7 +2683,7 @@ example %>%
 
 We should aim to remove clutter from plots to strive for clean and elegant plots. I highly recommend anyone interested in data visualisations to read the works of Edward Tufte, but one of his most famous opinions is to "Maximise the data-ink ratio, within reason". Through this, Tufte proposes a minimalistic approach to data visualisation by removing most parts of a plot which do not display the data itself. This is certainly one extreme of data visualisation aesthetics, and we should look to find a a middle balance between including too much and too little 'non-data ink' (anything on a chart that doesn't display the actual data).
 
-With gridlines the advice should be:
+The advice surrounding gridlines is:
 
 * Gridlines that run perpendicular to the variable of interest are the most useful
 * We do not need gridlines that go from the x axis on a bar chart where the x axis is a category (the bars themselves guide our eye the same way a gridline would).
@@ -2870,3 +3092,42 @@ Here are some really good websites and/or blogs for all things data visualisatio
 * [R Graph Gallery](https://r-graph-gallery.com/ggplot2-package.html)
 * [R Charts](https://r-charts.com/)
 * [BBC Graphic Cookbook](https://bbc.github.io/rcookbook/)
+* [from Data to Viz](https://www.data-to-viz.com/)
+
+# Chart index
+
+[Bar chart](#barchart)
+
+[Bigram network](#bigram)
+
+[Chord diagram](#chord)
+
+[Doughnut chart](#doughnut)
+
+[Heatmap](#heatmap)
+
+[Histogram](#histogram)
+
+[Line chart](#linechart)
+
+[Lollipop chart](#lollipop)
+
+[Pie chart](#pie)
+
+[Stacked bar chart](#stacked)
+
+[Tables](#tables)
+
+[Top Term Network](#ttn)
+
+[Treemap](#treemap)
+
+[UMAP](#umap)
+
+[WLO](#wlo)
+
+
+
+
+
+
