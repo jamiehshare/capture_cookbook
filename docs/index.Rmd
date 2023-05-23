@@ -1256,7 +1256,7 @@ Heatmaps are particularly useful for providing a generalized view of the data ra
 
 To further illustrate the interpretation of heatmaps, let's consider the following example. The heatmap shown here effectively functions as a calendar, with each row representing a different day and each column representing an hour of the day. We can interpret this plot as depicting the proportion of branded conversations occurring at different times throughout the week. Immediately, two clear patterns emerge. Firstly, for each day, the majority of users posting about this brand do so between 16:00 and 21:00 (indicated by darker colours when reading rows from left to right). Secondly, when comparing the days, we observe that Saturday and Sunday have more posts at most hours than weekdays (indicated by darker coluors when reading columns up and down).
 
-```{r gg-heatmap-2, fig.cap = 'Example heatmap showing hourly social media brand mentions for each day of the week', eval = FALSE}
+```{r gg-heatmap-2, fig.cap = 'Example heatmap showing hourly social media brand mentions for each day of the week'}
 x <- 1:10000
 days <- factor(c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), 
                levels = rev(c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")), 
@@ -1298,7 +1298,7 @@ data.frame(x, hour, day) %>%
         axis.line = element_blank())
 ```
 
-```{r gg-heatmap-2-v2, fig.cap = 'Example heatmap showing hourly social media brand mentions for each day of the week'}
+```{r gg-heatmap-2-v2, fig.cap = 'Example heatmap showing hourly social media brand mentions for each day of the week', eval = FALSE}
 x <- 1:10000
 days <- factor(c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"), 
                levels = rev(c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")), 
@@ -1386,7 +1386,8 @@ circos.clear()
         x = mean(xlim),
         y = 4,
         labels = sector.index,
-        facing = "bending",
+        facing = "bending.inside",
+        niceFacing = TRUE,
         cex = 1
       )
       
