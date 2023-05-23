@@ -1335,7 +1335,7 @@ data.frame(x, hour, day) %>%
 
 ## Showcasing inter-relationships between categories
 
-Sometimes we might want to visualise how different categories share information/data. The information displayed can be flow (i.e. directed from one category to another) or connection (i.e shared between categories).
+Sometimes we might want to visualise how different categories share information/data. The information displayed can be flow (i.e. directed from one category to another) or connection (i.e shared between categories). A business question that might require such a visualisation is understanding how customers have moved between a brand or product and its competitors.
 
 We can use a chord diagram to showcase this, where flow or connections between categories are represented by arcs between categories positioned in a circular layout. 
 
