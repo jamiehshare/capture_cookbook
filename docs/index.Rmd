@@ -1754,7 +1754,7 @@ seq_bin / seq_cont
 ::: {.center data-latex=""}
 **Note**
 :::
-
+<br>
 Whilst the colour palette above matches the Capture Intelligence colour palette, and is a sequential palette, there are also colour palettes that not only use multiple colours but also change the lightness/brightness of the colour too. This can be thought of as effectively changing the colour from an intense colour to something more muted. Sometimes palettes which change brightness along with colour can be more effective in showcasing the benefits of certain data visualisation principles applied to different plots. As such, we also introduce the below sequential colour scheme in this section for the purpose of exaggerating the pros and cons of different palettes.
 ::::
 
