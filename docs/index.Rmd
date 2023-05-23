@@ -875,7 +875,7 @@ Therefore, when reporting WLO to clients, one must refrain from using phrases su
 
 There is another way of visualising differences in language across categories that has been developed internally. 
 
-We can plot a network where the largest nodes symbolise the categorical variables in our data, with terms radiating from these nodes based on whether they are relevant to that specific category. With these plots, terms that are only relevant to a single category will only be connected to a single category and appear towards the edge of the plot. Terms that are relevant to multiple categories, however, will appear towards the the centre. As there are no labelled axes in this plot, we cannot determine whether two terms that are both connected to the same node are more or less associated to that category than each other. Note that whilst the general interpretation of this plot will be consistent throughout its use, how we decide which terms can appear in the plot will change the specific interpretation. For example, the below plot shows the most frequent terms across two categories, however we could also show the terms with the highest log-odds ratio for difference categories. This would effectively recreate a standard WLO plot but visualise it as a network. Because there are no numerical axes, it might actually be an easier way to visualise that certain terms have a stronger association with certain categories than others than a standard WLO in some cases.
+We can plot a network where the largest nodes symbolise the categorical variables in our data, with terms radiating from these nodes based on whether they are relevant to that specific category. With these plots, terms that are only relevant to a single category will only be connected to a single category and appear towards the edge of the plot. In the example below, these are terms such as "today", "festival", and "culture". Terms that are relevant to multiple categories, however, will appear towards the the centre, such as "amazing", "hispanic", and "celebrate". As there are no labelled axes in this plot, we cannot determine whether two terms that are both connected to the same node are more or less associated to that category than each other. Note that whilst the general interpretation of this plot will be consistent throughout its use, how we decide which terms can appear in the plot will change the specific interpretation. For example, the below plot shows the most frequent terms across two categories, however we could also show the terms with the highest log-odds ratio for difference categories. This would effectively recreate a standard WLO plot but visualise it as a network. Because there are no numerical axes, it might actually be an easier way to visualise that certain terms have a stronger association with certain categories than others than a standard WLO in some cases.
 
 ```{r}
 plot_group_term_network_jh <- function(data, group_var = brand, text_var = message, n_terms = 20,
@@ -924,7 +924,8 @@ plot_group_term_network_jh <- function(data, group_var = brand, text_var = messa
     dplyr::mutate(my_colour = ifelse(node_name %in% groups, "GROUP", "NOTGROUP")) %>%
     dplyr::distinct(node_name, .keep_all = TRUE) %>%
     dplyr::mutate(n = ifelse(is.na(n), 1, n),
-                  n = ifelse(node_name %in% groups, max(n), n))
+                  n = ifelse(node_name %in% groups, max(n), n),
+                  fontface = ifelse(node_name %in% groups, "bold", "plain"))
 
   tidygraph::tbl_graph(nodes = nodes, edges = edges) %>%
     ggraph::ggraph(layout = "nicely") +
@@ -932,9 +933,10 @@ plot_group_term_network_jh <- function(data, group_var = brand, text_var = messa
     # ggraph::geom_edge_link(edge_alpha = .5, edge_color = "grey70",
     #                        aes(edge_width = n))+
     ggraph::geom_node_point(aes(size = size, colour = my_colour)) +
-    shadowtext::geom_shadowtext(ggplot2::aes(label = node_name, x ,y),
+    shadowtext::geom_shadowtext(ggplot2::aes(label = node_name, x ,y,
+                                             fontface = fontface),
                                 size = 3, colour = "black", repel = TRUE,
-                                bg.colour = "white", fontface = "bold", 
+                                bg.colour = "white",
                                 vjust = 0.5, bg.r = 0.25, 
                                 family = "GT Walsheim Pro")+
     ggplot2::theme_void() +
@@ -948,7 +950,7 @@ plot_group_term_network_jh <- function(data, group_var = brand, text_var = messa
 }
 ```
 
-```{r group-term-network, fig.cap = "A network showing overlapping and distinct terms between different categories"}
+```{r group-term-network, fig.cap = "A network showing overlapping and distinct terms across different categories"}
 set.seed(1234)
 example %>% 
   ParseR::clean_text(text_var = message) %>% 
