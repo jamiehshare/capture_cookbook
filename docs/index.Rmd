@@ -6,7 +6,7 @@ output:
   rmdformats::readthedown:
     css: custom.css
     toc_depth: 2
-    code_folding: hide
+    #code_folding: hide
     use_bookdown: true
 ---
 
@@ -43,19 +43,11 @@ The BBC has provided an excellent summary of this topic in their own graphics co
 
 >A reference manual, rather than a tutorial, it might not tell you how to make your very first chart in R, but is a useful collection of little tips and tricks.
 
-In line with this, this document will not teach you R or the technical aspects of creating these plots. Whilst there is some code provided for some plots- showing 'how the plots are made', there is minimum explanation of the code in the hope of avoiding boilerplate and to try and make this document as coding language/software-agnostic as possible. Instead, its primary goal is to help you grasp the purpose and appropriate usage of visualisations in our work. By doing so, it empowers everyone to confidently explain the key insights, strengths, and weaknesses conveyed by different types of plots. Once the building blocks of this are in place, it is much easier to apply this knowledge to different coding languages and software. 
+In line with this, this document will not teach you R or the technical aspects of creating these plots. Within this resource, code is not provided in the hope of avoiding boilerplate and to try and make this document as coding language/software-agnostic as possible. Instead, its primary goal is to help you grasp the purpose and appropriate usage of visualisations in our work. By doing so, it empowers everyone to confidently explain the key insights, strengths, and weaknesses conveyed by different types of plots. Once the building blocks of this are in place, it is much easier to apply this knowledge to different coding languages and software. 
 
-```{r, echo = TRUE, class.source = 'fold-show', eval = FALSE, tidy=TRUE, tidy_source(width.cutoff = 60)}
+```{r, class.source = 'fold-show', eval = FALSE, tidy=TRUE, tidy_source(width.cutoff = 60)}
 # The code blocks can be accessed by clicking `code`/`hide` towards the right hand side of each block. Alternatively, at the top of the page is an option to open up all code blocks at once. 
 ```
-
-:::: {.blackbox data-latex=""}
-::: {.center data-latex=""}
-**Note**
-:::
-
-If you do look at the code for the plots, you will notice many plots use a function called `theme_capture()`. This is not yet available for wider use, but will eventually appear in the `DisplayR` package to enable consistent 'Capture aesthetics' for each plot.
-::::
 
 <br>
 The document begins by introducing various types of visualisations, each serving a specific purpose based on the type of task you want to perform. This approach is adopted because there are often multiple ways to present the same data, and each visualisation has its own merits and drawbacks. Within this section, you will find examples of the business questions we commonly encounter, accompanied by appropriate visualisations and explanations for interpreting them.
@@ -79,7 +71,7 @@ example <- ParseR::sprinklr_export %>%
 write_rds(example, "~/Documents/R/capture_cookbook/data/example.rds")
 ```
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 df %>% 
   mutate(x_axis_variable = floor_date(date_variable,
                                    unit = "day")) %>% 
@@ -116,7 +108,7 @@ It's important to note that when creating trend plots, we typically need to grou
 
 In the example above, we binned the data on a daily basis. However, if we examine the plot below, which represents the data at a weekly scale, we can see how the view of volume fluctuations becomes less detailed.
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 df %>% 
   mutate(x_axis_variable = floor_date(date_variable,
                                    unit = "week")) %>% 
@@ -148,7 +140,7 @@ It's worth noting that we *can* also present the same data using a bar chart ins
 
 Therefore, bar charts can be thought of as more useful when the absolute value of a data point is relevant for understanding a trend, or when we want to supplement an existing line chart with additional information (for example, representing volume alongside the proportion already plotted with time).
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 df %>% 
   mutate(x_axis_variable = floor_date(date_variable,
                                    unit = "day")) %>% 
@@ -182,7 +174,7 @@ It is often necessary to compare different groups or categories in relation of a
 
 ### Example {#barchart}
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 df %>% 
   count(x_axis_variable) %>% 
   ggplot(aes(x = x_axis_variable, y = n)) +
@@ -212,7 +204,7 @@ Similar to the aforementioned trend charts, interpreting a classic bar chart is 
 
 One such modification involves reordering the categories on the x-axis. We may choose to arrange them alphabetically if that order has been used previously in the project. Alternatively, it can be useful to display the bars in descending order based on the y-axis value, in this case, "Number of posts."
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 df %>% 
   count(x_axis_variable) %>% 
   ggplot(aes(x = reorder(x_axis_variable, desc(n), y = n)) +
@@ -273,7 +265,7 @@ We observe an example of the Moiré effect in the bar chart above. It manifests 
 
 In order to address this challenge, we can employ lollipop charts to present the data in a different way:
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 df %>% 
   ggplot(aes(x = x_axis_variable, y = y_axis_variable)) +
   geom_segment(aes(x = x_axis_variable, xend = x_axis_variable,
@@ -488,7 +480,7 @@ pie + doughnut
 
 An additional method of comparing part-to-whole relationships is through treemaps. These represent different categories as rectangles, where the sizes of the rectangles represent the proportions or volumes of different categories within a larger category. The total plot volume (i.e. the rectangle made up of all categories together) represents the total volume of the category of interest (in the case below, total mentions in 5 different platforms). We can compare the sizes of the rectangles to understand the relative volumes or proportions of the different categories- larger rectangles represent topics with higher volumes or proportions, while smaller rectangles represent topics with lower volumes or proportions. Note the use of a sequential colour scale (see the [colour section](#colours) below) to help guide the eye to the underlying values.
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 df %>%
   ggplot(aes(area = number_posts, fill = social_network,
              label = paste(social_network, paste(number_posts, "posts", sep = " "),
@@ -580,7 +572,7 @@ A key business question that may be answered with this is to visualise how senti
 
 ### Example {#stacked}
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 my.cols <- RColorBrewer::brewer.pal(5, "PRGn")
 
 df %>% 
@@ -644,7 +636,7 @@ Interpreting stacked bar charts requires careful consideration, especially when 
 
 Comparing stacks between different categories can also be challenging. While it's evident which category contains the largest number of negative posts in the baseline stack (purple), it becomes more difficult to compare the neutral and positive stacks since they don't share the same baseline (ask yourself, are there more neutral posts in category C or D- it's not clear is it?). Being mindful of this limitation is crucial. Finally, stacked bar charts can be particularly challenging to interpret when the total bar size varies significantly. In such cases, the individual stacks can become squashed, making it harder to discern the relative proportions accurately.
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 my.cols <- RColorBrewer::brewer.pal(5, "PRGn")
 
 df %>% 
@@ -694,7 +686,7 @@ Sometimes we will want to understand the distribution of a **continuous variable
 
 ### Example {#histogram}
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 df %>%
   ggplot(aes(x = continuous_variable)) +
   geom_histogram(fill = viridis_pal(option = "viridis")(1)) +
@@ -782,7 +774,7 @@ N.B. The term *bi*-gram refers to a sequence of two adjacent terms. If we were t
 
 ### Example {#bigram}
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 ngram_df <- df %>%
   ParseR::count_ngram(text_var = message, 
                       n = 2, 
@@ -834,7 +826,7 @@ Often we will be interested in comparing language use between groups/categories.
 
 ### Example {#wlo}
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 wlos <- ParseR::calculate_wlos(df, 
                                topic_var = gender,
                                text_var = message,
@@ -978,7 +970,7 @@ We are often tasked with capturing a wide array of conversations on various topi
 
 ### Example {#umap}
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 df %>% 
   ggplot(aes(x = V1, y = V2, colour = factor(cluster))) +
   geom_point(alpha = 0.5, shape = 16,
@@ -1098,7 +1090,7 @@ UMAP visualizations also highlight outliers or mentions that are far apart from 
 
 The density of points in certain areas of the UMAP plot can indicate the volume of conversations or the prominence of specific themes. Areas with dense clusters may represent highly active or popular discussions, while sparser regions could indicate less popular or peripheral topics. To identify density on a UMAP, it is mostly appropriate to plot using a monochromatic colour palette, as otherwise our eye gets distracted by colour:
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 df %>% 
   ggplot(aes(x = V1, y = V2)) +
   geom_point(alpha = 0.5, shape = 16,
@@ -1404,7 +1396,7 @@ circos.clear()
   )
 ```
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 
   circos.clear()
   circos.par(start.degree = 90, gap.degree = 4, track.margin = c(-0.1, 0.1), points.overflow.warning = FALSE)
@@ -2483,7 +2475,7 @@ Sometimes we might want a really clean looking plot, or fully transparency of th
 
 In this case, also including the raw values directly onto a figure can be extremely useful. Here we take the same bar chart we introduced earlier in the document but include the specific values that each of our bars represents as a label. Because we include these values, we can also remove our y axis as well as any plot gridlines as they no longer help us discern more information from the plot. 
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 df %>%
   ggplot(aes(x = x_axis_variable, y = y_axis_variable)) +
   geom_col(fill = viridis_pal(option = "viridis")(1)) +
@@ -2626,7 +2618,7 @@ Notice how you have to keep looking between the plot and the legend to fully und
 
 When we plot the category label directly on the figure, the reader no longer needs to zig zag their eyes back and forth between the lines and the legend.
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 df %>%
   ggplot(aes(x = x_axis_variable, y = y_axis_variable, colour = category)) +
   geom_line(linewidth = 1) +
@@ -2689,7 +2681,7 @@ The advice surrounding gridlines is:
 * Gridlines that run perpendicular to the variable of interest are the most useful
 * We do not need gridlines that go from the x axis on a bar chart where the x axis is a category (the bars themselves guide our eye the same way a gridline would).
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 # Add the below code to the theme() argument of your ggplot
 theme(panel.grid.major.x = element_blank())
 ```
@@ -2741,7 +2733,7 @@ bar_grid + bar_no_grid
 
 * When the data values are specifically displayed on the chart (as in Figure \@ref(fig:gg-value)) then we do not need gridlines to help interpret these values.
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 # Add the below code to the theme() argument of your ggplot
 theme(panel.grid = element_blank())
 ```
@@ -2802,7 +2794,7 @@ bar_lab <- tribble(
 bar_no_lab + bar_lab
 ```
 * Gridlines should not be the same colour as the axis lines or font. A light grey balances utility and overpowering the plot. 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 ## This is the default aesthetics when using the theme_capture() function
 ... +
   theme_capture()
@@ -2843,7 +2835,7 @@ The advice surrounding borders:
 
 * If the plot you are making is faceted (i.e. made of up of lots of little plots as in the case of WLO), then a border should be included around each plot to clearly show which data and information in contained in each individual plot.
 * If the plot is stand alone, but requires axes, then only the axes of interest (normally x and y axes) should be drawn, with no outer border.
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 ## To have a border add the below code to the theme() argument of your ggplot
 ... +
   theme(panel.border = element_rect(colour = "black",
@@ -2967,7 +2959,7 @@ Imagine we are visualising some metric across different brands, such as in the p
 
 To address this issue, we actually want to make grey the most common colour of our chart! By assigning grey to less important elements, we create a contrast that makes our highlighted colours stand out even more. To align with our narrative, we can highlight the key element in each plot that corresponds to the most important brand. This approach significantly enhances clarity and enables viewers to quickly identify the relevant data points related to the key brand under consideration.
 
-```{r, eval = FALSE, echo = TRUE}
+```{r, eval = FALSE}
 ## Line chart
 df %>%
   ggplot(aes(x = x_axis_variable, y = y_axis_variable, colour = category)) +
