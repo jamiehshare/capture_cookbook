@@ -1031,7 +1031,7 @@ umap_tib %>%
 
 This is a very high level overview of UMAP. As explained previously, the purpose of this Cookbook is not to get a thorough understanding of statistics and Data Science, but rather empower solid data visualisation principles and understanding from an interpretation perspective
 ::::
-
+<br>
 When applying UMAP to social media mentions, the technique projects the data into a lower-dimensional space, typically two dimensions, while preserving the underlying structure of the conversations. Each data point represents a post, and their proximity to each other on the UMAP plot indicates similarity in the context or content of the conversations (i.e. semantic similarity).
 
 The plot above is an example of this two-dimensional 'landscape' that is produced by UMAP. We can see that it is effectively a scatter plot, though the interpretation is much more complex that usual scatters. UMAP reveals clusters or groups of mentions that are closer together on the plot. These clusters represent conversations that share common themes, topics, or sentiments, and are represented by colour in the plot above. We can examine these clusters to identify distinct subtopics or communities within the larger conversational landscape. By exploring the content of these clusters, we can gain a deeper understanding of the prevailing narratives or discussions taking place on social media. Another way of visualising these clusters is by producing a faceted plot, as below, where each of our clusters appears separately as a small multiple on a single plot. This enables us to rapidly compare  clusters in different parts of the data and see how similar or different they are.
