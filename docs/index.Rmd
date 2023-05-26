@@ -1242,7 +1242,53 @@ data %>%
 
 ### Interpretation
 
-The heatmap displayed above illustrates the distribution of brand mentions across different topics. Each row represents a topic, and if we were to sum the values in each cell, the total for each row would equal 100%, while this wouldn't hold true for each column.
+The heatmap displayed above illustrates the distribution of brand mentions across different topics. Each row represents a topic, and if we were to sum the values in each cell, the total for each row would equal 100%, while this wouldn't hold true for each column. Check for yourself below with the values added to each cell:
+
+```{r gg-heatmap-4, fig.cap = 'The sum of the rows = 100% in this case', out.width="60%"}
+x <- LETTERS[1:6]
+y <- paste0("Topic ", seq(1, 5))
+
+set.seed(1234)
+data <- expand.grid(x = x, y = rev(y)) %>%
+  rename(brand = x,
+         topic = y) %>% 
+  mutate(z = round(runif(30, 1, 100)),
+         z_t = case_when(brand == "A" ~ z * 8,
+                       T ~ z),
+         z_t = case_when(brand == "E" & topic == "Topic 4" ~ z_t * 5,
+                         brand == "D" ~ z_t * 0.3,
+                         T ~ z_t)) %>% 
+  group_by(topic) %>% 
+  mutate(z_prop = z_t / sum(z_t),
+         z_prop2 = z / sum(z)) %>% 
+  ungroup()
+
+data %>% 
+  ggplot(aes(brand, topic, fill = z_prop)) + 
+  geom_tile() +
+  labs(x = "Brand",
+       y = NULL,
+       fill = "Percentage of Topic conversation that includes each Brand",
+       title = "Topic x Brand Heatmap") +
+  scale_fill_viridis_c(direction = -1,
+                       labels = percent) +
+  geom_text(aes(label = round(z_prop, 2),
+            colour = ifelse(z_prop >0.4, "white", "black"))) +
+  scale_color_identity() +
+  guides(fill = guide_colourbar(title.position = 'top',
+                               direction = "horizontal",
+                               title.hjust = .5,
+                               barwidth = 22,
+                               barheight = 0.8)) +
+  coord_fixed() +
+  theme_capture() +
+  theme(panel.grid = element_blank(),
+        axis.ticks = element_blank(),
+        legend.position = "bottom",
+        legend.text = element_text(size = 7),
+        legend.title = element_text(hjust = 0.5),
+        axis.line = element_blank())
+```
 
 The x-axis represents different brands, while the y-axis represents different topics. Each coloured cell represents the percentage of conversation within each topic that includes mentions of a specific brand.
 
