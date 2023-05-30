@@ -149,7 +149,7 @@ df %>%
   geom_col(fill = viridis_pal(option = "viridis")(1)) +
   labs(x = "Date",
        y = "Number of posts",
-       title = "Bar chart showing weekly trend") +
+       title = "Bar chart showing daily trend") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_capture()
 ```
@@ -163,7 +163,7 @@ example %>%
   geom_col(fill = viridis_pal(option = "viridis")(1)) +
   labs(x = "Date",
        y = "Number of posts",
-       title = "Bar chart showing weekly trend") +
+       title = "Bar chart showing daily trend") +
   scale_y_continuous(expand = expansion(mult = c(0, 0.05))) +
   theme_capture()
 ```
